@@ -20,10 +20,12 @@ import net.minecraft.server.EntitySquid;
 import net.minecraft.server.EntityZombie;
 import net.minecraft.server.WorldServer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Cow;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ghast;
@@ -40,8 +42,6 @@ import org.bukkit.entity.Squid;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
-import com.elmakers.mine.bukkit.borrowed.CreatureType;
-import com.elmakers.mine.bukkit.persistence.Persistence;
 import com.elmakers.mine.bukkit.plugins.crowd.dao.ControlRule;
 import com.elmakers.mine.bukkit.plugins.crowd.dao.ControlledWorld;
 
@@ -49,7 +49,7 @@ public class Controller
 {
     private static boolean      debugLog = false;
 
-    private static final Logger log      = Persistence.getLogger();
+    private static final Logger log      = Bukkit.getServer().getLogger();
 
     public static boolean isEntityType(CreatureType type, LivingEntity entity)
     {

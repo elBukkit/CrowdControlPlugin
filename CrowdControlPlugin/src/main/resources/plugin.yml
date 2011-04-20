@@ -2,8 +2,9 @@ name: CrowdControl
 main: com.elmakers.mine.bukkit.plugins.crowd.CrowdControlPlugin
 version: 0.21
 website: http://mine.elmakers.com
-author: NathanWolf
+author: NathanWolf WinSock
 description : Simple console-based creature control
+database: true
 depend:
  - Persistence
 commands:

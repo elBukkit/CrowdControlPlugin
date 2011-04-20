@@ -4,28 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.persistence.PersistenceException;
+
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.elmakers.mine.bukkit.borrowed.CreatureType;
-import com.elmakers.mine.bukkit.persistence.Persistence;
-import com.elmakers.mine.bukkit.persistence.dao.Message;
-import com.elmakers.mine.bukkit.persistence.dao.PluginCommand;
-import com.elmakers.mine.bukkit.persistence.dao.WorldData;
+import com.elmakers.mine.bukkit.plugins.crowd.Utilities.PluginUtilities;
+import com.elmakers.mine.bukkit.plugins.crowd.dao.CommandSenderData;
 import com.elmakers.mine.bukkit.plugins.crowd.dao.ControlRule;
 import com.elmakers.mine.bukkit.plugins.crowd.dao.ControlledWorld;
-import com.elmakers.mine.bukkit.plugins.persistence.PersistencePlugin;
-import com.elmakers.mine.bukkit.utilities.PluginUtilities;
+import com.elmakers.mine.bukkit.plugins.crowd.dao.MaterialData;
+import com.elmakers.mine.bukkit.plugins.crowd.dao.MaterialList;
+import com.elmakers.mine.bukkit.plugins.crowd.dao.Message;
+import com.elmakers.mine.bukkit.plugins.crowd.dao.PluginCommand;
+import com.elmakers.mine.bukkit.plugins.crowd.dao.PluginData;
+import com.elmakers.mine.bukkit.plugins.crowd.dao.WorldData;
 
 public class CrowdControlPlugin extends JavaPlugin
 {
@@ -41,6 +44,8 @@ public class CrowdControlPlugin extends JavaPlugin
             this.worldName = worldName;
         }
     }
+    
+    protected final PluginUtilities utilities = new PluginUtilities(this);
 
     protected static final Logger       log         = Logger.getLogger("Minecraft");
 
@@ -87,12 +92,9 @@ public class CrowdControlPlugin extends JavaPlugin
     protected Message                   notControllingMessage;
     protected Message                   noWorldMessage;
     protected PluginCommand             nukeCommand;
-    protected Persistence               persistence = null;
     protected Message                   populationMessage;
     protected Message                   rulesMessage;
     protected Message                   unknownEntityMessage;
-
-    protected PluginUtilities           utilities   = null;
 
     protected WorldSearchResults findWorld(CommandSender sender, String[] parameters, int worldParamIndex)
     {
@@ -144,7 +146,7 @@ public class CrowdControlPlugin extends JavaPlugin
     public ControlledWorld getDefaultWorld()
     {
         List<WorldData> allWorlds = new ArrayList<WorldData>();
-        persistence.getAll(allWorlds, WorldData.class);
+        allWorlds = this.getDatabase().find(WorldData.class).findList();
         if (allWorlds.size() == 0)
         {
             return null;
@@ -167,7 +169,7 @@ public class CrowdControlPlugin extends JavaPlugin
 
     public ControlledWorld getWorldData(String worldName)
     {
-        WorldData existingWorld = persistence.get(worldName, WorldData.class);
+        WorldData existingWorld = this.getDatabase().find(WorldData.class).where().idEq(worldName).findUnique();
         if (existingWorld == null)
         {
             return null;
@@ -188,11 +190,11 @@ public class CrowdControlPlugin extends JavaPlugin
             return null;
         }
 
-        ControlledWorld controlled = persistence.get(worldData, ControlledWorld.class);
+        ControlledWorld controlled = this.getDatabase().find(ControlledWorld.class).where().idEq(worldData).findUnique();
         if (controlled == null)
         {
             controlled = new ControlledWorld(worldData);
-            persistence.put(controlled);
+            this.getDatabase().save(controlled);
         }
 
         return controlled;
@@ -201,22 +203,8 @@ public class CrowdControlPlugin extends JavaPlugin
     public void initialize()
     {
         Server server = getServer();
-        Plugin checkForPersistence = server.getPluginManager().getPlugin("Persistence");
-        if (checkForPersistence != null)
-        {
-            PersistencePlugin plugin = (PersistencePlugin) checkForPersistence;
-            persistence = plugin.getPersistence();
-            utilities = plugin.createUtilities(this);
-        }
-        else
-        {
-            log.warning("The CrowdControl plugin depends on Persistence");
-            server.getPluginManager().disablePlugin(this);
-            return;
-        }
 
         CrowdControlDefaults d = new CrowdControlDefaults();
-        listener.initialize(persistence, controller);
         controller.initialize();
 
         // Initialize default world!
@@ -377,7 +365,7 @@ public class CrowdControlPlugin extends JavaPlugin
         newRule.setPercentChance(percent);
         rules.add(newRule);
         world.setRules(rules);
-        persistence.put(world);
+        this.getDatabase().save(world);
 
         if (percent >= 1)
         {
@@ -400,6 +388,7 @@ public class CrowdControlPlugin extends JavaPlugin
         try
         {
             initialize();
+            setupDatabase();
             PluginDescriptionFile pdfFile = this.getDescription();
             log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled");
         }
@@ -567,7 +556,7 @@ public class CrowdControlPlugin extends JavaPlugin
         if (modified)
         {
             world.setRules(newRules);
-            persistence.put(world);
+            this.getDatabase().save(world);
             crowdReleasedMessage.sendTo(sender, mobType.getName(), search.worldName);
         }
         else
@@ -643,7 +632,7 @@ public class CrowdControlPlugin extends JavaPlugin
         newRule.setReplaceWith(targetType);
         rules.add(newRule);
         world.setRules(rules);
-        persistence.put(world);
+        this.getDatabase().save(world);
 
         if (percent >= 1)
         {
@@ -657,4 +646,36 @@ public class CrowdControlPlugin extends JavaPlugin
         return true;
     }
 
+    private void setupDatabase() {
+        try {
+            getDatabase().find(ControlledWorld.class).findRowCount();
+            getDatabase().find(ControlRule.class).findRowCount();
+            getDatabase().find(CommandSenderData.class).findRowCount();
+            getDatabase().find(MaterialData.class).findRowCount();
+            getDatabase().find(MaterialList.class).findRowCount();
+            getDatabase().find(Message.class).findRowCount();
+            getDatabase().find(PluginCommand.class).findRowCount();
+            getDatabase().find(PluginData.class).findRowCount();
+            getDatabase().find(WorldData.class).findRowCount();
+        } catch (PersistenceException ex) {
+            System.out.println("Installing database for " + getDescription().getName() + " due to first time usage");
+            installDDL();
+        }
+    }
+
+    @Override
+    public List<Class<?>> getDatabaseClasses() {
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(ControlledWorld.class);
+        list.add(ControlRule.class);
+        list.add(CommandSenderData.class);
+        list.add(MaterialData.class);
+        list.add(MaterialList.class);
+        list.add(Message.class);
+        list.add(PluginCommand.class);
+        list.add(PluginData.class);
+        list.add(WorldData.class);
+        return list;
+    }
+    
 }

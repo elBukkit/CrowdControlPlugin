@@ -2,15 +2,22 @@ package com.elmakers.mine.bukkit.plugins.crowd.dao;
 
 import java.util.List;
 
-import com.elmakers.mine.bukkit.persisted.PersistClass;
-import com.elmakers.mine.bukkit.persisted.PersistField;
-import com.elmakers.mine.bukkit.persistence.dao.WorldData;
+import com.avaje.ebean.validation.NotNull;
 
-@PersistClass(schema = "crowd", name = "world")
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity()
+@Table(name = "cc_world")
 public class ControlledWorld
 {
+	@Id
     protected WorldData         id;
 
+	@NotNull
+	@Embedded
     protected List<ControlRule> rules;
 
     public ControlledWorld()
@@ -23,13 +30,11 @@ public class ControlledWorld
         this.id = world;
     }
 
-    @PersistField(id = true)
     public WorldData getId()
     {
         return id;
     }
 
-    @PersistField(contained = true)
     public List<ControlRule> getRules()
     {
         return rules;
