@@ -1,12 +1,10 @@
 name: CrowdControl
 main: com.elmakers.mine.bukkit.plugins.crowd.CrowdControlPlugin
-version: 0.21
+version: 0.22
 website: http://mine.elmakers.com
-author: NathanWolf WinSock
+author: elBukkit
 description : Simple console-based creature control
 database: true
-depend:
- - Persistence
 commands:
   crowd:
     description: Control mob spawning
