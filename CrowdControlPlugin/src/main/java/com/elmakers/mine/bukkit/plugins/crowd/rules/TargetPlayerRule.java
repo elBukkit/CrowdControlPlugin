@@ -4,28 +4,29 @@ import java.util.Set;
 
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Player;
 
-import com.elmakers.mine.bukkit.plugins.crowd.SpawnInfo;
+import com.elmakers.mine.bukkit.plugins.crowd.TargetInfo;
 
 /*
- * TODO Finish the rule
+ * A rule that prevents creatures from targeting certian players.
  * 
- * Set maximum number of a creature type
+ * TODO Finish the code
  * 
- *  @author Andrew Querol(WinSock)
+ * @author Andrew Querol(WinSock)
  */
 
-public class MaxRule implements SpawnRule {
-	
+public class TargetPlayerRule implements TargetRule {
+
 	private Set<World> worlds;
 	private CreatureType type;
 
-	public MaxRule(Set<World> worlds, CreatureType type) {
+	public TargetPlayerRule(Set<Player> players, boolean targetable,Set<World> worlds, CreatureType type) {
 		this.worlds = worlds;
 		this.type = type;
 	}
 
-	public boolean spawn(SpawnInfo info) {
+	public boolean target(TargetInfo info) {
 		// TODO Auto-generated method stub
 		return false;
 	}

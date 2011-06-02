@@ -8,34 +8,41 @@ import org.bukkit.entity.CreatureType;
 
 import com.elmakers.mine.bukkit.plugins.crowd.SpawnInfo;
 
-public class EnvironmentRule implements Rule {
+/*
+ * A rule that allows or disallows creatures based on the environment, Normal, Nether, (Soon) Ather
+ * 
+ * @author Andrew Querol(WinSock)
+ */
+
+public class EnvironmentRule implements SpawnRule {
 
 	private Set<Environment> spawnableEnvironment;
 	private Set<World> worlds;
 	private CreatureType type;
-	
-	public EnvironmentRule(Set<Environment> e, Set<World> worlds, CreatureType type){
+
+	public EnvironmentRule(Set<Environment> e, Set<World> worlds,
+			CreatureType type) {
 		this.spawnableEnvironment = e;
 		this.worlds = worlds;
 		this.type = type;
 	}
-	
+
 	public boolean spawn(SpawnInfo info) {
-		if (this.spawnableEnvironment.contains(info.getEnv())){
+		if (this.spawnableEnvironment.contains(info.getEnv())) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean checkWorld(World world) {
-		if (worlds.contains(world)){
+		if (worlds.contains(world)) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean checkCreatureType(CreatureType type) {
-		if (this.type == type){
+		if (this.type == type) {
 			return true;
 		}
 		return false;
