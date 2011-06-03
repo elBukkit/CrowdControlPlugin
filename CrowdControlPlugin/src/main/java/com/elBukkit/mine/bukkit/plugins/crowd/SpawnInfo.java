@@ -1,4 +1,4 @@
-package com.elmakers.mine.bukkit.plugins.crowd;
+package com.elBukkit.mine.bukkit.plugins.crowd;
 
 import org.bukkit.Location;
 import org.bukkit.World.Environment;

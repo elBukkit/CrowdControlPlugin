@@ -1,9 +1,9 @@
-package com.elmakers.mine.bukkit.plugins.crowd.rules;
+package com.elBukkit.mine.bukkit.plugins.crowd.rules;
 
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
-import com.elmakers.mine.bukkit.plugins.crowd.TargetInfo;
+import com.elBukkit.mine.bukkit.plugins.crowd.TargetInfo;
 
 /*
  * Target Rule interface, basic methods required for target checking
