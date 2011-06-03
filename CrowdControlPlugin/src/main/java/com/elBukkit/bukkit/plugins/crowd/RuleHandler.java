@@ -1,4 +1,4 @@
-package com.elBukkit.mine.bukkit.plugins.crowd;
+package com.elBukkit.bukkit.plugins.crowd;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,8 +25,8 @@ import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Zombie;
 
-import com.elBukkit.mine.bukkit.plugins.crowd.rules.SpawnRule;
-import com.elBukkit.mine.bukkit.plugins.crowd.rules.TargetRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.SpawnRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.TargetRule;
 
 /*
  * Handles all of the rules and checks if the triggering creatures passes

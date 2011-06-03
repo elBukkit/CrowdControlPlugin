@@ -1,20 +1,20 @@
-package com.elBukkit.mine.bukkit.plugins.crowd.rules;
+package com.elBukkit.bukkit.plugins.crowd.rules;
 
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
-import com.elBukkit.mine.bukkit.plugins.crowd.TargetInfo;
+import com.elBukkit.bukkit.plugins.crowd.SpawnInfo;
 
 /*
- * Target Rule interface, basic methods required for target checking
+ * Spawn Rule interface, basic methods required for spawn checking
  * 
  * @author Andrew Querol(WinSock)
  * 
  */
 
-public interface TargetRule {
+public interface SpawnRule {
 
-	public boolean target(TargetInfo info); // Check if creature can target
+	public boolean spawn(SpawnInfo info); // Check if creature passes
 
 	public boolean checkWorld(World world); // Check if the world is effected by
 											// this rule

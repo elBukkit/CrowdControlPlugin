@@ -1,4 +1,4 @@
-package com.elBukkit.mine.bukkit.plugins.crowd.rules;
+package com.elBukkit.bukkit.plugins.crowd.rules;
 
 import java.util.Set;
 
@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
-import com.elBukkit.mine.bukkit.plugins.crowd.SpawnInfo;
+import com.elBukkit.bukkit.plugins.crowd.SpawnInfo;
 
 /*
  * A rule that controls spawning based on the material it spawns on.

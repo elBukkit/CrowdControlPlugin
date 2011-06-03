@@ -1,4 +1,4 @@
-package com.elBukkit.mine.bukkit.plugins.crowd.creature;
+package com.elBukkit.bukkit.plugins.crowd.creature;
 
 import java.util.HashMap;
 import java.util.Map;

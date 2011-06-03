@@ -1,4 +1,4 @@
-package com.elBukkit.mine.bukkit.plugins.crowd.rules;
+package com.elBukkit.bukkit.plugins.crowd.rules;
 
 import java.util.Set;
 
@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 
-import com.elBukkit.mine.bukkit.plugins.crowd.TargetInfo;
+import com.elBukkit.bukkit.plugins.crowd.TargetInfo;
 
 /*
  * A rule that prevents creatures from targeting certian players.

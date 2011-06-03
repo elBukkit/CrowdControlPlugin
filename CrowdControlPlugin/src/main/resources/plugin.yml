@@ -1,5 +1,5 @@
 name: CrowdControl
-main: com.elmakers.mine.bukkit.plugins.crowd.CrowdControlPlugin
+main: com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin
 version: 0.22
 website: http://mine.elmakers.com
 author: elBukkit

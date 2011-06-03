@@ -1,4 +1,4 @@
-package com.elBukkit.mine.bukkit.plugins.crowd.creature;
+package com.elBukkit.bukkit.plugins.crowd.creature;
 
 /*
  * Info about a creature

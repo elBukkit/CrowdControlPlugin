@@ -1,4 +1,4 @@
-package com.elBukkit.mine.bukkit.plugins.crowd;
+package com.elBukkit.bukkit.plugins.crowd;
 
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;

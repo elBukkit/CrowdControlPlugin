@@ -1,4 +1,4 @@
-package com.elBukkit.mine.bukkit.plugins.crowd.rules;
+package com.elBukkit.bukkit.plugins.crowd.rules;
 
 import java.util.Set;
 
@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.CreatureType;
 
-import com.elBukkit.mine.bukkit.plugins.crowd.SpawnInfo;
+import com.elBukkit.bukkit.plugins.crowd.SpawnInfo;
 
 /*
  * A rule that allows or disallows creatures based on the environment, Normal, Nether, (Soon) Ather
