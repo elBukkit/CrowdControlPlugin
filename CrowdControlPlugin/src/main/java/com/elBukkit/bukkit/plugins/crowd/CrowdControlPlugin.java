@@ -6,8 +6,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.elBukkit.bukkit.plugins.crowd.creature.Spawn;
-
 /*
  * CrowdControl plugin
  * 
@@ -34,8 +32,5 @@ public class CrowdControlPlugin extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Type.CREATURE_SPAWN, entityListener, Priority.Highest,
 				this);
-		
-		// Register the spawning system
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Spawn(), 60, 5);
 	}
 }
