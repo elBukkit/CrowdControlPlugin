@@ -16,7 +16,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 	private PluginDescriptionFile pdf;
-	
+
 	public RuleHandler ruleHandler = new RuleHandler();
 
 	public void onDisable() {

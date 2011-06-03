@@ -8,29 +8,27 @@ import org.bukkit.entity.CreatureType;
 import com.elBukkit.mine.bukkit.plugins.crowd.SpawnInfo;
 
 /*
- * A rule that controls spawning based on light levels.
+ * A rule that controls spawning based on height.
  * 
  * @author Andrew Querol(WinSock)
  */
 
-public class SpawnLightRule implements SpawnRule {
+public class SpawnHeightRule implements SpawnRule {
 
 	private Set<World> worlds;
 	private CreatureType type;
 
-	private int min, max;
+	int min, max;
 
-	public SpawnLightRule(int min, int max, Set<World> worlds, CreatureType type) {
+	public SpawnHeightRule(int min, int max, Set<World> worlds,
+			CreatureType type) {
 		this.worlds = worlds;
 		this.type = type;
-
-		this.min = min;
-		this.max = max;
 	}
 
 	public boolean spawn(SpawnInfo info) {
-		if (info.getLocation().getBlock().getLightLevel() > min) {
-			if (info.getLocation().getBlock().getLightLevel() < max) {
+		if (info.getLocation().getBlockY() > min) {
+			if (info.getLocation().getBlockY() < max) {
 				return true;
 			}
 		}

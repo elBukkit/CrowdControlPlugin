@@ -29,15 +29,15 @@ public class CrowdEntityListener extends EntityListener {
 			event.setCancelled(true);
 		}
 	}
-	
+
 	@Override
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (event.getEntity() instanceof Creature) {
 			TargetInfo info = new TargetInfo();
-			info.setCreature((Creature)event.getEntity());
+			info.setCreature((Creature) event.getEntity());
 			info.setTarget(event.getTarget());
 			info.setReason(event.getReason());
-			
+
 			if (!plugin.ruleHandler.passesRules(info)) {
 				event.setCancelled(true);
 			}

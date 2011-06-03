@@ -23,5 +23,5 @@ public interface TargetRule {
 															// creature is
 															// effected by the
 															// rule
-	
+
 }

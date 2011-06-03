@@ -8,23 +8,29 @@ import org.bukkit.entity.CreatureType;
 
 import com.elBukkit.mine.bukkit.plugins.crowd.SpawnInfo;
 
+/*
+ * A rule that controls spawning based on the material it spawns on.
+ * 
+ * @author Andrew Querol(WinSock)
+ */
+
 public class SpawnMaterialRule implements SpawnRule {
 
 	private Set<World> worlds;
 	private CreatureType type;
-	
+
 	private Set<Material> materials;
 
-	public SpawnMaterialRule(Set<Material> materials, Set<World> worlds, CreatureType type) {
+	public SpawnMaterialRule(Set<Material> materials, Set<World> worlds,
+			CreatureType type) {
 		this.worlds = worlds;
 		this.type = type;
-		
+
 		this.materials = materials;
 	}
 
 	public boolean spawn(SpawnInfo info) {
-		if (materials.contains(info.getLocation().getBlock().getType()))
-		{
+		if (materials.contains(info.getLocation().getBlock().getType())) {
 			return true;
 		}
 		return false;

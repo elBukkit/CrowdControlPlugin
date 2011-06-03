@@ -16,7 +16,7 @@ import com.elBukkit.mine.bukkit.plugins.crowd.SpawnInfo;
  */
 
 public class MaxRule implements SpawnRule {
-	
+
 	private Set<World> worlds;
 	private CreatureType type;
 

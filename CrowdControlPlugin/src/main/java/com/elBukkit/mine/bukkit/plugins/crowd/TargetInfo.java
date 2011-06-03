@@ -11,15 +11,15 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
  */
 
 public class TargetInfo {
-	
+
 	private Creature creature;
 	private TargetReason reason;
 	private Entity target;
-	
+
 	public void setTarget(Entity target) {
 		this.target = target;
 	}
-	
+
 	public Entity getTarget() {
 		return target;
 	}
@@ -39,5 +39,5 @@ public class TargetInfo {
 	public TargetReason getReason() {
 		return reason;
 	}
-	
+
 }

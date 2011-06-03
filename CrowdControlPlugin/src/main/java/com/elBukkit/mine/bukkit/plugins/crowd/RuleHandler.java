@@ -38,6 +38,7 @@ public class RuleHandler {
 
 	private Set<SpawnRule> spawnRules;
 	private Set<TargetRule> targetRules;
+
 	// TODO Add when entity movement events are added, feature request #157
 	// private Set<SpawnRule> movmentRules;
 
@@ -62,7 +63,7 @@ public class RuleHandler {
 		}
 		return false;
 	}
-	
+
 	public void AddRule(TargetRule rule) {
 		this.targetRules.add(rule);
 
@@ -92,11 +93,12 @@ public class RuleHandler {
 		}
 		return true;
 	}
-	
+
 	public boolean passesRules(TargetInfo info) {
 		for (TargetRule r : targetRules) {
 			if (r.checkWorld(info.getCreature().getLocation().getWorld())) {
-				if (r.checkCreatureType(getCreatureType((Entity)info.getCreature()))) {
+				if (r.checkCreatureType(getCreatureType((Entity) info
+						.getCreature()))) {
 					if (r.target(info)) {
 						return true;
 					}
@@ -106,7 +108,7 @@ public class RuleHandler {
 		}
 		return true;
 	}
-	
+
 	public CreatureType getCreatureType(Entity entity) {
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Creature) {
