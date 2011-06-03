@@ -3,8 +3,7 @@ package com.elBukkit.mine.bukkit.plugins.crowd;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Entity;
-
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
