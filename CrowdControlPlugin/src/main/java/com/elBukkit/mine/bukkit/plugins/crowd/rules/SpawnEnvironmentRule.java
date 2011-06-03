@@ -14,13 +14,13 @@ import com.elBukkit.mine.bukkit.plugins.crowd.SpawnInfo;
  * @author Andrew Querol(WinSock)
  */
 
-public class EnvironmentRule implements SpawnRule {
+public class SpawnEnvironmentRule implements SpawnRule {
 
 	private Set<Environment> spawnableEnvironment;
 	private Set<World> worlds;
 	private CreatureType type;
 
-	public EnvironmentRule(Set<Environment> e, Set<World> worlds,
+	public SpawnEnvironmentRule(Set<Environment> e, Set<World> worlds,
 			CreatureType type) {
 		this.spawnableEnvironment = e;
 		this.worlds = worlds;

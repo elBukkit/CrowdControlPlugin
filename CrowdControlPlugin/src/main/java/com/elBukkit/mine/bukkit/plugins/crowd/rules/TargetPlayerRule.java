@@ -20,15 +20,31 @@ public class TargetPlayerRule implements TargetRule {
 
 	private Set<World> worlds;
 	private CreatureType type;
+	
+	private Set<Player> players;
+	private boolean targetable;
 
 	public TargetPlayerRule(Set<Player> players, boolean targetable,Set<World> worlds, CreatureType type) {
 		this.worlds = worlds;
 		this.type = type;
+		
+		this.players = players;
+		this.targetable = targetable;
 	}
 
 	public boolean target(TargetInfo info) {
-		// TODO Auto-generated method stub
-		return false;
+		if(!targetable)
+		{
+			if(info.getTarget() instanceof Player)
+			{
+				Player pTarget = (Player)info.getTarget();
+				if (players.contains(pTarget))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public boolean checkWorld(World world) {
