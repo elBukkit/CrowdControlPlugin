@@ -4,7 +4,6 @@ version: 0.22
 website: http://mine.elmakers.com
 author: elBukkit
 description : Simple console-based creature control
-database: true
 commands:
   crowd:
     description: Control mob spawning

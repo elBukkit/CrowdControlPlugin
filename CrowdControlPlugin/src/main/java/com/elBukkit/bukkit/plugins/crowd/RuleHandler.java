@@ -1,8 +1,11 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Chicken;
@@ -37,68 +40,120 @@ import com.elBukkit.bukkit.plugins.crowd.rules.TargetRule;
 
 public class RuleHandler {
 
-	private Set<SpawnRule> spawnRules;
-	private Set<TargetRule> targetRules;
+	private Map<SpawnRule, Integer> spawnRules;
+	private Map<TargetRule, Integer> targetRules;
 	
 	private sqlCore dbManage;
 
 	// TODO Add when entity movement events are added, feature request #157
 	// private Set<SpawnRule> movmentRules;
 
-	public RuleHandler(sqlCore dbManage) {
-		spawnRules = new HashSet<SpawnRule>();
+	public RuleHandler(sqlCore dbManage) throws SQLException, ClassNotFoundException {
+		spawnRules = new HashMap<SpawnRule, Integer>();
+		targetRules = new HashMap<TargetRule, Integer>();
+		
 		this.dbManage = dbManage;
 		
 		dbManage.initialize();
 		if (!dbManage.checkTable("Rules"))
 		{
 			String createDB = "CREATE TABLE spawnRules" +
-			"(" +
-			"Id INTEGER PRIMARY KEY AUTO_INCREMENT, " +
-			"Rule VARCHAR(255), " +
-			"Worlds VARCHAR(255), " +
-			"Creatures VARCHAR(255), " +
-			"Data VARCHAR(255)" +
-			");";
+				"(" +
+				"Id INTEGER PRIMARY KEY AUTO_INCREMENT, " +
+				"Rule VARCHAR(255), " +
+				"Worlds VARCHAR(255), " +
+				"Creatures VARCHAR(255), " +
+				"Data VARCHAR(255)" +
+				");";
 			dbManage.createTable(createDB);
+		}
+		else
+		{
+			String selectSQL = "SELECT * FROM spawnRules;";
+			ResultSet rs = dbManage.sqlQuery(selectSQL);
+			
+			while(rs.next())
+			{
+				String ruleClass, worlds, creatures, data;
+				ruleClass = rs.getString(2);
+				worlds = rs.getString(3);
+				creatures = rs.getString(4);
+				data = rs.getString(5);
+				
+				Class rule = Class.forName(ruleClass);
+				
+				// TODO Figure out how to use reflection to get it back to the right rule
+			}
+			
 		}
 		dbManage.close();
 	}
 
-	public void AddRule(SpawnRule rule) {
-		this.spawnRules.add(rule);
+	public void AddRule(SpawnRule rule) throws SQLException {
 
-		// Do persistence
-	}
-
-	public boolean RemoveRule(SpawnRule rule) {
-		if (spawnRules.contains(rule)) {
-			spawnRules.remove(rule);
-			return true;
-
-			// Remove rule from persistence
+		String worlds = "";
+		
+		for(World w : rule.getWorlds())
+		{
+			worlds += w.getName();
 		}
-		return false;
+		
+		String addRuleSQL = "INSERT INTO spawnRules (Rule,Worlds,Creatures,Data) " +
+				"VALUES(" + rule.getClass().getName() + 
+				", " + worlds +
+				", " + rule.getCreatureType().toString() +
+				", " + rule.getData() + 
+				");";
+		
+		dbManage.initialize();
+		dbManage.insertQuery(addRuleSQL);
+		spawnRules.put(rule, dbManage.sqlQuery("SELECT LAST_INSERT_ID();").getInt(0));
+		dbManage.close();
 	}
 
-	public void AddRule(TargetRule rule) {
-		this.targetRules.add(rule);
-
-		// Do persistence
+	public void RemoveRule(SpawnRule rule) {
+		String removeSQL = "DELETE * FROM spawnRules WHERE " +
+			"Id = '" + String.valueOf(targetRules.get(rule)) +
+			"';";
+		dbManage.deleteQuery(removeSQL);
+		dbManage.close();
+		spawnRules.remove(rule);
 	}
 
-	public boolean RemoveRule(TargetRule rule) {
-		if (targetRules.contains(rule)) {
-			targetRules.remove(rule);
-			return true;
+	public void AddRule(TargetRule rule) throws SQLException {
 
-			// Remove rule from persistence
+		String worlds = "";
+		
+		for(World w : rule.getWorlds())
+		{
+			worlds += w.getName();
 		}
-		return false;
+		
+		String addRuleSQL = "INSERT INTO spawnRules (Rule,Worlds,Creatures,Data) " +
+		"VALUES(" + rule.getClass().getName() + 
+		", " + worlds +
+		", " + rule.getCreatureType().toString() +
+		", " + rule.getData() + 
+		");";
+
+		dbManage.initialize();
+		dbManage.insertQuery(addRuleSQL);
+		targetRules.put(rule, dbManage.sqlQuery("SELECT LAST_INSERT_ID();").getInt(0));
+		dbManage.close();
+		
+	}
+
+	public void RemoveRule(TargetRule rule) {
+		String removeSQL = "DELETE * FROM spawnRules WHERE " +
+				"Id = '" + String.valueOf(targetRules.get(rule)) +
+				"';";
+		dbManage.deleteQuery(removeSQL);
+		dbManage.close();
+		targetRules.remove(rule);
 	}
 
 	public boolean passesRules(SpawnInfo info) {
-		for (SpawnRule r : spawnRules) {
+		for (SpawnRule r : spawnRules.keySet()) {
 			if (r.checkWorld(info.getLocation().getWorld())) {
 				if (r.checkCreatureType(info.getType())) {
 					if (r.spawn(info)) {
@@ -112,7 +167,7 @@ public class RuleHandler {
 	}
 
 	public boolean passesRules(TargetInfo info) {
-		for (TargetRule r : targetRules) {
+		for (TargetRule r : targetRules.keySet()) {
 			if (r.checkWorld(info.getCreature().getLocation().getWorld())) {
 				if (r.checkCreatureType(getCreatureType((Entity) info
 						.getCreature()))) {

@@ -38,7 +38,16 @@ public class CrowdControlPlugin extends JavaPlugin {
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
 		
 		dbManage = new sqlCore(this.getServer().getLogger(), this.prefix, this.dbName, this.getDataFolder().getAbsolutePath());
-		ruleHandler = new RuleHandler(dbManage);
+		try
+		{
+			ruleHandler = new RuleHandler(dbManage);
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+			this.setEnabled(false);
+			return;
+		}
 
 		// Register our events
 		PluginManager pm = getServer().getPluginManager();
