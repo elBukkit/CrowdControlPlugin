@@ -1,5 +1,6 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.World;
@@ -26,6 +27,18 @@ public class SpawnEnvironmentRule implements SpawnRule {
 		this.worlds = worlds;
 		this.type = type;
 	}
+	
+	public SpawnEnvironmentRule(String data, Set<World> worlds,
+			CreatureType type) {
+		spawnableEnvironment = new HashSet<Environment>();
+		String[] envString = data.split(" ");
+		for (String s : envString)
+		{
+			spawnableEnvironment.add(Environment.valueOf(s));
+		}
+		this.worlds = worlds;
+		this.type = type;
+	}
 
 	public boolean spawn(SpawnInfo info) {
 		if (this.spawnableEnvironment.contains(info.getEnv())) {
@@ -46,6 +59,24 @@ public class SpawnEnvironmentRule implements SpawnRule {
 			return true;
 		}
 		return false;
+	}
+
+	public CreatureType getCreatureType() {
+		return type;
+	}
+
+	public Set<World> getWorlds() {
+		return worlds;
+	}
+
+	public String getData() {
+		String data = "";
+		for (Environment e : spawnableEnvironment)
+		{
+			data += e.toString() + " ";
+		}
+		data.trim();
+		return data;
 	}
 
 }

@@ -24,6 +24,19 @@ public class SpawnHeightRule implements SpawnRule {
 			CreatureType type) {
 		this.worlds = worlds;
 		this.type = type;
+		
+		this.min = min;
+		this.max = max;
+	}
+	
+	public SpawnHeightRule(String data, Set<World> worlds,
+			CreatureType type) {
+		this.worlds = worlds;
+		this.type = type;
+		
+		String[] splitData = data.split(",");
+		max = Integer.parseInt(splitData[0]);
+		min = Integer.parseInt(splitData[0]);
 	}
 
 	public boolean spawn(SpawnInfo info) {
@@ -47,6 +60,18 @@ public class SpawnHeightRule implements SpawnRule {
 			return true;
 		}
 		return false;
+	}
+
+	public CreatureType getCreatureType() {
+		return this.type;
+	}
+
+	public Set<World> getWorlds() {
+		return this.worlds;
+	}
+
+	public String getData() {
+		return String.valueOf(max) + "," + String.valueOf(min);
 	}
 
 }

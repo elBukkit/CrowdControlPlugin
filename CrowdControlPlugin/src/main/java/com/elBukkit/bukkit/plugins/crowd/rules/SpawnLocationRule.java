@@ -87,4 +87,19 @@ public class SpawnLocationRule implements SpawnRule {
 		}
 		return false;
 	}
+
+	public CreatureType getCreatureType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Set<World> getWorlds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

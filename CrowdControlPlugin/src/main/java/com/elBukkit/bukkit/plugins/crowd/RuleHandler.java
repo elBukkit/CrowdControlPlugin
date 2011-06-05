@@ -25,6 +25,7 @@ import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Zombie;
 
+import com.alta189.sqlLibrary.SQLite.sqlCore;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.TargetRule;
 
@@ -38,14 +39,30 @@ public class RuleHandler {
 
 	private Set<SpawnRule> spawnRules;
 	private Set<TargetRule> targetRules;
+	
+	private sqlCore dbManage;
 
 	// TODO Add when entity movement events are added, feature request #157
 	// private Set<SpawnRule> movmentRules;
 
-	public RuleHandler() {
+	public RuleHandler(sqlCore dbManage) {
 		spawnRules = new HashSet<SpawnRule>();
-
-		// Do loading of saved rules
+		this.dbManage = dbManage;
+		
+		dbManage.initialize();
+		if (!dbManage.checkTable("Rules"))
+		{
+			String createDB = "CREATE TABLE spawnRules" +
+			"(" +
+			"Id INTEGER PRIMARY KEY AUTO_INCREMENT, " +
+			"Rule VARCHAR(255), " +
+			"Worlds VARCHAR(255), " +
+			"Creatures VARCHAR(255), " +
+			"Data VARCHAR(255)" +
+			");";
+			dbManage.createTable(createDB);
+		}
+		dbManage.close();
 	}
 
 	public void AddRule(SpawnRule rule) {

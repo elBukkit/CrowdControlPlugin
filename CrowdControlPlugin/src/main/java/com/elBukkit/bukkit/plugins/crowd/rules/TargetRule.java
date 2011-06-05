@@ -1,5 +1,7 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
+import java.util.Set;
+
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
@@ -24,4 +26,8 @@ public interface TargetRule {
 															// effected by the
 															// rule
 
+	// Classes used for saving data
+	public CreatureType getCreatureType();
+	public Set<World> getWorlds();
+	public String getData();
 }

@@ -19,6 +19,7 @@ public class MaxRule implements SpawnRule {
 
 	private Set<World> worlds;
 	private CreatureType type;
+	private int maxMobs;
 
 	public MaxRule(Set<World> worlds, CreatureType type) {
 		this.worlds = worlds;
@@ -42,6 +43,18 @@ public class MaxRule implements SpawnRule {
 			return true;
 		}
 		return false;
+	}
+
+	public CreatureType getCreatureType() {
+		return type;
+	}
+
+	public Set<World> getWorlds() {
+		return worlds;
+	}
+
+	public String getData() {
+		return String.valueOf(maxMobs);
 	}
 
 }
