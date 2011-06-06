@@ -35,7 +35,7 @@ public class RuleHandler {
 		this.dbManage = dbManage;
 		
 		dbManage.initialize();
-		if (!dbManage.checkTable("Rules"))
+		if (!dbManage.checkTable("spawnRules"))
 		{
 			String createDB = "CREATE TABLE spawnRules" +
 				"(" +
