@@ -2,9 +2,7 @@ package com.elBukkit.bukkit.plugins.crowd.rules;
 
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 
