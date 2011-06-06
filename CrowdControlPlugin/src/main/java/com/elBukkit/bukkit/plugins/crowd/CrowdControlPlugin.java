@@ -23,7 +23,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	
 	public sqlCore dbManage; // import SQLite lib
 	public String prefix = "[CrowdControl]";
-	public String dbName = "ccdb";
+	public String dbName = pdf.getFullName()+".db";
 
 	public void onDisable() {
 		System.out.println(pdf.getFullName() + " is disabled!");
