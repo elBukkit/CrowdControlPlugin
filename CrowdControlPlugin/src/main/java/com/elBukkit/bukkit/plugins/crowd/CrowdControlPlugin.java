@@ -22,8 +22,6 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public RuleHandler ruleHandler;
 	
 	public sqlCore dbManage; // import SQLite lib
-	public String prefix = "[CrowdControl]";
-	public String dbName = pdf.getFullName()+".db";
 
 	public void onDisable() {
 		System.out.println(pdf.getFullName() + " is disabled!");
@@ -37,7 +35,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 		if(!this.getDataFolder().exists())
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
 		
-		dbManage = new sqlCore(this.getServer().getLogger(), this.prefix, this.dbName, this.getDataFolder().getAbsolutePath());
+		String prefix = "[CrowdControl]";
+		String dbName = pdf.getFullName()+".db";
+		
+		dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName, this.getDataFolder().getAbsolutePath());
 		try
 		{
 			ruleHandler = new RuleHandler(dbManage);
