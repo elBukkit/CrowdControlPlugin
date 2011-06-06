@@ -92,12 +92,12 @@ public class RuleHandler {
 				}
 				
 				Class rule = Class.forName(ruleClass);
-				rule.getDeclaredConstructor(String.class,Set.class,CreatureType.class).newInstance(data,worldSet,CreatureType.valueOf(creatures));
+				Object classObj = rule.getDeclaredConstructor(String.class,Set.class,CreatureType.class).newInstance(data,worldSet,CreatureType.valueOf(creatures));
 				
-				if(rule.isInstance(SpawnRule.class)){
-					AddRule((SpawnRule)rule.cast(SpawnRule.class),id);
-				} else if(rule.isInstance(TargetRule.class)){
-					AddRule((TargetRule)rule.cast(TargetRule.class),id);
+				if(classObj instanceof SpawnRule){
+					AddRule((SpawnRule)classObj,id);
+				} else if(classObj instanceof TargetRule){
+					AddRule((TargetRule)classObj,id);
 				} else {
 					System.out.println("Invalid Class: " + rule.getSimpleName() + " in Database!");
 					String removeSQL = "DELETE * FROM spawnRules WHERE " +
