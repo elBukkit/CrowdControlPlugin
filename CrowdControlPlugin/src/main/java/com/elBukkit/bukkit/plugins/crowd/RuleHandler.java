@@ -1,10 +1,14 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Animals;
@@ -48,7 +52,7 @@ public class RuleHandler {
 	// TODO Add when entity movement events are added, feature request #157
 	// private Set<SpawnRule> movmentRules;
 
-	public RuleHandler(sqlCore dbManage) throws SQLException, ClassNotFoundException {
+	public RuleHandler(sqlCore dbManage) throws SQLException, ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		spawnRules = new HashMap<SpawnRule, Integer>();
 		targetRules = new HashMap<TargetRule, Integer>();
 		
@@ -75,14 +79,32 @@ public class RuleHandler {
 			while(rs.next())
 			{
 				String ruleClass, worlds, creatures, data;
+				int id = rs.getInt(1);
 				ruleClass = rs.getString(2);
 				worlds = rs.getString(3);
 				creatures = rs.getString(4);
 				data = rs.getString(5);
 				
-				Class rule = Class.forName(ruleClass);
+				String[] worldArray = worlds.split(" ");
+				Set<World> worldSet = new HashSet<World>();
+				for (String s : worldArray) {
+					worldSet.add(Bukkit.getServer().getWorld(s));
+				}
 				
-				// TODO Figure out how to use reflection to get it back to the right rule
+				Class rule = Class.forName(ruleClass);
+				rule.getDeclaredConstructor(String.class,Set.class,CreatureType.class).newInstance(data,worldSet,CreatureType.valueOf(creatures));
+				
+				if(rule.isInstance(SpawnRule.class)){
+					AddRule((SpawnRule)rule.cast(SpawnRule.class),id);
+				} else if(rule.isInstance(TargetRule.class)){
+					AddRule((TargetRule)rule.cast(TargetRule.class),id);
+				} else {
+					System.out.println("Invalid Class: " + rule.getSimpleName() + " in Database!");
+					String removeSQL = "DELETE * FROM spawnRules WHERE " +
+						"Id = '" + String.valueOf(id) +
+						"';";
+					dbManage.deleteQuery(removeSQL);
+				}
 			}
 			
 		}
@@ -95,7 +117,7 @@ public class RuleHandler {
 		
 		for(World w : rule.getWorlds())
 		{
-			worlds += w.getName();
+			worlds += w.getName() + " ";
 		}
 		
 		String addRuleSQL = "INSERT INTO spawnRules (Rule,Worlds,Creatures,Data) " +
@@ -109,6 +131,14 @@ public class RuleHandler {
 		dbManage.insertQuery(addRuleSQL);
 		spawnRules.put(rule, dbManage.sqlQuery("SELECT last_insert_rowid();").getInt(0));
 		dbManage.close();
+	}
+	
+	public void AddRule(SpawnRule rule, int id) {
+		spawnRules.put(rule, id);
+	}
+	
+	public void AddRule(TargetRule rule, int id) {
+		targetRules.put(rule, id);
 	}
 
 	public void RemoveRule(SpawnRule rule) {
