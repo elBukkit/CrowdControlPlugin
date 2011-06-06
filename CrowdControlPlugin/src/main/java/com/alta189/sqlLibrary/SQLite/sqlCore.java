@@ -46,7 +46,7 @@ public class sqlCore {
 	
 	public Boolean initialize() {
 		File dbFolder = new File(dbLocation);
-		if (dbName.contains("/") || dbName.contains("\\") || dbName.endsWith(".db")) { this.writeError("The database name can not contain: /, \\, or .db", true); return false; }
+		if (dbName.contains("/") || dbName.contains("\\")) { this.writeError("The database name can not contain: /, \\", true); return false; }
 		if (!dbFolder.exists()) {
 			dbFolder.mkdir();
 		}
