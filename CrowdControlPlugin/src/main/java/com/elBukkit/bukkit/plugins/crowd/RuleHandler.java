@@ -1,5 +1,6 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -90,7 +91,8 @@ public class RuleHandler {
 				}
 				
 				Class<? extends Rule> rule = Class.forName(ruleClass).asSubclass(Rule.class);
-				Object classObj = rule.getDeclaredConstructor(String.class,Set.class,CreatureType.class).newInstance(data,worldSet,CreatureType.valueOf(creatures));
+				Constructor<? extends Rule> c = rule.getDeclaredConstructor(String.class,Set.class,CreatureType.class);
+				Object classObj = c.newInstance(data,worldSet,CreatureType.valueOf(creatures));
 				
 				if(classObj instanceof Rule){
 					AddRule((Rule)classObj,id);
