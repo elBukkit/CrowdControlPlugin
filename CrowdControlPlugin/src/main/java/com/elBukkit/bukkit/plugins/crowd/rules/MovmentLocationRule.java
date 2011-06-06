@@ -6,7 +6,7 @@ import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.Vector;
 
-import com.elBukkit.bukkit.plugins.crowd.SpawnInfo;
+import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
  * Control where entities can be, i.e. entity zones.
@@ -17,17 +17,27 @@ import com.elBukkit.bukkit.plugins.crowd.SpawnInfo;
  * @author Andrew Querol(WinSock)
  */
 
-public class MovmentLocationRule {
-
-	private Set<World> worlds;
-	private CreatureType type;
-
-	private long[] xyzA = { 0, 0, 0 };
-	private long[] xyzB = { 0, 0, 0 };
+public class MovmentLocationRule extends Rule {
+	
+	
+	//private long[] xyzA = { 0, 0, 0 };
+	//private long[] xyzB = { 0, 0, 0 };
 
 	private Vector point1, point2;
 
-	public MovmentLocationRule(long[] xyzA, long[] xyzB, Set<World> worlds,
+	public MovmentLocationRule(Set<World> worlds, CreatureType type) {
+		super(worlds, type);
+		this.ruleType = Type.Movement;
+	}
+
+	@Override
+	public void init(String data)
+	{
+		// TODO Finish init()
+	}
+
+	// TODO Move the constructors to init()
+	/* public MovmentLocationRule(long[] xyzA, long[] xyzB, Set<World> worlds,
 			CreatureType type) {
 		this.xyzA = xyzA.clone();
 		this.xyzB = xyzB.clone();
@@ -57,16 +67,17 @@ public class MovmentLocationRule {
 
 		this.worlds = worlds;
 		this.type = type;
-	}
+	} */
 
-	public boolean spawn(SpawnInfo info) {
+	@Override
+	public boolean check(Info info) {
 		if (info.getLocation().toVector().isInAABB(point1, point2)) {
 			return true;
 		}
 		return false;
 	}
 
-	private void normalize() {
+	/* private void normalize() {
 		long temp;
 		for (int i = 0; i < 3; i++) {
 			if (this.xyzA[i] > this.xyzB[i]) {
@@ -75,19 +86,5 @@ public class MovmentLocationRule {
 				this.xyzB[i] = temp;
 			}
 		}
-	}
-
-	public boolean checkWorld(World world) {
-		if (worlds.contains(world)) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean checkCreatureType(CreatureType type) {
-		if (this.type == type) {
-			return true;
-		}
-		return false;
-	}
+	} */
 }

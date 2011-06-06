@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
-import com.elBukkit.bukkit.plugins.crowd.SpawnInfo;
+import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
  * A rule that controls spawning based on the material it spawns on.
@@ -14,55 +14,36 @@ import com.elBukkit.bukkit.plugins.crowd.SpawnInfo;
  * @author Andrew Querol(WinSock)
  */
 
-public class SpawnMaterialRule implements SpawnRule {
-
-	private Set<World> worlds;
-	private CreatureType type;
+public class SpawnMaterialRule extends Rule {
 
 	private Set<Material> materials;
-
-	public SpawnMaterialRule(Set<Material> materials, Set<World> worlds,
-			CreatureType type) {
-		this.worlds = worlds;
-		this.type = type;
-
-		this.materials = materials;
+	
+	public SpawnMaterialRule(Set<World> worlds, CreatureType type) {
+		super(worlds, type);
+		this.ruleType = Type.Spawn;
 	}
 
-	public boolean spawn(SpawnInfo info) {
+	@Override
+	public void init(String data)
+	{
+		// TODO Finish init()
+	}
+	
+	@Override
+	public boolean check(Info info) {
 		if (materials.contains(info.getLocation().getBlock().getType())) {
 			return true;
 		}
 		return false;
 	}
 
-	public boolean checkWorld(World world) {
-		if (worlds.contains(world)) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean checkCreatureType(CreatureType type) {
-		if (this.type == type) {
-			return true;
-		}
-		return false;
-	}
-
-	public CreatureType getCreatureType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Set<World> getWorlds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	@Override
 	public String getData() {
-		// TODO Auto-generated method stub
-		return null;
+		String data = "";
+		for(Material m : materials) {
+			data += m.name() + ",";
+		}
+		return data;
 	}
 
 }

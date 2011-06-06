@@ -2,8 +2,11 @@ package com.elBukkit.bukkit.plugins.crowd;
 
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
 /*
  * Info about creature spawning
@@ -11,12 +14,39 @@ import org.bukkit.entity.LivingEntity;
  * @author Andrew Querol(WinSock)
  */
 
-public class SpawnInfo {
+public class Info {
 
 	private Location location;
 	private Environment env;
 	private CreatureType type;
 	private LivingEntity entity;
+	private Creature creature;
+	private TargetReason reason;
+	private Entity target;
+
+	public void setTarget(Entity target) {
+		this.target = target;
+	}
+
+	public Entity getTarget() {
+		return target;
+	}
+
+	public void setCreature(Creature creature) {
+		this.creature = creature;
+	}
+
+	public Creature getCreature() {
+		return creature;
+	}
+
+	public void setReason(TargetReason reason) {
+		this.reason = reason;
+	}
+
+	public TargetReason getReason() {
+		return reason;
+	}
 
 	public void setLocation(Location location) {
 		this.location = location;

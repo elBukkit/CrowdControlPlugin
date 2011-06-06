@@ -6,38 +6,36 @@ import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 
-import com.elBukkit.bukkit.plugins.crowd.TargetInfo;
+import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
  * A rule that prevents creatures from targeting certian players.
  * 
- * TODO Finish the code
- * 
  * @author Andrew Querol(WinSock)
  */
 
-public class TargetPlayerRule implements TargetRule {
+public class TargetPlayerRule extends Rule {
 
-	private Set<World> worlds;
-	private CreatureType type;
-
-	private Set<Player> players;
+	private Set<String> players;
 	private boolean targetable;
-
-	public TargetPlayerRule(Set<Player> players, boolean targetable,
-			Set<World> worlds, CreatureType type) {
-		this.worlds = worlds;
-		this.type = type;
-
-		this.players = players;
-		this.targetable = targetable;
+	
+	public TargetPlayerRule(Set<World> worlds, CreatureType type) {
+		super(worlds, type);
+		this.ruleType = Type.Target;
 	}
-
-	public boolean target(TargetInfo info) {
+	
+	@Override
+	public void init(String data)
+	{
+		// TODO Finish init()
+	}
+	
+	@Override
+	public boolean check(Info info) {
 		if (!targetable) {
 			if (info.getTarget() instanceof Player) {
 				Player pTarget = (Player) info.getTarget();
-				if (players.contains(pTarget)) {
+				if (players.contains(pTarget.getName())) {
 					return false;
 				}
 			}
@@ -45,33 +43,13 @@ public class TargetPlayerRule implements TargetRule {
 		return true;
 	}
 
-	public boolean checkWorld(World world) {
-		if (worlds.contains(world)) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean checkCreatureType(CreatureType type) {
-		if (this.type == type) {
-			return true;
-		}
-		return false;
-	}
-
-	public CreatureType getCreatureType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Set<World> getWorlds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String getData() {
-		// TODO Auto-generated method stub
-		return null;
+		String data = "";
+		for(String s : this.players) {
+			data += s + ",";
+		}
+		data += ";" + String.valueOf(targetable);
+		return data;
 	}
 
 }

@@ -33,8 +33,8 @@ import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Zombie;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
-import com.elBukkit.bukkit.plugins.crowd.rules.SpawnRule;
-import com.elBukkit.bukkit.plugins.crowd.rules.TargetRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
+import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 /*
  * Handles all of the rules and checks if the triggering creatures passes
@@ -44,8 +44,7 @@ import com.elBukkit.bukkit.plugins.crowd.rules.TargetRule;
 
 public class RuleHandler {
 
-	private Map<SpawnRule, Integer> spawnRules;
-	private Map<TargetRule, Integer> targetRules;
+	private Map<Rule, Integer> rules;
 	
 	private sqlCore dbManage;
 
@@ -53,8 +52,7 @@ public class RuleHandler {
 	// private Set<SpawnRule> movmentRules;
 
 	public RuleHandler(sqlCore dbManage) throws SQLException, ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		spawnRules = new HashMap<SpawnRule, Integer>();
-		targetRules = new HashMap<TargetRule, Integer>();
+		rules = new HashMap<Rule, Integer>();
 		
 		this.dbManage = dbManage;
 		
@@ -91,13 +89,11 @@ public class RuleHandler {
 					worldSet.add(Bukkit.getServer().getWorld(s));
 				}
 				
-				Class rule = Class.forName(ruleClass);
+				Class<? extends Rule> rule = Class.forName(ruleClass).asSubclass(Rule.class);
 				Object classObj = rule.getDeclaredConstructor(String.class,Set.class,CreatureType.class).newInstance(data,worldSet,CreatureType.valueOf(creatures));
 				
-				if(classObj instanceof SpawnRule){
-					AddRule((SpawnRule)classObj,id);
-				} else if(classObj instanceof TargetRule){
-					AddRule((TargetRule)classObj,id);
+				if(classObj instanceof Rule){
+					AddRule((Rule)classObj,id);
 				} else {
 					System.out.println("Invalid Class: " + rule.getSimpleName() + " in Database!");
 					String removeSQL = "DELETE * FROM spawnRules WHERE " +
@@ -111,7 +107,7 @@ public class RuleHandler {
 		dbManage.close();
 	}
 
-	public void AddRule(SpawnRule rule) throws SQLException {
+	public void AddRule(Rule rule) throws SQLException {
 
 		String worlds = "";
 		
@@ -129,83 +125,34 @@ public class RuleHandler {
 		
 		dbManage.initialize();
 		dbManage.insertQuery(addRuleSQL);
-		spawnRules.put(rule, dbManage.sqlQuery("SELECT last_insert_rowid();").getInt(0));
+		rules.put(rule, dbManage.sqlQuery("SELECT last_insert_rowid();").getInt(0));
 		dbManage.close();
 	}
 	
-	public void AddRule(SpawnRule rule, int id) {
-		spawnRules.put(rule, id);
-	}
-	
-	public void AddRule(TargetRule rule, int id) {
-		targetRules.put(rule, id);
+	public void AddRule(Rule rule, int id) {
+		rules.put(rule, id);
 	}
 
-	public void RemoveRule(SpawnRule rule) {
+	public void RemoveRule(Rule rule) {
 		String removeSQL = "DELETE * FROM spawnRules WHERE " +
-			"Id = '" + String.valueOf(targetRules.get(rule)) +
+			"Id = '" + String.valueOf(rules.get(rule)) +
 			"';";
 		dbManage.deleteQuery(removeSQL);
 		dbManage.close();
-		spawnRules.remove(rule);
+		rules.remove(rule);
 	}
 
-	public void AddRule(TargetRule rule) throws SQLException {
-
-		String worlds = "";
-		
-		for(World w : rule.getWorlds())
-		{
-			worlds += w.getName();
-		}
-		
-		String addRuleSQL = "INSERT INTO spawnRules (Rule,Worlds,Creatures,Data) " +
-		"VALUES(" + rule.getClass().getName() + 
-		", " + worlds +
-		", " + rule.getCreatureType().toString() +
-		", " + rule.getData() + 
-		");";
-
-		dbManage.initialize();
-		dbManage.insertQuery(addRuleSQL);
-		targetRules.put(rule, dbManage.sqlQuery("SELECT last_insert_rowid();").getInt(0));
-		dbManage.close();
-		
-	}
-
-	public void RemoveRule(TargetRule rule) {
-		String removeSQL = "DELETE * FROM spawnRules WHERE " +
-				"Id = '" + String.valueOf(targetRules.get(rule)) +
-				"';";
-		dbManage.deleteQuery(removeSQL);
-		dbManage.close();
-		targetRules.remove(rule);
-	}
-
-	public boolean passesRules(SpawnInfo info) {
-		for (SpawnRule r : spawnRules.keySet()) {
+	public boolean passesRules(Info info, Type type) {
+		for (Rule r : rules.keySet()) {
+			if (r.getType().equals(type)){
 			if (r.checkWorld(info.getLocation().getWorld())) {
 				if (r.checkCreatureType(info.getType())) {
-					if (r.spawn(info)) {
+					if (r.check(info)) {
 						return true;
 					}
 					return false;
 				}
 			}
-		}
-		return true;
-	}
-
-	public boolean passesRules(TargetInfo info) {
-		for (TargetRule r : targetRules.keySet()) {
-			if (r.checkWorld(info.getCreature().getLocation().getWorld())) {
-				if (r.checkCreatureType(getCreatureType((Entity) info
-						.getCreature()))) {
-					if (r.target(info)) {
-						return true;
-					}
-					return false;
-				}
 			}
 		}
 		return true;
