@@ -59,7 +59,7 @@ public class RuleHandler {
 		{
 			String createDB = "CREATE TABLE spawnRules" +
 				"(" +
-				"Id INTEGER PRIMARY KEY AUTO_INCREMENT, " +
+				"Id INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				"Rule VARCHAR(255), " +
 				"Worlds VARCHAR(255), " +
 				"Creatures VARCHAR(255), " +
@@ -107,7 +107,7 @@ public class RuleHandler {
 		
 		dbManage.initialize();
 		dbManage.insertQuery(addRuleSQL);
-		spawnRules.put(rule, dbManage.sqlQuery("SELECT LAST_INSERT_ID();").getInt(0));
+		spawnRules.put(rule, dbManage.sqlQuery("SELECT last_insert_rowid();").getInt(0));
 		dbManage.close();
 	}
 
@@ -138,7 +138,7 @@ public class RuleHandler {
 
 		dbManage.initialize();
 		dbManage.insertQuery(addRuleSQL);
-		targetRules.put(rule, dbManage.sqlQuery("SELECT LAST_INSERT_ID();").getInt(0));
+		targetRules.put(rule, dbManage.sqlQuery("SELECT last_insert_rowid();").getInt(0));
 		dbManage.close();
 		
 	}
