@@ -62,8 +62,8 @@ public class CrowdCommand implements CommandExecutor {
 								.get(Integer.valueOf(args[1]));
 						Constructor<? extends Rule> c;
 						try {
-							c = ruleClass.getDeclaredConstructor(String.class,
-									World.class, CreatureType.class);
+							c = ruleClass.getDeclaredConstructor(World.class,
+									CreatureType.class);
 							Object classObj = c.newInstance(Bukkit.getServer()
 									.getWorld(args[2]), CreatureType
 									.valueOf(args[3]));
@@ -76,7 +76,7 @@ public class CrowdCommand implements CommandExecutor {
 							sender.sendMessage("Error: security exception!");
 							return false;
 						} catch (NoSuchMethodException e) {
-							sender.sendMessage("Error: no such rule!");
+							e.printStackTrace();
 							return false;
 						} catch (IllegalArgumentException e) {
 							sender.sendMessage("Error: argument exception! Are the arguments in the right order?");
@@ -92,6 +92,7 @@ public class CrowdCommand implements CommandExecutor {
 							return false;
 						} catch (SQLException e) {
 							sender.sendMessage("Error: failed to save rule to disk, rule is still in memory. Call \"/crowd rebuildDB\" to try to fix");
+							e.printStackTrace();
 							return false;
 						}
 						return true;

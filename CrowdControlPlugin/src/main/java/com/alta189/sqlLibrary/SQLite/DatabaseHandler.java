@@ -61,6 +61,7 @@ public class DatabaseHandler {
 
 			Statement statement = connection.createStatement();
 			statement.execute(query);
+			statement.close();
 			return true;
 		} catch (SQLException ex) {
 			core.writeError(ex.getMessage(), true);
@@ -94,6 +95,7 @@ public class DatabaseHandler {
 			Statement statement = connection.createStatement();
 
 			statement.executeQuery(query);
+			statement.close();
 
 		} catch (SQLException ex) {
 
@@ -114,6 +116,7 @@ public class DatabaseHandler {
 			Statement statement = connection.createStatement();
 
 			statement.executeQuery(query);
+			statement.close();
 
 		} catch (SQLException ex) {
 			if (ex.getMessage().toLowerCase().contains("locking")
@@ -132,6 +135,7 @@ public class DatabaseHandler {
 			Statement statement = connection.createStatement();
 
 			statement.executeQuery(query);
+			statement.close();
 
 		} catch (SQLException ex) {
 			if (ex.getMessage().toLowerCase().contains("locking")
@@ -155,6 +159,7 @@ public class DatabaseHandler {
 			Statement statement = connection.createStatement();
 			String query = "DELETE FROM " + table + ";";
 			statement.executeQuery(query);
+			statement.close();
 
 			return true;
 		} catch (SQLException ex) {
@@ -176,8 +181,10 @@ public class DatabaseHandler {
 			dbm = this.getConnection().getMetaData();
 			ResultSet tables = dbm.getTables(null, null, table, null);
 			if (tables.next()) {
+				tables.close();
 				return true;
 			} else {
+				tables.close();
 				return false;
 			}
 		} catch (SQLException e) {
@@ -228,6 +235,7 @@ public class DatabaseHandler {
 				statement.executeQuery(query);
 
 				passed = true;
+				statement.close();
 
 				return;
 			} catch (SQLException ex) {

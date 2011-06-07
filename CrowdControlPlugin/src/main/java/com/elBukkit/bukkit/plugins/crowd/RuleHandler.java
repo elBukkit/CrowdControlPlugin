@@ -81,20 +81,27 @@ public class RuleHandler {
 	public void AddRule(Rule rule) throws SQLException {
 
 		String addRuleSQL = "INSERT INTO spawnRules (Rule,Worlds,Creatures,Data) "
-				+ "VALUES("
+				+ "VALUES('"
 				+ rule.getClass().getName()
-				+ ", "
+				+ "', '"
 				+ rule.getWorld().getName()
-				+ ", "
+				+ "', '"
 				+ rule.getCreatureType().toString()
-				+ ", "
+				+ "', '"
 				+ rule.getData()
-				+ ");";
+				+ "');";
+		
+		System.out.println(addRuleSQL);
 
 		dbManage.initialize();
 		dbManage.insertQuery(addRuleSQL);
-		rules.put(rule, dbManage.sqlQuery("SELECT last_insert_rowid();")
-				.getInt(0));
+		ResultSet rs = dbManage
+				.sqlQuery("SELECT last_insert_rowid() FROM spawnRules;"); // TODO MAJOR: What is wrong with this SQLite statement????
+		if (rs.next()) {
+			rules.put(rule, rs.getInt(0));
+		} else {
+			System.out.println("Error adding rule!");
+		}
 		dbManage.close();
 	}
 
