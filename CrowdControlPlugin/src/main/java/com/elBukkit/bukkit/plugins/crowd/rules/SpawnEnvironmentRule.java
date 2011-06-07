@@ -18,8 +18,8 @@ public class SpawnEnvironmentRule extends Rule {
 
 	private Set<Environment> spawnableEnvironment;
 
-	public SpawnEnvironmentRule(Set<World> worlds, CreatureType type) {
-		super(worlds, type);
+	public SpawnEnvironmentRule(World world, CreatureType type) {
+		super(world, type);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub
 	}

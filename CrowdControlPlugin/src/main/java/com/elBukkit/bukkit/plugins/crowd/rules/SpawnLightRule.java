@@ -1,7 +1,5 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
-import java.util.Set;
-
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
@@ -17,8 +15,9 @@ public class SpawnLightRule extends Rule {
 
 	private int min, max;
 
-	public SpawnLightRule(Set<World> worlds, CreatureType type) {
-		super(worlds, type);
+	public SpawnLightRule(World world, CreatureType type) {
+		super(world, type);
+		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub
 	}
 

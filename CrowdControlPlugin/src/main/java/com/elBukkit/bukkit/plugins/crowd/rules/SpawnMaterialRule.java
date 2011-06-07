@@ -18,9 +18,10 @@ public class SpawnMaterialRule extends Rule {
 
 	private Set<Material> materials;
 
-	public SpawnMaterialRule(Set<World> worlds, CreatureType type) {
-		super(worlds, type);
+	public SpawnMaterialRule(World world, CreatureType type) {
+		super(world, type);
 		this.ruleType = Type.Spawn;
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override

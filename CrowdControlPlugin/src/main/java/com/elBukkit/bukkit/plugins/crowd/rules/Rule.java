@@ -1,7 +1,5 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
-import java.util.Set;
-
 import org.bukkit.World;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Chicken;
@@ -36,12 +34,12 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class Rule {
 
-	protected Set<World> worlds;
+	protected World world;
 	protected CreatureType type;
 	protected Type ruleType;
 
-	public Rule(Set<World> worlds, CreatureType type) {
-		this.worlds = worlds;
+	public Rule(World world, CreatureType type) {
+		this.world = world;
 		this.type = type;
 	}
 
@@ -51,20 +49,14 @@ public class Rule {
 
 	public boolean checkWorld(World world) { // Check if the world is effected
 												// by this rule
-		if (worlds.contains(world)) {
-			return true;
-		}
-		return false;
+		return this.world.equals(world);
 	}
 
 	public boolean checkCreatureType(CreatureType type) { // Check if the
 															// creature is
 															// effected by the
 															// rule
-		if (this.type == type) {
-			return true;
-		}
-		return false;
+		return this.type.equals(type);
 	}
 
 	// Classes used for saving data
@@ -72,8 +64,8 @@ public class Rule {
 		return type;
 	}
 
-	public Set<World> getWorlds() {
-		return worlds;
+	public World getWorld() {
+		return world;
 	}
 
 	public Type getType() {

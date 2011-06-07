@@ -5,9 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -49,24 +47,19 @@ public class RuleHandler {
 			ResultSet rs = dbManage.sqlQuery(selectSQL);
 
 			while (rs.next()) {
-				String ruleClass, worlds, creatures, data;
+				String ruleClass, world, creatures, data;
 				int id = rs.getInt(1);
 				ruleClass = rs.getString(2);
-				worlds = rs.getString(3);
+				world = rs.getString(3);
 				creatures = rs.getString(4);
 				data = rs.getString(5);
-
-				String[] worldArray = worlds.split(" ");
-				Set<World> worldSet = new HashSet<World>();
-				for (String s : worldArray) {
-					worldSet.add(Bukkit.getServer().getWorld(s));
-				}
 
 				Class<? extends Rule> rule = Class.forName(ruleClass)
 						.asSubclass(Rule.class);
 				Constructor<? extends Rule> c = rule.getDeclaredConstructor(
-						String.class, Set.class, CreatureType.class);
-				Object classObj = c.newInstance(worldSet,
+						World.class, CreatureType.class);
+				Object classObj = c.newInstance(
+						Bukkit.getServer().getWorld(world),
 						CreatureType.valueOf(creatures));
 
 				if (classObj instanceof Rule) {
@@ -87,17 +80,11 @@ public class RuleHandler {
 
 	public void AddRule(Rule rule) throws SQLException {
 
-		String worlds = "";
-
-		for (World w : rule.getWorlds()) {
-			worlds += w.getName() + " ";
-		}
-
 		String addRuleSQL = "INSERT INTO spawnRules (Rule,Worlds,Creatures,Data) "
 				+ "VALUES("
 				+ rule.getClass().getName()
 				+ ", "
-				+ worlds
+				+ rule.getWorld().getName()
 				+ ", "
 				+ rule.getCreatureType().toString()
 				+ ", "

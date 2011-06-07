@@ -1,7 +1,5 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
-import java.util.Set;
-
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
@@ -11,9 +9,10 @@ public class SpawnReplaceRule extends Rule {
 
 	CreatureType replaceType;
 
-	public SpawnReplaceRule(Set<World> worlds, CreatureType type) {
-		super(worlds, type);
+	public SpawnReplaceRule(World world, CreatureType type) {
+		super(world, type);
 		this.ruleType = Type.Spawn;
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override

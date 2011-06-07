@@ -19,9 +19,10 @@ public class TargetPlayerRule extends Rule {
 	private Set<String> players;
 	private boolean targetable;
 
-	public TargetPlayerRule(Set<World> worlds, CreatureType type) {
-		super(worlds, type);
+	public TargetPlayerRule(World world, CreatureType type) {
+		super(world, type);
 		this.ruleType = Type.Target;
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override

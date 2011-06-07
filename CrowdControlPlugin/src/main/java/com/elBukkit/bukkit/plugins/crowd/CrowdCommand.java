@@ -4,9 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -59,23 +57,19 @@ public class CrowdCommand implements CommandExecutor {
 			if (args.length >= 5) {
 				if (pendingCommands.size() > 0) {
 					if (pendingCommands.size() >= Integer.valueOf(args[1])) {
-						Set<World> worldSet = new HashSet<World>();
-						String[] worlds = args[5].split(",");
-						for (String s : worlds) {
-							worldSet.add(Bukkit.getServer().getWorld(s));
-						}
 
 						Class<? extends Rule> ruleClass = pendingCommands
 								.get(Integer.valueOf(args[1]));
 						Constructor<? extends Rule> c;
 						try {
 							c = ruleClass.getDeclaredConstructor(String.class,
-									Set.class, CreatureType.class);
-							Object classObj = c.newInstance(worldSet,
-									CreatureType.valueOf(args[4]));
+									World.class, CreatureType.class);
+							Object classObj = c.newInstance(Bukkit.getServer()
+									.getWorld(args[2]), CreatureType
+									.valueOf(args[3]));
 							if (classObj instanceof Rule) {
 								Rule r = (Rule) classObj;
-								r.init(args[5]);
+								r.init(args[4]);
 								plugin.ruleHandler.AddRule(r);
 							}
 						} catch (SecurityException e) {
@@ -117,7 +111,7 @@ public class CrowdCommand implements CommandExecutor {
 			if (plugin.commands.size() > 0) {
 				String ruleList = "";
 				for (Class<? extends Rule> r : plugin.commands) {
-					ruleList += r.getSimpleName();
+					ruleList += "," + r.getSimpleName();
 				}
 				sender.sendMessage("Available Rules:");
 				sender.sendMessage(ruleList);

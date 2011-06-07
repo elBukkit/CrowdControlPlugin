@@ -1,7 +1,5 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
-import java.util.Set;
-
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
@@ -20,9 +18,10 @@ public class MaxRule extends Rule {
 
 	private int maxMobs;
 
-	public MaxRule(Set<World> worlds, CreatureType type) {
-		super(worlds, type);
+	public MaxRule(World world, CreatureType type) {
+		super(world, type);
 		this.ruleType = Type.Spawn;
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
