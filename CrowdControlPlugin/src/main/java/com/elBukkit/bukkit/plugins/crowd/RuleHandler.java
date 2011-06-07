@@ -91,14 +91,12 @@ public class RuleHandler {
 				+ rule.getData()
 				+ "');";
 		
-		System.out.println(addRuleSQL);
-
 		dbManage.initialize();
 		dbManage.insertQuery(addRuleSQL);
 		ResultSet rs = dbManage
 				.sqlQuery("SELECT last_insert_rowid() FROM spawnRules;"); // TODO MAJOR: What is wrong with this SQLite statement????
 		if (rs.next()) {
-			rules.put(rule, rs.getInt(0));
+			rules.put(rule, rs.getInt(1));
 		} else {
 			System.out.println("Error adding rule!");
 		}

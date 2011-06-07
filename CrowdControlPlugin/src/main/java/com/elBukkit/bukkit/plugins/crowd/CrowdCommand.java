@@ -76,7 +76,7 @@ public class CrowdCommand implements CommandExecutor {
 							sender.sendMessage("Error: security exception!");
 							return false;
 						} catch (NoSuchMethodException e) {
-							e.printStackTrace();
+							sender.sendMessage("Error: no such method");
 							return false;
 						} catch (IllegalArgumentException e) {
 							sender.sendMessage("Error: argument exception! Are the arguments in the right order?");
@@ -92,7 +92,6 @@ public class CrowdCommand implements CommandExecutor {
 							return false;
 						} catch (SQLException e) {
 							sender.sendMessage("Error: failed to save rule to disk, rule is still in memory. Call \"/crowd rebuildDB\" to try to fix");
-							e.printStackTrace();
 							return false;
 						}
 						return true;
