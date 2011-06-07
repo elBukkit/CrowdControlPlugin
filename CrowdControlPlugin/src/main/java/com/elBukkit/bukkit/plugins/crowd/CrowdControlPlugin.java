@@ -1,5 +1,8 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -7,6 +10,14 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
+import com.elBukkit.bukkit.plugins.crowd.rules.MaxRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
+import com.elBukkit.bukkit.plugins.crowd.rules.SpawnEnvironmentRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.SpawnHeightRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.SpawnLightRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.SpawnMaterialRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.SpawnReplaceRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.TargetPlayerRule;
 
 /*
  * CrowdControl plugin
@@ -18,6 +29,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 	private PluginDescriptionFile pdf;
+	public Set<Class<? extends Rule>> commands;
 
 	public RuleHandler ruleHandler;
 	
@@ -31,6 +43,15 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public void onEnable() {
 		pdf = this.getDescription();
 		System.out.println(pdf.getFullName() + " is enabled!");
+		
+		commands = new HashSet<Class<? extends Rule>>();
+		commands.add(MaxRule.class);
+		commands.add(SpawnEnvironmentRule.class);
+		commands.add(SpawnHeightRule.class);
+		commands.add(SpawnLightRule.class);
+		commands.add(SpawnMaterialRule.class);
+		commands.add(TargetPlayerRule.class);
+		commands.add(SpawnReplaceRule.class);
 		
 		if(!this.getDataFolder().exists())
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
@@ -54,5 +75,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Type.CREATURE_SPAWN, entityListener, Priority.Highest,
 				this);
+		pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Highest,
+				this);
+		
+		// Register command
+		getCommand("crowd").setExecutor(new CrowdCommand(this));
 	}
 }

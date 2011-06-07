@@ -69,9 +69,10 @@ public class RuleHandler {
 				
 				Class<? extends Rule> rule = Class.forName(ruleClass).asSubclass(Rule.class);
 				Constructor<? extends Rule> c = rule.getDeclaredConstructor(String.class,Set.class,CreatureType.class);
-				Object classObj = c.newInstance(data,worldSet,CreatureType.valueOf(creatures));
+				Object classObj = c.newInstance(worldSet,CreatureType.valueOf(creatures));
 				
 				if(classObj instanceof Rule){
+					((Rule) classObj).init(data);
 					AddRule((Rule)classObj,id);
 				} else {
 					System.out.println("Invalid Class: " + rule.getSimpleName() + " in Database!");
