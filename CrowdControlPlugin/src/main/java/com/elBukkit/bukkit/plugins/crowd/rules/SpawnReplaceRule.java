@@ -8,28 +8,25 @@ import org.bukkit.entity.CreatureType;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class SpawnReplaceRule extends Rule {
-	
+
 	CreatureType replaceType;
 
 	public SpawnReplaceRule(Set<World> worlds, CreatureType type) {
 		super(worlds, type);
 		this.ruleType = Type.Spawn;
 	}
-	
+
 	@Override
-	public void init(String data)
-	{
+	public void init(String data) {
 		replaceType = CreatureType.fromName(data);
 	}
-	
-	public void init(CreatureType type)
-	{
+
+	public void init(CreatureType type) {
 		replaceType = type;
 	}
-	
+
 	@Override
-	public boolean check(Info info)
-	{
+	public boolean check(Info info) {
 		info.setType(replaceType);
 		return true;
 	}

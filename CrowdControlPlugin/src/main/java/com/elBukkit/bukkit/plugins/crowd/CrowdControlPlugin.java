@@ -32,7 +32,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public Set<Class<? extends Rule>> commands;
 
 	public RuleHandler ruleHandler;
-	
+
 	public sqlCore dbManage; // import SQLite lib
 
 	public void onDisable() {
@@ -43,7 +43,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public void onEnable() {
 		pdf = this.getDescription();
 		System.out.println(pdf.getFullName() + " is enabled!");
-		
+
 		commands = new HashSet<Class<? extends Rule>>();
 		commands.add(MaxRule.class);
 		commands.add(SpawnEnvironmentRule.class);
@@ -52,20 +52,18 @@ public class CrowdControlPlugin extends JavaPlugin {
 		commands.add(SpawnMaterialRule.class);
 		commands.add(TargetPlayerRule.class);
 		commands.add(SpawnReplaceRule.class);
-		
-		if(!this.getDataFolder().exists())
+
+		if (!this.getDataFolder().exists())
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
-		
+
 		String prefix = "[CrowdControl]";
-		String dbName = pdf.getFullName()+".db";
-		
-		dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName, this.getDataFolder().getAbsolutePath());
-		try
-		{
+		String dbName = pdf.getFullName() + ".db";
+
+		dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName,
+				this.getDataFolder().getAbsolutePath());
+		try {
 			ruleHandler = new RuleHandler(dbManage);
-		}
-		catch(Exception e)
-		{
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			this.setEnabled(false);
 			return;
@@ -77,7 +75,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 				this);
 		pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Highest,
 				this);
-		
+
 		// Register command
 		getCommand("crowd").setExecutor(new CrowdCommand(this));
 	}

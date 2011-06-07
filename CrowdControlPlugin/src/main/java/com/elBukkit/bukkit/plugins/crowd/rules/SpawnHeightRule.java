@@ -16,15 +16,14 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 public class SpawnHeightRule extends Rule {
 
 	int min, max;
-	
+
 	public SpawnHeightRule(Set<World> worlds, CreatureType type) {
 		super(worlds, type);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public void init(String data)
-	{
+	public void init(String data) {
 		// TODO Finish init()
 	}
 

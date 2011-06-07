@@ -17,16 +17,15 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 public class SpawnEnvironmentRule extends Rule {
 
 	private Set<Environment> spawnableEnvironment;
-	
+
 	public SpawnEnvironmentRule(Set<World> worlds, CreatureType type) {
 		super(worlds, type);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public void init(String data)
-	{
+	public void init(String data) {
 		// TODO Finish init()
 	}
 
@@ -37,11 +36,10 @@ public class SpawnEnvironmentRule extends Rule {
 		}
 		return false;
 	}
-	
+
 	@Override
-	public String getData()
-	{
-		//TODO Finish getData()
+	public String getData() {
+		// TODO Finish getData()
 		return null;
 	}
 }

@@ -14,20 +14,19 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
  */
 
 public class SpawnLightRule extends Rule {
-	
+
 	private int min, max;
-	
+
 	public SpawnLightRule(Set<World> worlds, CreatureType type) {
 		super(worlds, type);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
-	public void init(String data)
-	{
+	public void init(String data) {
 		// TODO Finish init()
 	}
-	
+
 	@Override
 	public boolean check(Info info) {
 		if (info.getLocation().getBlock().getLightLevel() > min) {

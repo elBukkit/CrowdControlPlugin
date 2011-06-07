@@ -17,41 +17,36 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
  */
 
 public class MaxRule extends Rule {
-	
+
 	private int maxMobs;
-	
+
 	public MaxRule(Set<World> worlds, CreatureType type) {
 		super(worlds, type);
 		this.ruleType = Type.Spawn;
 	}
-	
+
 	@Override
-	public void init(String data)
-	{
+	public void init(String data) {
 		// TODO Finish init()
 	}
-	
-	public void init(int max)
-	{
+
+	public void init(int max) {
 		this.maxMobs = max;
 	}
-	
+
 	@Override
-	public boolean check(Info info)
-	{
+	public boolean check(Info info) {
 		int number = 0;
-		for(Entity e : info.getLocation().getWorld().getEntities()) {
-			if (this.getCreatureType(e).equals(this.type))
-			{
+		for (Entity e : info.getLocation().getWorld().getEntities()) {
+			if (this.getCreatureType(e).equals(this.type)) {
 				number++;
 			}
 		}
-		
-		if(number < maxMobs)
-		{
+
+		if (number < maxMobs) {
 			return true;
 		}
-		
+
 		return false;
 	}
 

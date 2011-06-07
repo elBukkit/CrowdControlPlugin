@@ -17,18 +17,17 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 public class SpawnMaterialRule extends Rule {
 
 	private Set<Material> materials;
-	
+
 	public SpawnMaterialRule(Set<World> worlds, CreatureType type) {
 		super(worlds, type);
 		this.ruleType = Type.Spawn;
 	}
 
 	@Override
-	public void init(String data)
-	{
+	public void init(String data) {
 		// TODO Finish init()
 	}
-	
+
 	@Override
 	public boolean check(Info info) {
 		if (materials.contains(info.getLocation().getBlock().getType())) {
@@ -40,7 +39,7 @@ public class SpawnMaterialRule extends Rule {
 	@Override
 	public String getData() {
 		String data = "";
-		for(Material m : materials) {
+		for (Material m : materials) {
 			data += m.name() + ",";
 		}
 		return data;

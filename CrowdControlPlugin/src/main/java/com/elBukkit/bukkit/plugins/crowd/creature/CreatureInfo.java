@@ -7,15 +7,16 @@ package com.elBukkit.bukkit.plugins.crowd.creature;
  */
 
 public class CreatureInfo {
-	
+
 	private Nature creatureNature;
-	private int collisionDamage, miscDamage; // Misc damage is for like ghast fireballs, and other damage
+	private int collisionDamage, miscDamage; // Misc damage is for like ghast
+												// fireballs, and other damage
 	private int health;
-	
+
 	public void setCreatureNature(Nature creatureNature) {
 		this.creatureNature = creatureNature;
 	}
-	
+
 	public Nature getCreatureNature() {
 		return creatureNature;
 	}
@@ -43,5 +44,5 @@ public class CreatureInfo {
 	public int getHealth() {
 		return health;
 	}
-	
+
 }

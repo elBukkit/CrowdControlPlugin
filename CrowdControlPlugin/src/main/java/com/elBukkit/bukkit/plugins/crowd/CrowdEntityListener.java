@@ -30,11 +30,11 @@ public class CrowdEntityListener extends EntityListener {
 		if (!plugin.ruleHandler.passesRules(info, Type.Spawn)) {
 			event.setCancelled(true);
 		}
-		
-		if(info.getType() != event.getCreatureType())
-		{
+
+		if (info.getType() != event.getCreatureType()) {
 			event.setCancelled(true);
-			event.getLocation().getWorld().spawnCreature(info.getLocation(), info.getType());
+			event.getLocation().getWorld()
+					.spawnCreature(info.getLocation(), info.getType());
 		}
 	}
 

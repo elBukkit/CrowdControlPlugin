@@ -18,18 +18,17 @@ public class TargetPlayerRule extends Rule {
 
 	private Set<String> players;
 	private boolean targetable;
-	
+
 	public TargetPlayerRule(Set<World> worlds, CreatureType type) {
 		super(worlds, type);
 		this.ruleType = Type.Target;
 	}
-	
+
 	@Override
-	public void init(String data)
-	{
+	public void init(String data) {
 		// TODO Finish init()
 	}
-	
+
 	@Override
 	public boolean check(Info info) {
 		if (!targetable) {
@@ -45,7 +44,7 @@ public class TargetPlayerRule extends Rule {
 
 	public String getData() {
 		String data = "";
-		for(String s : this.players) {
+		for (String s : this.players) {
 			data += s + ",";
 		}
 		data += ";" + String.valueOf(targetable);
