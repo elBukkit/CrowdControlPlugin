@@ -46,7 +46,8 @@ public class CrowdCommand implements CommandExecutor {
 						sender.sendMessage("Add added to pending with id: "
 								+ String.valueOf(pendingCommands.indexOf(c)));
 						sender.sendMessage("Args needed: ");
-						sender.sendMessage("Use /crowd finish [id] [worldname] [creaturetype] "+ plugin.commands.get(c) +" to complete");
+						sender.sendMessage("Use /crowd finish [id] [worldname] [creaturetype] "
+								+ plugin.commands.get(c) + " to complete");
 						return true;
 					}
 				}
@@ -119,8 +120,7 @@ public class CrowdCommand implements CommandExecutor {
 			if (plugin.commands.size() > 0) {
 				String ruleList = "";
 				for (Class<? extends Rule> r : plugin.commands.keySet()) {
-					if(ruleList.length() > 0)
-					{
+					if (ruleList.length() > 0) {
 						ruleList += ", ";
 					}
 					ruleList += r.getSimpleName();

@@ -61,7 +61,7 @@ public class DatabaseHandler {
 
 			Statement statement = connection.createStatement();
 			statement.execute(query);
-			
+
 			return true;
 		} catch (SQLException ex) {
 			core.writeError(ex.getMessage(), true);
