@@ -77,6 +77,8 @@ public class CrowdCommand implements CommandExecutor {
 								Rule r = (Rule) classObj;
 								r.init(args[4]);
 								plugin.ruleHandler.AddRule(r);
+								sender.sendMessage("Rule added!");
+								pendingCommands.remove(ruleClass);
 							}
 						} catch (SecurityException e) {
 							sender.sendMessage("Error: security exception!");
@@ -117,13 +119,26 @@ public class CrowdCommand implements CommandExecutor {
 			if (plugin.commands.size() > 0) {
 				String ruleList = "";
 				for (Class<? extends Rule> r : plugin.commands.keySet()) {
-					ruleList += "," + r.getSimpleName();
+					if(ruleList.length() > 0)
+					{
+						ruleList += ", ";
+					}
+					ruleList += r.getSimpleName();
 				}
 				sender.sendMessage("Available Rules:");
 				sender.sendMessage(ruleList);
 				return true;
 			} else {
 				sender.sendMessage("No rules!"); // should never happen :)
+				return false;
+			}
+		} else if (args[0].equalsIgnoreCase("rebuildDB")) {
+			try {
+				plugin.ruleHandler.rebuildDB();
+				sender.sendMessage("Database is rebuilt! All rules were re-added");
+				return true;
+			} catch (SQLException e) {
+				sender.sendMessage("Error rebuilding database!");
 				return false;
 			}
 		}

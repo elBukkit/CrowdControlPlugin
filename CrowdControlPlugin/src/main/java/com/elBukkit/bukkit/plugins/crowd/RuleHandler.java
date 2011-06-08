@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -129,5 +130,24 @@ public class RuleHandler {
 			}
 		}
 		return true;
+	}
+	
+	public void rebuildDB() throws SQLException {
+		String dropSQL = "DROP TABLE IF EXISTS spawnRules";
+		String createDB = "CREATE TABLE spawnRules" + "("
+			+ "Id INTEGER PRIMARY KEY AUTOINCREMENT, "
+			+ "Rule VARCHAR(255), " + "Worlds VARCHAR(255), "
+			+ "Creatures VARCHAR(255), " + "Data VARCHAR(255)" + ");";
+		Set<Rule> tempRules = rules.keySet();
+		rules.clear();
+		
+		dbManage.initialize();
+		dbManage.deleteQuery(dropSQL);
+		dbManage.createTable(createDB);
+		dbManage.close();
+		
+		for (Rule r : tempRules) {
+			this.AddRule(r);
+		}
 	}
 }
