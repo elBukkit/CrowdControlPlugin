@@ -5,6 +5,12 @@ import org.bukkit.entity.CreatureType;
 
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
+/*
+ * A rule that replaces a creature type with another
+ * 
+ * @author Andrew Querol(WinSock)
+ */
+
 public class SpawnReplaceRule extends Rule {
 
 	CreatureType replaceType;

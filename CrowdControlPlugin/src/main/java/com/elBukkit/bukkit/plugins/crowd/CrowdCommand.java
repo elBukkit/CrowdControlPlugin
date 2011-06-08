@@ -15,6 +15,12 @@ import org.bukkit.entity.CreatureType;
 
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 
+/*
+ * Handles all of the commands
+ * 
+ * @author Andrew Querol(WinSock)
+ */
+
 public class CrowdCommand implements CommandExecutor {
 
 	CrowdControlPlugin plugin;

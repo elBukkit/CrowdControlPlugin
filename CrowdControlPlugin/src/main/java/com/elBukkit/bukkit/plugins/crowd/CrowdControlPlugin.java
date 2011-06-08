@@ -47,10 +47,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 		commands = new HashMap<Class<? extends Rule>, String>();
 		commands.put(MaxRule.class,"[max number]");
 		commands.put(SpawnEnvironmentRule.class,"[NORMAL,NETHER]");
-		commands.put(SpawnHeightRule.class,"[max] [min]");
-		commands.put(SpawnLightRule.class, "[max] [min]");
+		commands.put(SpawnHeightRule.class,"[max,min]");
+		commands.put(SpawnLightRule.class, "[max,min]");
 		commands.put(SpawnMaterialRule.class, "[material name]");
-		commands.put(TargetPlayerRule.class, "[player] [targetable(true,false)]");
+		commands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
 		commands.put(SpawnReplaceRule.class, "[creature name]");
 
 		if (!this.getDataFolder().exists())
