@@ -1,7 +1,7 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -29,7 +29,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 	private PluginDescriptionFile pdf;
-	public Set<Class<? extends Rule>> commands;
+	public Map<Class<? extends Rule>, String> commands;
 
 	public RuleHandler ruleHandler;
 
@@ -44,14 +44,14 @@ public class CrowdControlPlugin extends JavaPlugin {
 		pdf = this.getDescription();
 		System.out.println(pdf.getFullName() + " is enabled!");
 
-		commands = new HashSet<Class<? extends Rule>>();
-		commands.add(MaxRule.class);
-		commands.add(SpawnEnvironmentRule.class);
-		commands.add(SpawnHeightRule.class);
-		commands.add(SpawnLightRule.class);
-		commands.add(SpawnMaterialRule.class);
-		commands.add(TargetPlayerRule.class);
-		commands.add(SpawnReplaceRule.class);
+		commands = new HashMap<Class<? extends Rule>, String>();
+		commands.put(MaxRule.class,"[max number]");
+		commands.put(SpawnEnvironmentRule.class,"[NORMAL,NETHER]");
+		commands.put(SpawnHeightRule.class,"[max] [min]");
+		commands.put(SpawnLightRule.class, "[max] [min]");
+		commands.put(SpawnMaterialRule.class, "[material name]");
+		commands.put(TargetPlayerRule.class, "[player] [targetable(true,false)]");
+		commands.put(SpawnReplaceRule.class, "[creature name]");
 
 		if (!this.getDataFolder().exists())
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist

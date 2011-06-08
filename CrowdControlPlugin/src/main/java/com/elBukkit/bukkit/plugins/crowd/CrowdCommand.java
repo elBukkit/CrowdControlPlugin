@@ -34,13 +34,13 @@ public class CrowdCommand implements CommandExecutor {
 
 		if (args[0].equalsIgnoreCase("add")) {
 			if (!(args.length < 2)) {
-				for (Class<? extends Rule> c : plugin.commands) {
+				for (Class<? extends Rule> c : plugin.commands.keySet()) {
 					if (args[1].equals(c.getSimpleName())) {
 						pendingCommands.add(c);
 						sender.sendMessage("Add added to pending with id: "
 								+ String.valueOf(pendingCommands.indexOf(c)));
 						sender.sendMessage("Args needed: ");
-						sender.sendMessage("Use /crowd finish [id] [worldname] [creaturetype] [args] to complete");
+						sender.sendMessage("Use /crowd finish [id] [worldname] [creaturetype] "+ plugin.commands.get(c) +" to complete");
 						return true;
 					}
 				}
@@ -110,7 +110,7 @@ public class CrowdCommand implements CommandExecutor {
 		} else if (args[0].equalsIgnoreCase("listRules")) {
 			if (plugin.commands.size() > 0) {
 				String ruleList = "";
-				for (Class<? extends Rule> r : plugin.commands) {
+				for (Class<? extends Rule> r : plugin.commands.keySet()) {
 					ruleList += "," + r.getSimpleName();
 				}
 				sender.sendMessage("Available Rules:");

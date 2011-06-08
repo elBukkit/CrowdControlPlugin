@@ -23,7 +23,9 @@ public class SpawnLightRule extends Rule {
 
 	@Override
 	public void init(String data) {
-		// TODO Finish init()
+		String[] split = data.split(",");
+		this.max = Integer.parseInt(split[0]);
+		this.min = Integer.parseInt(split[0]);
 	}
 
 	@Override
@@ -38,8 +40,7 @@ public class SpawnLightRule extends Rule {
 
 	@Override
 	public String getData() {
-		// TODO Auto-generated method stub
-		return null;
+		return String.valueOf(max) + "," + String.valueOf(min);
 	}
 
 }

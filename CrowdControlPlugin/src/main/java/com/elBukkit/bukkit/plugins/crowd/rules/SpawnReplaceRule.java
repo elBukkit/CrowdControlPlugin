@@ -17,7 +17,7 @@ public class SpawnReplaceRule extends Rule {
 
 	@Override
 	public void init(String data) {
-		replaceType = CreatureType.fromName(data);
+		replaceType = CreatureType.valueOf(data);
 	}
 
 	public void init(CreatureType type) {
@@ -32,7 +32,7 @@ public class SpawnReplaceRule extends Rule {
 
 	@Override
 	public String getData() {
-		return replaceType.name();
+		return replaceType.toString();
 	}
 
 }

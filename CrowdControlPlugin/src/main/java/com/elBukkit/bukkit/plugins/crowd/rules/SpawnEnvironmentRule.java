@@ -1,7 +1,5 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
-import java.util.Set;
-
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.CreatureType;
@@ -16,7 +14,7 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class SpawnEnvironmentRule extends Rule {
 
-	private Set<Environment> spawnableEnvironment;
+	private Environment spawnableEnvironment;
 
 	public SpawnEnvironmentRule(World world, CreatureType type) {
 		super(world, type);
@@ -26,12 +24,12 @@ public class SpawnEnvironmentRule extends Rule {
 
 	@Override
 	public void init(String data) {
-		// TODO Finish init()
+		this.spawnableEnvironment = Environment.valueOf(data);
 	}
 
 	@Override
 	public boolean check(Info info) {
-		if (this.spawnableEnvironment.contains(info.getEnv())) {
+		if (this.spawnableEnvironment.equals(info.getEnv())) {
 			return true;
 		}
 		return false;
@@ -39,7 +37,6 @@ public class SpawnEnvironmentRule extends Rule {
 
 	@Override
 	public String getData() {
-		// TODO Finish getData()
-		return null;
+		return spawnableEnvironment.toString();
 	}
 }

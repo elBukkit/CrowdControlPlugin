@@ -26,11 +26,7 @@ public class MaxRule extends Rule {
 
 	@Override
 	public void init(String data) {
-		// TODO Finish init()
-	}
-
-	public void init(int max) {
-		this.maxMobs = max;
+		this.maxMobs = Integer.parseInt(data);
 	}
 
 	@Override

@@ -23,7 +23,9 @@ public class SpawnHeightRule extends Rule {
 
 	@Override
 	public void init(String data) {
-		// TODO Finish init()
+		String[] split = data.split(",");
+		this.max = Integer.parseInt(split[0]);
+		this.min = Integer.parseInt(split[0]);
 	}
 
 	public boolean spawn(Info info) {

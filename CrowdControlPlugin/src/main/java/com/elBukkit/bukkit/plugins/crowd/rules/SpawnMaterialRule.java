@@ -1,7 +1,5 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
-import java.util.Set;
-
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
@@ -16,7 +14,8 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class SpawnMaterialRule extends Rule {
 
-	private Set<Material> materials;
+	private Material material;
+	private boolean spawnable = true;
 
 	public SpawnMaterialRule(World world, CreatureType type) {
 		super(world, type);
@@ -26,12 +25,14 @@ public class SpawnMaterialRule extends Rule {
 
 	@Override
 	public void init(String data) {
-		// TODO Finish init()
+		String[] split = data.split(",");
+		material = Material.valueOf(split[0]);
+		spawnable = Boolean.valueOf(split[1]);
 	}
 
 	@Override
 	public boolean check(Info info) {
-		if (materials.contains(info.getLocation().getBlock().getType())) {
+		if (material.equals(info.getLocation().getBlock().getType())) {
 			return true;
 		}
 		return false;
@@ -39,11 +40,7 @@ public class SpawnMaterialRule extends Rule {
 
 	@Override
 	public String getData() {
-		String data = "";
-		for (Material m : materials) {
-			data += m.name() + ",";
-		}
-		return data;
+		return material.toString() + "," + String.valueOf(spawnable);
 	}
 
 }

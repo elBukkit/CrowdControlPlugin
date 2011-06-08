@@ -1,7 +1,5 @@
 package com.elBukkit.bukkit.plugins.crowd.rules;
 
-import java.util.Set;
-
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
@@ -16,7 +14,7 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class TargetPlayerRule extends Rule {
 
-	private Set<String> players;
+	private String player;
 	private boolean targetable;
 
 	public TargetPlayerRule(World world, CreatureType type) {
@@ -27,7 +25,9 @@ public class TargetPlayerRule extends Rule {
 
 	@Override
 	public void init(String data) {
-		// TODO Finish init()
+		String[] split = data.split(",");
+		this.player = split[0];
+		this.targetable = Boolean.valueOf(split[1]);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class TargetPlayerRule extends Rule {
 		if (!targetable) {
 			if (info.getTarget() instanceof Player) {
 				Player pTarget = (Player) info.getTarget();
-				if (players.contains(pTarget.getName())) {
+				if (player.equalsIgnoreCase(pTarget.getName())) {
 					return false;
 				}
 			}
@@ -44,12 +44,7 @@ public class TargetPlayerRule extends Rule {
 	}
 
 	public String getData() {
-		String data = "";
-		for (String s : this.players) {
-			data += s + ",";
-		}
-		data += ";" + String.valueOf(targetable);
-		return data;
+		return player + "," + String.valueOf(targetable);
 	}
 
 }
