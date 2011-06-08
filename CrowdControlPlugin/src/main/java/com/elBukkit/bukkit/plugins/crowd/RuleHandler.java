@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 public class RuleHandler {
 
-	private Map<Rule, Integer> rules;
+	private Map<Integer, Rule> rules;
 
 	private sqlCore dbManage;
 
@@ -32,7 +33,7 @@ public class RuleHandler {
 			ClassNotFoundException, IllegalArgumentException,
 			SecurityException, InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
-		rules = new HashMap<Rule, Integer>();
+		rules = new HashMap<Integer, Rule>();
 
 		this.dbManage = dbManage;
 
@@ -95,17 +96,9 @@ public class RuleHandler {
 		dbManage.initialize();
 		dbManage.insertQuery(addRuleSQL);
 		ResultSet rs = dbManage
-				.sqlQuery("SELECT last_insert_rowid() FROM spawnRules;"); // TODO
-																			// MAJOR:
-																			// What
-																			// is
-																			// wrong
-																			// with
-																			// this
-																			// SQLite
-																			// statement????
+				.sqlQuery("SELECT last_insert_rowid() FROM spawnRules;");
 		if (rs.next()) {
-			rules.put(rule, rs.getInt(1));
+			rules.put(rs.getInt(1), rule);
 		} else {
 			System.out.println("Error adding rule!");
 		}
@@ -113,7 +106,7 @@ public class RuleHandler {
 	}
 
 	public void AddRule(Rule rule, int id) {
-		rules.put(rule, id);
+		rules.put(id, rule);
 	}
 
 	public void RemoveRule(Rule rule) {
@@ -125,7 +118,7 @@ public class RuleHandler {
 	}
 
 	public boolean passesRules(Info info, Type type) {
-		for (Rule r : rules.keySet()) {
+		for (Rule r : rules.values()) {
 			if (r.getType().equals(type)) {
 				if (r.checkWorld(info.getLocation().getWorld())) {
 					if (r.checkCreatureType(info.getType())) {
@@ -146,7 +139,7 @@ public class RuleHandler {
 				+ "Id INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ "Rule VARCHAR(255), " + "Worlds VARCHAR(255), "
 				+ "Creatures VARCHAR(255), " + "Data VARCHAR(255)" + ");";
-		Set<Rule> tempRules = rules.keySet();
+		Set<Rule> tempRules = new HashSet<Rule>(rules.values());
 		rules.clear();
 
 		dbManage.initialize();
@@ -157,5 +150,10 @@ public class RuleHandler {
 		for (Rule r : tempRules) {
 			this.AddRule(r);
 		}
+	}
+	
+	public Map<Integer, Rule> getRules()
+	{
+		return new HashMap<Integer, Rule>(rules); // Create copy to prevent direct modification
 	}
 }

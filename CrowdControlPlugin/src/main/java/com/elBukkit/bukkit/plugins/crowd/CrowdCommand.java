@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -46,20 +47,22 @@ public class CrowdCommand implements CommandExecutor {
 						sender.sendMessage("Add added to pending with id: "
 								+ String.valueOf(pendingCommands.indexOf(c)));
 						sender.sendMessage("Args needed: ");
-						sender.sendMessage("Use /crowd finish [id] [worldname] [creaturetype] "
+						sender.sendMessage("Use crowd finish "+ pendingCommands.indexOf(c) +" [worldname] [creaturetype] "
 								+ plugin.commands.get(c) + " to complete");
 						return true;
 					}
 				}
 			} else {
-				sender.sendMessage("Error not enough arguments");
+				sender.sendMessage("Usage: crowd add [Rule class]");
 				return false;
 			}
 		} else if (args[0].equalsIgnoreCase("listPending")) {
 			for (Class<? extends Rule> c : pendingCommands) {
 				sender.sendMessage(c.getSimpleName() + ", ID: "
 						+ String.valueOf(pendingCommands.indexOf(c)));
+				sender.sendMessage("[data] = " + plugin.commands.get(c));
 			}
+			return true;
 		} else if (args[0].equalsIgnoreCase("finish")) {
 			if (args.length >= 5) {
 				if (pendingCommands.size() > 0) {
@@ -100,7 +103,7 @@ public class CrowdCommand implements CommandExecutor {
 							sender.sendMessage("Error: Invocation Exception");
 							return false;
 						} catch (SQLException e) {
-							sender.sendMessage("Error: failed to save rule to disk, rule is still in memory. Call \"/crowd rebuildDB\" to try to fix");
+							sender.sendMessage("Error: failed to save rule to disk, rule is still in memory. Call \"crowd rebuildDB\" to try to fix");
 							return false;
 						}
 						return true;
@@ -113,7 +116,7 @@ public class CrowdCommand implements CommandExecutor {
 					return false;
 				}
 			} else {
-				sender.sendMessage("Error not enough arguments");
+				sender.sendMessage("usage: crowd finish [pending id] [worldname] [creaturetype] [data] ");
 				return false;
 			}
 		} else if (args[0].equalsIgnoreCase("listRules")) {
@@ -139,6 +142,23 @@ public class CrowdCommand implements CommandExecutor {
 				return true;
 			} catch (SQLException e) {
 				sender.sendMessage("Error rebuilding database!");
+				return false;
+			}
+		} else if (args[0].equalsIgnoreCase("listEnabledRules")) {
+			Map<Integer, Rule> rules = plugin.ruleHandler.getRules();
+			for(Rule r : rules.values()) {
+				sender.sendMessage(r.toString() + ", ID: " + rules.get(r));
+			}
+			return true;
+		} else if (args[0].equalsIgnoreCase("getDetailedInfo")) {
+			if (args.length >= 2) {
+				Rule r = plugin.ruleHandler.getRules().get(args[1]);
+				sender.sendMessage("Creature Type: " + r.getCreatureType().toString());
+				sender.sendMessage("World: " + r.getWorld().getName());
+				sender.sendMessage("Data: " + r.getData());
+				return true;
+			} else {
+				sender.sendMessage("Usage: crowd getDetailedInfo [enabled id]");
 				return false;
 			}
 		}
