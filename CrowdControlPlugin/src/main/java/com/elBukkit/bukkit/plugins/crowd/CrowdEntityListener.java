@@ -1,6 +1,11 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
+
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -14,28 +19,38 @@ import com.elBukkit.bukkit.plugins.crowd.rules.Type;
  */
 
 public class CrowdEntityListener extends EntityListener {
+
 	private CrowdControlPlugin plugin;
+	private Random rand = new Random();
 
 	public CrowdEntityListener(CrowdControlPlugin plugin) {
 		this.plugin = plugin;
 	}
 
+	private Set<Info> pendingSpawn = new HashSet<Info>();
+
 	@Override
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
+
+		for (Info i : pendingSpawn) {
+			if (i.getID() == event.getEntity().getEntityId()) {
+				pendingSpawn.remove(i);
+				return;
+			}
+		}
+
 		Info info = new Info();
 		info.setEnv(event.getLocation().getWorld().getEnvironment());
 		info.setLocation(event.getLocation());
-		info.setType(event.getCreatureType());
+		int random = rand.nextInt(CreatureType.values().length - 1);
+		info.setType(CreatureType.values()[random]);
 
-		if (!plugin.ruleHandler.passesRules(info, Type.Spawn)) {
-			event.setCancelled(true);
+		if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
+			pendingSpawn.add(info);
+			info.spawn();
 		}
 
-		if (info.getType() != event.getCreatureType()) {
-			event.setCancelled(true);
-			event.getLocation().getWorld()
-					.spawnCreature(info.getLocation(), info.getType());
-		}
+		event.setCancelled(true);
 	}
 
 	@Override

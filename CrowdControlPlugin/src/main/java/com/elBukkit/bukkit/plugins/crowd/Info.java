@@ -1,7 +1,11 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
+import net.minecraft.server.EntityLiving;
+import net.minecraft.server.EntityTypes;
+
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
@@ -23,6 +27,7 @@ public class Info {
 	private Creature creature;
 	private TargetReason reason;
 	private Entity target;
+	private int id;
 
 	public void setTarget(Entity target) {
 		this.target = target;
@@ -73,11 +78,20 @@ public class Info {
 	}
 
 	public void spawn() {
-
+		EntityLiving entityCreature = (EntityLiving) EntityTypes.a(
+				type.getName(), ((CraftWorld) location.getWorld()).getHandle());
+		entityCreature.setPosition(location.getX(), location.getY(),
+				location.getZ());
+		this.id = entityCreature.id;
+		(((CraftWorld) location.getWorld()).getHandle())
+				.addEntity(entityCreature);
 	}
 
 	public LivingEntity getEntity() {
 		return entity;
 	}
 
+	public int getID() {
+		return this.id;
+	}
 }

@@ -12,7 +12,9 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Entity;
 
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 
@@ -182,6 +184,33 @@ public class CrowdCommand implements CommandExecutor {
 				return true;
 			} else {
 				sender.sendMessage("Usage: crowd remove [enabled id]");
+				return false;
+			}
+		} else if (args[0].equalsIgnoreCase("nuke")) {
+			if (args.length >= 3) {
+				World w = Bukkit.getServer().getWorld(args[1]);
+				if (args[2].equalsIgnoreCase("all")) {
+					for (Entity e : w.getEntities()) {
+						if (e instanceof Creature) {
+							((Creature) e).setHealth(0);
+							e.remove();
+						}
+					}
+				} else {
+					for (Entity e : w.getEntities()) {
+						if (e instanceof Creature) {
+							if (plugin.getCreatureType(e).equals(
+									CreatureType.valueOf(args[2]))) {
+								((Creature) e).setHealth(0);
+								e.remove();
+							}
+						}
+					}
+				}
+				sender.sendMessage("Nuked!");
+				return true;
+			} else {
+				sender.sendMessage("Usage: crowd nuke [world] [CreatureType,all]");
 				return false;
 			}
 		}
