@@ -5,7 +5,32 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Chicken;
+import org.bukkit.entity.Cow;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Flying;
+import org.bukkit.entity.Ghast;
+import org.bukkit.entity.Giant;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Pig;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Skeleton;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Spider;
+import org.bukkit.entity.Squid;
+import org.bukkit.entity.WaterMob;
+import org.bukkit.entity.Zombie;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
 
@@ -15,7 +40,7 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
  * @author Andrew Querol(WinSock)
  */
 
-public class CreatureHandler {
+public class CreatureHandler implements Runnable{
 
 	private Map<CreatureType, CreatureInfo> creatureMap;
 	private sqlCore dbManage;
@@ -121,6 +146,111 @@ public class CreatureHandler {
 
 			setInfo(t, info);
 		}
+	}
+
+	public void run() {
+		// This controls the mob burning
+		for(World w : Bukkit.getServer().getWorlds())
+		{
+			for (Entity e : w.getEntities())
+			{
+				if (e instanceof Creature)
+				{
+					CreatureInfo cInfo = getInfo(getCreatureType(e));
+					if(isDay(e.getWorld())) {
+						if (cInfo.isBurnDay()) {
+							if (canSeeSky(e.getLocation())) {
+								e.setFireTicks(25);
+							} else {
+								e.setFireTicks(0);
+							}
+						} else {
+							e.setFireTicks(0);
+						}
+					} else {
+						e.setFireTicks(0);
+					}
+				}
+			}
+		}
+		
+	}
+
+	public boolean canSeeSky(Location loc) {
+		for (int i = 128; i >= 0; i++) {
+			if (isTransparentBlock(loc.getWorld().getBlockAt(loc.getBlockX(), i,
+					loc.getBlockZ()))) {
+				if (loc.getBlockY() == i) {
+					return true;
+				}
+			} else {
+				break;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isDay(World world) {
+		return world.getTime() < 12000 || world.getTime() == 24000;
+	}
+	
+	public boolean isTransparentBlock(Block block) {
+		if (block.getType() != Material.AIR
+				|| block.getType() != Material.LEAVES) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public CreatureType getCreatureType(Entity entity) {
+		if (entity instanceof LivingEntity) {
+			if (entity instanceof Creature) {
+				// Animals
+				if (entity instanceof Animals) {
+					if (entity instanceof Chicken) {
+						return CreatureType.CHICKEN;
+					} else if (entity instanceof Cow) {
+						return CreatureType.COW;
+					} else if (entity instanceof Pig) {
+						return CreatureType.PIG;
+					} else if (entity instanceof Sheep) {
+						return CreatureType.SHEEP;
+					}
+				}
+				// Monsters
+				else if (entity instanceof Monster) {
+					if (entity instanceof Zombie) {
+						if (entity instanceof PigZombie) {
+							return CreatureType.PIG_ZOMBIE;
+						}
+					} else if (entity instanceof Creeper) {
+						return CreatureType.CREEPER;
+					} else if (entity instanceof Giant) {
+						return CreatureType.GIANT;
+					} else if (entity instanceof Skeleton) {
+						return CreatureType.SKELETON;
+					} else if (entity instanceof Spider) {
+						return CreatureType.SPIDER;
+					} else if (entity instanceof Slime) {
+						return CreatureType.SLIME;
+					}
+				}
+				// Water Animals
+				else if (entity instanceof WaterMob) {
+					if (entity instanceof Squid) {
+						return CreatureType.SQUID;
+					}
+				}
+			}
+			// Flying
+			else if (entity instanceof Flying) {
+				if (entity instanceof Ghast) {
+					return CreatureType.GHAST;
+				}
+			}
+		}
+		return null;
 	}
 
 }

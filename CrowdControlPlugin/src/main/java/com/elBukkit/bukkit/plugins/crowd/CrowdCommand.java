@@ -209,7 +209,7 @@ public class CrowdCommand implements CommandExecutor {
 				} else {
 					for (Entity e : w.getEntities()) {
 						if (e instanceof Creature) {
-							if (plugin.getCreatureType(e).equals(
+							if (plugin.creatureHandler.getCreatureType(e).equals(
 									CreatureType.valueOf(args[2]))) {
 								((Creature) e).setHealth(0);
 								e.remove();
