@@ -8,17 +8,19 @@ package com.elBukkit.bukkit.plugins.crowd.creature;
 
 public class CreatureInfo {
 
-	private Nature creatureNature;
+	private Nature creatureNatureDay, creatureNatureNight;
 	private int collisionDamage, miscDamage; // Misc damage is for like ghast
 												// fireballs, and other damage
 	private int health;
+	private boolean burnDay = false;
+	private float spawnChance = 0.7f;
 
-	public void setCreatureNature(Nature creatureNature) {
-		this.creatureNature = creatureNature;
+	public void setCreatureNatureDay(Nature creatureNature) {
+		this.creatureNatureDay = creatureNature;
 	}
 
-	public Nature getCreatureNature() {
-		return creatureNature;
+	public Nature getCreatureNatureDay() {
+		return creatureNatureDay;
 	}
 
 	public void setCollisionDamage(int collisionDamage) {
@@ -43,6 +45,30 @@ public class CreatureInfo {
 
 	public int getHealth() {
 		return health;
+	}
+
+	public void setSpawnChance(float spawnChance) {
+		this.spawnChance = spawnChance;
+	}
+
+	public float getSpawnChance() {
+		return spawnChance;
+	}
+
+	public void setCreatureNatureNight(Nature creatureNatureNight) {
+		this.creatureNatureNight = creatureNatureNight;
+	}
+
+	public Nature getCreatureNatureNight() {
+		return creatureNatureNight;
+	}
+
+	public void setBurnDay(boolean burnDay) {
+		this.burnDay = burnDay;
+	}
+
+	public boolean isBurnDay() {
+		return burnDay;
 	}
 
 }

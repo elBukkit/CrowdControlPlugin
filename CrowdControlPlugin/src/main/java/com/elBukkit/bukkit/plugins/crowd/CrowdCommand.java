@@ -16,6 +16,8 @@ import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 
+import com.elBukkit.bukkit.plugins.crowd.creature.CreatureInfo;
+import com.elBukkit.bukkit.plugins.crowd.creature.Nature;
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 
 /*
@@ -47,7 +49,7 @@ public class CrowdCommand implements CommandExecutor {
 
 		if (args[0].equalsIgnoreCase("add")) {
 			if (!(args.length < 2)) {
-				for (Class<? extends Rule> c : plugin.commands.keySet()) {
+				for (Class<? extends Rule> c : plugin.ruleCommands.keySet()) {
 					if (args[1].equals(c.getSimpleName())) {
 						pendingCommands.add(c);
 						sender.sendMessage("Add added to pending with id: "
@@ -56,7 +58,7 @@ public class CrowdCommand implements CommandExecutor {
 						sender.sendMessage("Use crowd finish "
 								+ pendingCommands.indexOf(c)
 								+ " [worldname] [creaturetype] "
-								+ plugin.commands.get(c) + " to complete");
+								+ plugin.ruleCommands.get(c) + " to complete");
 						return true;
 					}
 				}
@@ -68,7 +70,7 @@ public class CrowdCommand implements CommandExecutor {
 			for (Class<? extends Rule> c : pendingCommands) {
 				sender.sendMessage(c.getSimpleName() + ", ID: "
 						+ String.valueOf(pendingCommands.indexOf(c)));
-				sender.sendMessage("[data] = " + plugin.commands.get(c));
+				sender.sendMessage("[data] = " + plugin.ruleCommands.get(c));
 			}
 			return true;
 		} else if (args[0].equalsIgnoreCase("finish")) {
@@ -128,9 +130,9 @@ public class CrowdCommand implements CommandExecutor {
 				return false;
 			}
 		} else if (args[0].equalsIgnoreCase("listRules")) {
-			if (plugin.commands.size() > 0) {
+			if (plugin.ruleCommands.size() > 0) {
 				String ruleList = "";
-				for (Class<? extends Rule> r : plugin.commands.keySet()) {
+				for (Class<? extends Rule> r : plugin.ruleCommands.keySet()) {
 					if (ruleList.length() > 0) {
 						ruleList += ", ";
 					}
@@ -186,6 +188,14 @@ public class CrowdCommand implements CommandExecutor {
 				sender.sendMessage("Usage: crowd remove [enabled id]");
 				return false;
 			}
+		} else if (args[0].equalsIgnoreCase("removePending")) {
+			if (args.length >= 2) {
+				pendingCommands.remove(Integer.parseInt(args[1]));
+				sender.sendMessage("Removed pending rule with ID: " + args[1]);
+				return true;
+			} else {
+				sender.sendMessage("Usage: crowd removePending [pending id]");
+			}
 		} else if (args[0].equalsIgnoreCase("nuke")) {
 			if (args.length >= 3) {
 				World w = Bukkit.getServer().getWorld(args[1]);
@@ -212,6 +222,24 @@ public class CrowdCommand implements CommandExecutor {
 			} else {
 				sender.sendMessage("Usage: crowd nuke [world] [CreatureType,all]");
 				return false;
+			}
+		} else if (args[0].equalsIgnoreCase("set")) {
+			if (args.length >= 7) {
+				CreatureInfo info = new CreatureInfo();
+				info.setCreatureNatureDay(Nature.valueOf(args[2]));
+				info.setCollisionDamage(Integer.parseInt(args[3]));
+				info.setMiscDamage(Integer.parseInt(args[4]));
+				info.setHealth(Integer.parseInt(args[5]));
+				info.setSpawnChance(Float.parseFloat(args[6]));
+
+				try {
+					plugin.creatureHandler.setInfo(
+							CreatureType.valueOf(args[1]), info);
+				} catch (SQLException e) {
+					sender.sendMessage("Error saving creature info!");
+				}
+			} else {
+				sender.sendMessage("usage crowd set [CreatureType] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [Health] [SpawnChance]");
 			}
 		}
 

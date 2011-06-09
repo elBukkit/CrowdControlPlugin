@@ -31,6 +31,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
+import com.elBukkit.bukkit.plugins.crowd.creature.CreatureHandler;
 import com.elBukkit.bukkit.plugins.crowd.rules.MaxRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnEnvironmentRule;
@@ -50,9 +51,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 	private PluginDescriptionFile pdf;
-	public Map<Class<? extends Rule>, String> commands;
+	public Map<Class<? extends Rule>, String> ruleCommands;
 
 	public RuleHandler ruleHandler;
+	public CreatureHandler creatureHandler;
 
 	public sqlCore dbManage; // import SQLite lib
 
@@ -65,25 +67,27 @@ public class CrowdControlPlugin extends JavaPlugin {
 		pdf = this.getDescription();
 		System.out.println(pdf.getFullName() + " is enabled!");
 
-		commands = new HashMap<Class<? extends Rule>, String>();
-		commands.put(MaxRule.class, "[max number]");
-		commands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
-		commands.put(SpawnHeightRule.class, "[max,min]");
-		commands.put(SpawnLightRule.class, "[max,min]");
-		commands.put(SpawnMaterialRule.class, "[material name]");
-		commands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
-		commands.put(SpawnReplaceRule.class, "[creature name]");
+		ruleCommands = new HashMap<Class<? extends Rule>, String>();
+		ruleCommands.put(MaxRule.class, "[max number]");
+		ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
+		ruleCommands.put(SpawnHeightRule.class, "[max,min]");
+		ruleCommands.put(SpawnLightRule.class, "[max,min]");
+		ruleCommands.put(SpawnMaterialRule.class, "[material name]");
+		ruleCommands.put(TargetPlayerRule.class,
+				"[player,targetable(true,false)]");
+		ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
 
 		if (!this.getDataFolder().exists())
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
 
 		String prefix = "[CrowdControl]";
-		String dbName = pdf.getFullName() + ".db";
+		String dbName = pdf.getName() + ".db";
 
 		dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName,
 				this.getDataFolder().getAbsolutePath());
 		try {
 			ruleHandler = new RuleHandler(dbManage);
+			creatureHandler = new CreatureHandler(dbManage);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			this.setEnabled(false);
