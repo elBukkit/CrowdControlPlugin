@@ -224,13 +224,15 @@ public class CrowdCommand implements CommandExecutor {
 				return false;
 			}
 		} else if (args[0].equalsIgnoreCase("set")) {
-			if (args.length >= 7) {
+			if (args.length >= 9) {
 				CreatureInfo info = new CreatureInfo();
 				info.setCreatureNatureDay(Nature.valueOf(args[2]));
-				info.setCollisionDamage(Integer.parseInt(args[3]));
-				info.setMiscDamage(Integer.parseInt(args[4]));
-				info.setHealth(Integer.parseInt(args[5]));
-				info.setSpawnChance(Float.parseFloat(args[6]));
+				info.setCreatureNatureNight(Nature.valueOf(args[3]));
+				info.setCollisionDamage(Integer.parseInt(args[4]));
+				info.setMiscDamage(Integer.parseInt(args[5]));
+				info.setBurnDay(Boolean.parseBoolean(args[6]));
+				info.setHealth(Integer.parseInt(args[7]));
+				info.setSpawnChance(Float.parseFloat(args[8]));
 
 				try {
 					plugin.creatureHandler.setInfo(
@@ -239,7 +241,7 @@ public class CrowdCommand implements CommandExecutor {
 					sender.sendMessage("Error saving creature info!");
 				}
 			} else {
-				sender.sendMessage("usage crowd set [CreatureType] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [Health] [SpawnChance]");
+				sender.sendMessage("usage crowd set [CreatureType] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [SpawnChance]");
 			}
 		}
 
