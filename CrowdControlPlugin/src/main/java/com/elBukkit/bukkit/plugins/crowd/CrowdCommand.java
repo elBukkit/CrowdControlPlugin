@@ -34,8 +34,12 @@ public class CrowdCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command,
 			String label, String[] args) {
 
+		if (!sender.isOp()) {
+			sender.sendMessage("Must be OP of the server to use this command");
+			return false;
+		}
+
 		if (args.length < 1) {
-			sender.sendMessage("Error not enough arguments");
 			return false;
 		}
 
