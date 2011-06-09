@@ -57,12 +57,8 @@ public class CreatureHandler {
 		dbManage.close();
 	}
 
-	public CreatureInfo getInfo(CreatureType type) throws Exception {
-		if (creatureMap.containsKey(type)) {
-			return creatureMap.get(type);
-		}
-		throw new Exception("Cannot find creature"); // This should hopefully
-														// never happen
+	public CreatureInfo getInfo(CreatureType type) {
+		return creatureMap.get(type);
 	}
 
 	public void setInfo(CreatureType type, CreatureInfo info)

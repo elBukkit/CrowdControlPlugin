@@ -10,6 +10,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 
+import com.elBukkit.bukkit.plugins.crowd.creature.CreatureInfo;
 import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 /*
@@ -46,8 +47,12 @@ public class CrowdEntityListener extends EntityListener {
 		info.setType(CreatureType.values()[random]);
 
 		if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
-			pendingSpawn.add(info);
-			info.spawn();
+			CreatureInfo cInfo = plugin.creatureHandler.getInfo(info.getType());
+			if(rand.nextFloat() <= cInfo.getSpawnChance())
+			{
+				pendingSpawn.add(info);
+				info.spawn();
+			}
 		}
 
 		event.setCancelled(true);
