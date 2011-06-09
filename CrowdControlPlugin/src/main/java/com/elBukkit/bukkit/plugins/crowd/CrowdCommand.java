@@ -47,7 +47,9 @@ public class CrowdCommand implements CommandExecutor {
 						sender.sendMessage("Add added to pending with id: "
 								+ String.valueOf(pendingCommands.indexOf(c)));
 						sender.sendMessage("Args needed: ");
-						sender.sendMessage("Use crowd finish "+ pendingCommands.indexOf(c) +" [worldname] [creaturetype] "
+						sender.sendMessage("Use crowd finish "
+								+ pendingCommands.indexOf(c)
+								+ " [worldname] [creaturetype] "
 								+ plugin.commands.get(c) + " to complete");
 						return true;
 					}
@@ -146,19 +148,36 @@ public class CrowdCommand implements CommandExecutor {
 			}
 		} else if (args[0].equalsIgnoreCase("listEnabledRules")) {
 			Map<Integer, Rule> rules = plugin.ruleHandler.getRules();
-			for(Rule r : rules.values()) {
-				sender.sendMessage(r.toString() + ", ID: " + rules.get(r));
+			for (int i : rules.keySet()) {
+				sender.sendMessage(((Object) rules.get(i)).getClass()
+						.getSimpleName() + ", ID: " + i);
 			}
 			return true;
 		} else if (args[0].equalsIgnoreCase("getDetailedInfo")) {
 			if (args.length >= 2) {
-				Rule r = plugin.ruleHandler.getRules().get(args[1]);
-				sender.sendMessage("Creature Type: " + r.getCreatureType().toString());
+				Rule r = plugin.ruleHandler.getRules().get(
+						Integer.valueOf(args[1]));
+				sender.sendMessage("Creature Type: "
+						+ r.getCreatureType().toString());
 				sender.sendMessage("World: " + r.getWorld().getName());
 				sender.sendMessage("Data: " + r.getData());
 				return true;
 			} else {
 				sender.sendMessage("Usage: crowd getDetailedInfo [enabled id]");
+				return false;
+			}
+		} else if (args[0].equalsIgnoreCase("remove")) {
+			if (args.length >= 2) {
+				plugin.ruleHandler.RemoveRule(Integer.valueOf(args[1]));
+				try {
+					plugin.ruleHandler.rebuildDB();
+				} catch (SQLException e) {
+					sender.sendMessage("Error rebuilding database!");
+				}
+				sender.sendMessage("Removed rule with id: " + args[1] + "!");
+				return true;
+			} else {
+				sender.sendMessage("Usage: crowd remove [enabled id]");
 				return false;
 			}
 		}

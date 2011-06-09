@@ -7,6 +7,6 @@ description : Simple console-based creature control
 commands:
   crowd:
     description: Control mob spawning
-    usage: crowd [add,finish,listPending,listEnabled,rebuildDB,listRules,getDetailedInfo] 
+    usage: crowd [add,finish,listPending,listEnabledRules,rebuildDB,listRules,getDetailedInfo] 
                 
                 

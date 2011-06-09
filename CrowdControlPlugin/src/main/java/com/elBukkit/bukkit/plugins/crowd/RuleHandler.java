@@ -109,12 +109,8 @@ public class RuleHandler {
 		rules.put(id, rule);
 	}
 
-	public void RemoveRule(Rule rule) {
-		String removeSQL = "DELETE * FROM spawnRules WHERE " + "Id = '"
-				+ String.valueOf(rules.get(rule)) + "';";
-		dbManage.deleteQuery(removeSQL);
-		dbManage.close();
-		rules.remove(rule);
+	public void RemoveRule(int id) {
+		rules.remove(id);
 	}
 
 	public boolean passesRules(Info info, Type type) {
@@ -151,9 +147,8 @@ public class RuleHandler {
 			this.AddRule(r);
 		}
 	}
-	
-	public Map<Integer, Rule> getRules()
-	{
-		return new HashMap<Integer, Rule>(rules); // Create copy to prevent direct modification
+
+	public Map<Integer, Rule> getRules() {
+		return rules;
 	}
 }
