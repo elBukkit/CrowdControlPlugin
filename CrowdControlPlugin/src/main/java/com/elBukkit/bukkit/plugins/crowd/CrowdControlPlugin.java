@@ -79,11 +79,15 @@ public class CrowdControlPlugin extends JavaPlugin {
 				this);
 		pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Highest,
 				this);
+		pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Highest,
+				this);
 
 		// Register command
 		getCommand("crowd").setExecutor(new CrowdCommand(this));
-		
+
 		// Register the creature handler repeating task
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20); // Start immediately and call every second
+		getServer().getScheduler().scheduleSyncRepeatingTask(this,
+				creatureHandler, 0, 5); // Start immediately and call every 5
+										// ticks
 	}
 }

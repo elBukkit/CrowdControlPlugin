@@ -40,7 +40,7 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
  * @author Andrew Querol(WinSock)
  */
 
-public class CreatureHandler implements Runnable{
+public class CreatureHandler implements Runnable {
 
 	private Map<CreatureType, CreatureInfo> creatureMap;
 	private sqlCore dbManage;
@@ -72,7 +72,9 @@ public class CreatureHandler implements Runnable{
 				info.setCreatureNatureNight(Nature.valueOf(rs.getString(4)));
 				info.setCollisionDamage(rs.getInt(5));
 				info.setMiscDamage(rs.getInt(6));
-				info.setBurnDay(rs.getBoolean(7));
+				if (rs.getInt(7) == 1) {
+					info.setBurnDay(true);
+				}
 				info.setHealth(rs.getInt(8));
 				info.setSpawnChance(rs.getFloat(9));
 
@@ -150,36 +152,38 @@ public class CreatureHandler implements Runnable{
 
 	public void run() {
 		// This controls the mob burning
-		for(World w : Bukkit.getServer().getWorlds())
-		{
-			for (Entity e : w.getEntities())
-			{
-				if (e instanceof Creature)
-				{
+		for (World w : Bukkit.getServer().getWorlds()) {
+			for (Entity e : w.getEntities()) {
+				if (e instanceof Creature) {
 					CreatureInfo cInfo = getInfo(getCreatureType(e));
-					if(isDay(e.getWorld())) {
-						if (cInfo.isBurnDay()) {
-							if (canSeeSky(e.getLocation())) {
-								e.setFireTicks(25);
-							} else {
-								e.setFireTicks(0);
-							}
-						} else {
-							e.setFireTicks(0);
-						}
+					if (shouldBurn(e.getLocation()) && cInfo.isBurnDay()) {
+						e.setFireTicks(15);
 					} else {
 						e.setFireTicks(0);
 					}
 				}
 			}
 		}
-		
+	}
+
+	public boolean shouldBurn(Location loc) {
+		if (isDay(loc.getWorld())) {
+			if (loc.getWorld()
+					.getBlockAt(loc.getBlockX(), loc.getBlockY() + 1,
+							loc.getBlockZ()).getLightLevel() > 7) {
+				if (canSeeSky(loc)) {
+					return true;
+				}
+			}
+
+		}
+		return false;
 	}
 
 	public boolean canSeeSky(Location loc) {
 		for (int i = 128; i >= 0; i++) {
-			if (isTransparentBlock(loc.getWorld().getBlockAt(loc.getBlockX(), i,
-					loc.getBlockZ()))) {
+			if (isTransparentBlock(loc.getWorld().getBlockAt(loc.getBlockX(),
+					i, loc.getBlockZ()))) {
 				if (loc.getBlockY() == i) {
 					return true;
 				}
@@ -189,11 +193,11 @@ public class CreatureHandler implements Runnable{
 		}
 		return false;
 	}
-	
+
 	public boolean isDay(World world) {
 		return world.getTime() < 12000 || world.getTime() == 24000;
 	}
-	
+
 	public boolean isTransparentBlock(Block block) {
 		if (block.getType() != Material.AIR
 				|| block.getType() != Material.LEAVES) {
@@ -202,7 +206,7 @@ public class CreatureHandler implements Runnable{
 			return true;
 		}
 	}
-	
+
 	public CreatureType getCreatureType(Entity entity) {
 		if (entity instanceof LivingEntity) {
 			if (entity instanceof Creature) {

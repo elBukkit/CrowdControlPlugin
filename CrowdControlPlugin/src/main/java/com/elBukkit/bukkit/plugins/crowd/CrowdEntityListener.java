@@ -7,10 +7,12 @@ import java.util.Set;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 
 import com.elBukkit.bukkit.plugins.crowd.creature.CreatureInfo;
+import com.elBukkit.bukkit.plugins.crowd.creature.Nature;
 import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 /*
@@ -43,13 +45,12 @@ public class CrowdEntityListener extends EntityListener {
 		Info info = new Info();
 		info.setEnv(event.getLocation().getWorld().getEnvironment());
 		info.setLocation(event.getLocation());
-		int random = rand.nextInt(CreatureType.values().length - 1);
+		int random = rand.nextInt(CreatureType.values().length);
 		info.setType(CreatureType.values()[random]);
 
 		if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
 			CreatureInfo cInfo = plugin.creatureHandler.getInfo(info.getType());
-			if(rand.nextFloat() <= cInfo.getSpawnChance())
-			{
+			if (rand.nextFloat() <= cInfo.getSpawnChance()) {
 				pendingSpawn.add(info);
 				info.spawn();
 			}
@@ -66,7 +67,54 @@ public class CrowdEntityListener extends EntityListener {
 			info.setTarget(event.getTarget());
 			info.setReason(event.getReason());
 
-			if (!plugin.ruleHandler.passesRules(info, Type.Target)) {
+			CreatureInfo cInfo = plugin.creatureHandler
+					.getInfo(plugin.creatureHandler.getCreatureType(event
+							.getEntity()));
+
+			if (cInfo != null) {
+				if (plugin.creatureHandler.isDay(event.getEntity().getWorld())) {
+					switch (event.getReason()) {
+					case CLOSEST_PLAYER:
+						if (cInfo.getCreatureNatureDay() != Nature.Aggressive) {
+							event.setCancelled(true);
+						}
+						break;
+					case TARGET_ATTACKED_ENTITY:
+						if (cInfo.getCreatureNatureDay() == Nature.Passive) {
+							event.setCancelled(true);
+						}
+						break;
+					}
+				} else {
+					switch (event.getReason()) {
+					case CLOSEST_PLAYER:
+						if (cInfo.getCreatureNatureDay() != Nature.Aggressive) {
+							event.setCancelled(true);
+						}
+						break;
+					case TARGET_ATTACKED_ENTITY:
+						if (cInfo.getCreatureNatureDay() == Nature.Passive) {
+							event.setCancelled(true);
+						}
+						break;
+					}
+				}
+
+				if (!plugin.ruleHandler.passesRules(info, Type.Target)) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void onEntityCombust(EntityCombustEvent event) {
+		CreatureInfo cInfo = plugin.creatureHandler
+		.getInfo(plugin.creatureHandler.getCreatureType(event
+				.getEntity()));
+
+		if (cInfo != null) {
+			if(!cInfo.isBurnDay()) {
 				event.setCancelled(true);
 			}
 		}
