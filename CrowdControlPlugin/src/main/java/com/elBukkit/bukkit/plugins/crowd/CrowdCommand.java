@@ -232,7 +232,8 @@ public class CrowdCommand implements CommandExecutor {
 				info.setMiscDamage(Integer.parseInt(args[5]));
 				info.setBurnDay(Boolean.parseBoolean(args[6]));
 				info.setHealth(Integer.parseInt(args[7]));
-				info.setSpawnChance(Float.parseFloat(args[8]));
+				info.setTargetDistance(Integer.valueOf(args[8]));
+				info.setSpawnChance(Float.parseFloat(args[9]));
 
 				try {
 					plugin.creatureHandler.setInfo(
@@ -241,7 +242,7 @@ public class CrowdCommand implements CommandExecutor {
 					sender.sendMessage("Error saving creature info!");
 				}
 			} else {
-				sender.sendMessage("usage crowd set [CreatureType] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [SpawnChance]");
+				sender.sendMessage("usage crowd set [CreatureType] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [Target Distance] [SpawnChance]");
 			}
 		}
 
