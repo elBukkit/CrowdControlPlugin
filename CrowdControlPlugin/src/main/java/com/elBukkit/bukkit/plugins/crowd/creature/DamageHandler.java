@@ -88,7 +88,7 @@ public class DamageHandler implements Runnable {
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
-											c.setTarget((LivingEntity) p);
+											p.damage(cInfo.getCollisionDamage());
 										}
 									}
 									break;
@@ -104,7 +104,7 @@ public class DamageHandler implements Runnable {
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
-											c.setTarget((LivingEntity) p);
+											p.damage(cInfo.getCollisionDamage());
 										}
 									}
 									break;
