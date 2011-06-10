@@ -152,6 +152,13 @@ public class CreatureHandler implements Runnable {
 
 		int health = creatureHealthMap.get(c);
 		health -= damage;
+		
+		if (health <= 0) {
+			removeAllAttacked(c);
+			c.setHealth(0);
+			c.remove();
+			creatureHealthMap.remove(c);
+		}
 		creatureHealthMap.put(c, health);
 	}
 
@@ -237,6 +244,32 @@ public class CreatureHandler implements Runnable {
 						e.setFireTicks(0);
 					}
 				}
+			}
+		}
+		
+		// Check for dead/ removed creatures
+		for (Creature c : creatureHealthMap.keySet()) {
+			if (c != null) {
+				if (creatureHealthMap.get(c) <= 0) {
+					c.remove();
+					c.setHealth(0);
+					creatureHealthMap.remove(c);
+				}
+			} else {
+				creatureHealthMap.remove(c);
+			}
+		}
+		
+		// Check for dead/ removed creatures
+		for (Creature c : attacked.keySet()) {
+			if (c != null) {
+				if (attacked.get(c).size() <= 0) {
+					c.remove();
+					c.setHealth(0);
+					attacked.remove(c);
+				}
+			} else {
+				attacked.remove(c);
 			}
 		}
 	}

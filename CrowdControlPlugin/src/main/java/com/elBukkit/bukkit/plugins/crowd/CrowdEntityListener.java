@@ -198,14 +198,7 @@ public class CrowdEntityListener extends EntityListener {
 			}
 		}
 
-		if (event.getEntity() instanceof Creature) {
-			if (plugin.creatureHandler.getHealth((Creature) event.getEntity()) <= 0) {
-				plugin.creatureHandler.removeAllAttacked((Creature) event
-						.getEntity());
-				((Creature)event.getEntity()).setHealth(0);
-				((Creature)event.getEntity()).remove();
-			}
-		} else if (event.getEntity() instanceof Player) {
+		if (event.getEntity() instanceof Player) {
 			Player p = (Player) event.getEntity();
 			if (p.isDead() || (p.getHealth() - event.getDamage()) <= 0) {
 				plugin.creatureHandler.removePlayer(p);
