@@ -47,7 +47,8 @@ public class CrowdEntityListener extends EntityListener {
 			if (i.getID() == event.getEntity().getEntityId()) {
 				pendingSpawn.remove(i);
 				if (event.getEntity() instanceof Creature) {
-					plugin.creatureHandler.addCreature((Creature)event.getEntity());
+					plugin.creatureHandler.addCreature((Creature) event
+							.getEntity());
 				}
 				return;
 			}
@@ -154,11 +155,15 @@ public class CrowdEntityListener extends EntityListener {
 						return;
 					}
 				} else if (event.getEntity() instanceof Creature) {
-					Creature c = (Creature)event.getEntity();
-					CreatureInfo cInfo = plugin.creatureHandler.getInfo(plugin.creatureHandler.getCreatureType(entityDmgEvent.getDamager()));
-					
-					if(cInfo != null) {
-						plugin.creatureHandler.damageCreature(c, cInfo.getCollisionDamage());
+					Creature c = (Creature) event.getEntity();
+					CreatureInfo cInfo = plugin.creatureHandler
+							.getInfo(plugin.creatureHandler
+									.getCreatureType(entityDmgEvent
+											.getDamager()));
+
+					if (cInfo != null) {
+						plugin.creatureHandler.damageCreature(c,
+								cInfo.getCollisionDamage());
 					}
 				}
 			} else if (event instanceof EntityDamageByProjectileEvent) {
@@ -169,9 +174,10 @@ public class CrowdEntityListener extends EntityListener {
 							.getInfo(CreatureType.SKELETON);
 
 					if (cInfo != null) {
-						if(event.getEntity() instanceof Creature) {
-							Creature c = (Creature)event.getEntity();
-							plugin.creatureHandler.damageCreature(c, cInfo.getMiscDamage());
+						if (event.getEntity() instanceof Creature) {
+							Creature c = (Creature) event.getEntity();
+							plugin.creatureHandler.damageCreature(c,
+									cInfo.getMiscDamage());
 						} else {
 							event.setDamage(cInfo.getMiscDamage());
 						}
@@ -181,9 +187,10 @@ public class CrowdEntityListener extends EntityListener {
 							.getInfo(CreatureType.GHAST);
 
 					if (cInfo != null) {
-						if(event.getEntity() instanceof Creature) {
-							Creature c = (Creature)event.getEntity();
-							plugin.creatureHandler.damageCreature(c, cInfo.getMiscDamage());
+						if (event.getEntity() instanceof Creature) {
+							Creature c = (Creature) event.getEntity();
+							plugin.creatureHandler.damageCreature(c,
+									cInfo.getMiscDamage());
 						} else {
 							event.setDamage(cInfo.getMiscDamage());
 						}
@@ -193,12 +200,13 @@ public class CrowdEntityListener extends EntityListener {
 		}
 
 		if (event.getEntity() instanceof Creature) {
-			if (plugin.creatureHandler.getHealth((Creature)event.getEntity()) <= 0) {
-				plugin.creatureHandler.removeAllAttacked((Creature)event.getEntity());
+			if (plugin.creatureHandler.getHealth((Creature) event.getEntity()) <= 0) {
+				plugin.creatureHandler.removeAllAttacked((Creature) event
+						.getEntity());
 			}
 		} else if (event.getEntity() instanceof Player) {
-			Player p = (Player)event.getEntity();
-			if(p.isDead() || (p.getHealth() - event.getDamage()) <= 0) {
+			Player p = (Player) event.getEntity();
+			if (p.isDead() || (p.getHealth() - event.getDamage()) <= 0) {
 				plugin.creatureHandler.removePlayer(p);
 			}
 		}

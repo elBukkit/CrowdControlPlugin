@@ -1,5 +1,7 @@
 package com.elBukkit.bukkit.plugins.crowd.creature;
 
+import java.util.Set;
+
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -34,36 +36,44 @@ public class DamageHandler implements Runnable {
 
 					if (cInfo != null) {
 						Creature c = (Creature) e;
-						
+
 						// Targeting System
 						if (distance < cInfo.getTargetDistance()) {
 							if (plugin.creatureHandler.isDay(e.getWorld())) {
 								switch (cInfo.getCreatureNatureDay()) {
 								case Aggressive:
-									c.setTarget((LivingEntity)p);
+									c.setTarget((LivingEntity) p);
 									break;
 								case Neutral:
-									if (plugin.creatureHandler
-											.getAttackingPlayers(c).contains(p)) {
-										c.setTarget((LivingEntity)p);
+									Set<Player> attackingPlayers = plugin.creatureHandler
+											.getAttackingPlayers(c);
+									if (attackingPlayers != null
+											&& attackingPlayers.size() > 0) {
+										if (attackingPlayers.contains(p)) {
+											c.setTarget((LivingEntity) p);
+										}
 									}
 									break;
 								}
 							} else {
 								switch (cInfo.getCreatureNatureNight()) {
 								case Aggressive:
-									c.setTarget((LivingEntity)p);
+									c.setTarget((LivingEntity) p);
 									break;
 								case Neutral:
-									if (plugin.creatureHandler
-											.getAttackingPlayers(c).contains(p)) {
-										c.setTarget((LivingEntity)p);
+									Set<Player> attackingPlayers = plugin.creatureHandler
+											.getAttackingPlayers(c);
+									if (attackingPlayers != null
+											&& attackingPlayers.size() > 0) {
+										if (attackingPlayers.contains(p)) {
+											c.setTarget((LivingEntity) p);
+										}
 									}
 									break;
 								}
 							}
 						}
-						
+
 						// Collision damage system
 						if (distance <= 1.5) {
 
@@ -73,9 +83,13 @@ public class DamageHandler implements Runnable {
 									p.damage(cInfo.getCollisionDamage());
 									break;
 								case Neutral:
-									if (plugin.creatureHandler
-											.getAttackingPlayers(c).contains(p)) {
-										p.damage(cInfo.getCollisionDamage());
+									Set<Player> attackingPlayers = plugin.creatureHandler
+											.getAttackingPlayers(c);
+									if (attackingPlayers != null
+											&& attackingPlayers.size() > 0) {
+										if (attackingPlayers.contains(p)) {
+											c.setTarget((LivingEntity) p);
+										}
 									}
 									break;
 								}
@@ -85,9 +99,13 @@ public class DamageHandler implements Runnable {
 									p.damage(cInfo.getCollisionDamage());
 									break;
 								case Neutral:
-									if (plugin.creatureHandler
-											.getAttackingPlayers(c).contains(p)) {
-										p.damage(cInfo.getCollisionDamage());
+									Set<Player> attackingPlayers = plugin.creatureHandler
+											.getAttackingPlayers(c);
+									if (attackingPlayers != null
+											&& attackingPlayers.size() > 0) {
+										if (attackingPlayers.contains(p)) {
+											c.setTarget((LivingEntity) p);
+										}
 									}
 									break;
 								}

@@ -63,7 +63,8 @@ public class CreatureHandler implements Runnable {
 					+ "Creature VARCHAR(255), " + "NatureDay VARCHAR(255), "
 					+ "NatureNight VARCHAR(255), " + "CollisionDmg INT(10), "
 					+ "MiscDmg INT(10)," + "BurnDay TINYINT(1),"
-					+ "Health INT(10), " + "TargetDistance INT(10), " + "SpawnChance FLOAT(1,2)" + ");";
+					+ "Health INT(10), " + "TargetDistance INT(10), "
+					+ "SpawnChance FLOAT(1,2)" + ");";
 			dbManage.createTable(createDB);
 			generateDefaults();
 		} else {
@@ -125,30 +126,30 @@ public class CreatureHandler implements Runnable {
 			this.attacked.get(c).remove(p);
 		}
 	}
-	
+
 	public void addCreature(Creature c) {
-		CreatureInfo cInfo = getInfo(getCreatureType((Entity)c));
-		
+		CreatureInfo cInfo = getInfo(getCreatureType((Entity) c));
+
 		if (cInfo != null) {
 			creatureHealthMap.put(c, cInfo.getHealth());
 		}
 	}
-	
+
 	public Integer getHealth(Creature c) {
-		
+
 		if (!creatureHealthMap.containsKey(c)) {
 			addCreature(c);
 		}
-		
+
 		return creatureHealthMap.get(c);
 	}
-	
+
 	public void damageCreature(Creature c, int damage) {
-		
+
 		if (!creatureHealthMap.containsKey(c)) {
 			addCreature(c);
 		}
-		
+
 		int health = creatureHealthMap.get(c);
 		health -= damage;
 		creatureHealthMap.put(c, health);
@@ -178,7 +179,8 @@ public class CreatureHandler implements Runnable {
 					+ "', MiscDmg = '" + String.valueOf(info.getMiscDamage())
 					+ "', BurnDay = '" + (info.isBurnDay() ? 1 : 0)
 					+ "', Health = '" + String.valueOf(info.getHealth())
-					+ "', TargetDistance = '" + String.valueOf(info.getTargetDistance())
+					+ "', TargetDistance = '"
+					+ String.valueOf(info.getTargetDistance())
 					+ "', SpawnChance = '"
 					+ String.valueOf(info.getSpawnChance())
 					+ "' WHERE Creature = '" + type.toString() + "';";
