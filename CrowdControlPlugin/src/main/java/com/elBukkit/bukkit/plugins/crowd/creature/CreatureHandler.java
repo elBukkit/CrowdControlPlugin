@@ -3,7 +3,9 @@ package com.elBukkit.bukkit.plugins.crowd.creature;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,6 +26,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
@@ -43,11 +46,13 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
 public class CreatureHandler implements Runnable {
 
 	private Map<CreatureType, CreatureInfo> creatureMap;
+	private Map<Creature, Set<Player>> attacked;
 	private sqlCore dbManage;
 
 	public CreatureHandler(sqlCore dbManage) throws SQLException {
 		this.dbManage = dbManage;
 		creatureMap = new HashMap<CreatureType, CreatureInfo>();
+		attacked = new HashMap<Creature, Set<Player>>();
 
 		dbManage.initialize();
 		if (!dbManage.checkTable("creatureInfo")) {
@@ -56,7 +61,7 @@ public class CreatureHandler implements Runnable {
 					+ "Creature VARCHAR(255), " + "NatureDay VARCHAR(255), "
 					+ "NatureNight VARCHAR(255), " + "CollisionDmg INT(10), "
 					+ "MiscDmg INT(10)," + "BurnDay TINYINT(1),"
-					+ "Health INT(10), " + "SpawnChance FLOAT(1,2)" + ");";
+					+ "Health INT(10), " + "TargetDistance INT(10), " + "SpawnChance FLOAT(1,2)" + ");";
 			dbManage.createTable(createDB);
 			generateDefaults();
 		} else {
@@ -76,7 +81,8 @@ public class CreatureHandler implements Runnable {
 					info.setBurnDay(true);
 				}
 				info.setHealth(rs.getInt(8));
-				info.setSpawnChance(rs.getFloat(9));
+				info.setTargetDistance(rs.getInt(9));
+				info.setSpawnChance(rs.getFloat(10));
 
 				creatureMap.put(type, info);
 			}
@@ -86,6 +92,40 @@ public class CreatureHandler implements Runnable {
 
 	public CreatureInfo getInfo(CreatureType type) {
 		return creatureMap.get(type);
+	}
+
+	public Set<Player> getAttackingPlayers(Creature c) {
+		return this.attacked.get(c);
+	}
+
+	public void addAttacked(Creature c, Player p) {
+		if (this.attacked.containsKey(c)) {
+			Set<Player> pList = this.attacked.get(c);
+			pList.add(p);
+			this.attacked.put(c, pList);
+		} else {
+			Set<Player> pList = new HashSet<Player>();
+			pList.add(p);
+			attacked.put(c, pList);
+		}
+	}
+
+	public void removeAttacked(Creature c, Player p) {
+		if (this.attacked.containsKey(c)) {
+			Set<Player> pList = this.attacked.get(c);
+			pList.remove(p);
+			this.attacked.put(c, pList);
+		}
+	}
+
+	public void removePlayer(Player p) {
+		for (Creature c : this.attacked.keySet()) {
+			this.attacked.get(c).remove(p);
+		}
+	}
+
+	public void removeAllAttacked(Creature c) {
+		this.attacked.remove(c);
 	}
 
 	public void setInfo(CreatureType type, CreatureInfo info)
@@ -108,13 +148,14 @@ public class CreatureHandler implements Runnable {
 					+ "', MiscDmg = '" + String.valueOf(info.getMiscDamage())
 					+ "', BurnDay = '" + (info.isBurnDay() ? 1 : 0)
 					+ "', Health = '" + String.valueOf(info.getHealth())
+					+ "', TargetDistance = '" + String.valueOf(info.getTargetDistance())
 					+ "', SpawnChance = '"
 					+ String.valueOf(info.getSpawnChance())
 					+ "' WHERE Creature = '" + type.toString() + "';";
 
 			dbManage.updateQuery(updateSQL);
 		} else {
-			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, SpawnChance) VALUES ('"
+			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance) VALUES ('"
 					+ type.toString()
 					+ "', '"
 					+ info.getCreatureNatureDay().toString()
@@ -128,6 +169,8 @@ public class CreatureHandler implements Runnable {
 					+ (info.isBurnDay() ? 1 : 0)
 					+ "', '"
 					+ String.valueOf(info.getHealth())
+					+ "', '"
+					+ String.valueOf(info.getTargetDistance())
 					+ "', '"
 					+ String.valueOf(info.getSpawnChance()) + "');";
 

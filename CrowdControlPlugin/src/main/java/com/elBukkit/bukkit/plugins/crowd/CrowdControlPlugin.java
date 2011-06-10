@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
 import com.elBukkit.bukkit.plugins.crowd.creature.CreatureHandler;
+import com.elBukkit.bukkit.plugins.crowd.creature.DamageHandler;
 import com.elBukkit.bukkit.plugins.crowd.rules.MaxRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnEnvironmentRule;
@@ -89,5 +90,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 		getServer().getScheduler().scheduleSyncRepeatingTask(this,
 				creatureHandler, 0, 5); // Start immediately and call every 5
 										// ticks
+		
+		// Register the damage handler
+		getServer().getScheduler().scheduleSyncRepeatingTask(this,
+				new DamageHandler(this), 0, 20); // Start immediately and call every 20
+										// ticks(1 second)
 	}
 }

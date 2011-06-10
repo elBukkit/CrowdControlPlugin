@@ -12,6 +12,7 @@ public class CreatureInfo {
 	private int collisionDamage, miscDamage; // Misc damage is for like ghast
 												// fireballs, and other damage
 	private int health;
+	private int targetDistance = 24;
 	private boolean burnDay = false;
 	private float spawnChance = 0.7f;
 
@@ -69,6 +70,14 @@ public class CreatureInfo {
 
 	public boolean isBurnDay() {
 		return burnDay;
+	}
+
+	public void setTargetDistance(int targetDistance) {
+		this.targetDistance = targetDistance;
+	}
+
+	public int getTargetDistance() {
+		return targetDistance;
 	}
 
 }
