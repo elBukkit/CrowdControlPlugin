@@ -8,7 +8,6 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
@@ -47,6 +46,9 @@ public class CrowdEntityListener extends EntityListener {
 		for (Info i : pendingSpawn) {
 			if (i.getID() == event.getEntity().getEntityId()) {
 				pendingSpawn.remove(i);
+				if (event.getEntity() instanceof Creature) {
+					plugin.creatureHandler.addCreature((Creature)event.getEntity());
+				}
 				return;
 			}
 		}
@@ -148,10 +150,17 @@ public class CrowdEntityListener extends EntityListener {
 						plugin.creatureHandler.addAttacked(
 								(Creature) entityDmgEvent.getDamager(),
 								(Player) entityDmgEvent.getEntity());
+						event.setCancelled(true);
+						return;
+					}
+				} else if (event.getEntity() instanceof Creature) {
+					Creature c = (Creature)event.getEntity();
+					CreatureInfo cInfo = plugin.creatureHandler.getInfo(plugin.creatureHandler.getCreatureType(entityDmgEvent.getDamager()));
+					
+					if(cInfo != null) {
+						plugin.creatureHandler.damageCreature(c, cInfo.getCollisionDamage());
 					}
 				}
-				event.setCancelled(true); // Entity collision damage handled
-											// manually
 			} else if (event instanceof EntityDamageByProjectileEvent) {
 				EntityDamageByProjectileEvent entityProjectileEvent = (EntityDamageByProjectileEvent) event;
 
@@ -160,29 +169,37 @@ public class CrowdEntityListener extends EntityListener {
 							.getInfo(CreatureType.SKELETON);
 
 					if (cInfo != null) {
-						event.setDamage(cInfo.getMiscDamage());
+						if(event.getEntity() instanceof Creature) {
+							Creature c = (Creature)event.getEntity();
+							plugin.creatureHandler.damageCreature(c, cInfo.getMiscDamage());
+						} else {
+							event.setDamage(cInfo.getMiscDamage());
+						}
 					}
 				} else if (entityProjectileEvent.getProjectile() instanceof Fireball) {
 					CreatureInfo cInfo = plugin.creatureHandler
 							.getInfo(CreatureType.GHAST);
 
 					if (cInfo != null) {
-						event.setDamage(cInfo.getMiscDamage());
+						if(event.getEntity() instanceof Creature) {
+							Creature c = (Creature)event.getEntity();
+							plugin.creatureHandler.damageCreature(c, cInfo.getMiscDamage());
+						} else {
+							event.setDamage(cInfo.getMiscDamage());
+						}
 					}
 				}
 			}
 		}
 
-		if (event.getEntity() instanceof LivingEntity) {
-			LivingEntity lEntity = (LivingEntity) event.getEntity();
-			if (((lEntity.getHealth() - event.getDamage()) <= 0)
-					|| event.getEntity().isDead()) {
-				if (lEntity instanceof Creature) {
-					plugin.creatureHandler
-							.removeAllAttacked((Creature) lEntity);
-				} else if (lEntity instanceof Player) {
-					plugin.creatureHandler.removePlayer((Player) lEntity);
-				}
+		if (event.getEntity() instanceof Creature) {
+			if (plugin.creatureHandler.getHealth((Creature)event.getEntity()) <= 0) {
+				plugin.creatureHandler.removeAllAttacked((Creature)event.getEntity());
+			}
+		} else if (event.getEntity() instanceof Player) {
+			Player p = (Player)event.getEntity();
+			if(p.isDead() || (p.getHealth() - event.getDamage()) <= 0) {
+				plugin.creatureHandler.removePlayer(p);
 			}
 		}
 	}

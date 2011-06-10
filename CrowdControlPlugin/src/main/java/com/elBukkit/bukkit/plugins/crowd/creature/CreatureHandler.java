@@ -45,13 +45,15 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
 
 public class CreatureHandler implements Runnable {
 
-	private Map<CreatureType, CreatureInfo> creatureMap;
+	private Map<CreatureType, CreatureInfo> creatureTypeMap;
+	private Map<Creature, Integer> creatureHealthMap;
 	private Map<Creature, Set<Player>> attacked;
 	private sqlCore dbManage;
 
 	public CreatureHandler(sqlCore dbManage) throws SQLException {
 		this.dbManage = dbManage;
-		creatureMap = new HashMap<CreatureType, CreatureInfo>();
+		creatureTypeMap = new HashMap<CreatureType, CreatureInfo>();
+		creatureHealthMap = new HashMap<Creature, Integer>();
 		attacked = new HashMap<Creature, Set<Player>>();
 
 		dbManage.initialize();
@@ -84,14 +86,14 @@ public class CreatureHandler implements Runnable {
 				info.setTargetDistance(rs.getInt(9));
 				info.setSpawnChance(rs.getFloat(10));
 
-				creatureMap.put(type, info);
+				creatureTypeMap.put(type, info);
 			}
 		}
 		dbManage.close();
 	}
 
 	public CreatureInfo getInfo(CreatureType type) {
-		return creatureMap.get(type);
+		return creatureTypeMap.get(type);
 	}
 
 	public Set<Player> getAttackingPlayers(Creature c) {
@@ -123,6 +125,34 @@ public class CreatureHandler implements Runnable {
 			this.attacked.get(c).remove(p);
 		}
 	}
+	
+	public void addCreature(Creature c) {
+		CreatureInfo cInfo = getInfo(getCreatureType((Entity)c));
+		
+		if (cInfo != null) {
+			creatureHealthMap.put(c, cInfo.getHealth());
+		}
+	}
+	
+	public Integer getHealth(Creature c) {
+		
+		if (!creatureHealthMap.containsKey(c)) {
+			addCreature(c);
+		}
+		
+		return creatureHealthMap.get(c);
+	}
+	
+	public void damageCreature(Creature c, int damage) {
+		
+		if (!creatureHealthMap.containsKey(c)) {
+			addCreature(c);
+		}
+		
+		int health = creatureHealthMap.get(c);
+		health -= damage;
+		creatureHealthMap.put(c, health);
+	}
 
 	public void removeAllAttacked(Creature c) {
 		this.attacked.remove(c);
@@ -130,7 +160,7 @@ public class CreatureHandler implements Runnable {
 
 	public void setInfo(CreatureType type, CreatureInfo info)
 			throws SQLException {
-		creatureMap.put(type, info);
+		creatureTypeMap.put(type, info);
 
 		dbManage.initialize();
 		String selectSQL = "SELECT * FROM creatureInfo WHERE Creature = '"
