@@ -2,6 +2,8 @@ package com.elBukkit.bukkit.plugins.crowd.creature;
 
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -111,6 +113,20 @@ public class DamageHandler implements Runnable {
 								}
 							}
 						}
+					}
+				}
+			}
+		}
+		
+		// This controls the mob burning
+		for (World w : Bukkit.getServer().getWorlds()) {
+			for (Entity e : w.getEntities()) {
+				if (e instanceof Creature) {
+					CreatureInfo cInfo = plugin.creatureHandler.getInfo(plugin.creatureHandler.getCreatureType(e));
+					if (plugin.creatureHandler.shouldBurn(e.getLocation()) && cInfo.isBurnDay()) {
+						e.setFireTicks(15);
+					} else {
+						e.setFireTicks(0);
 					}
 				}
 			}

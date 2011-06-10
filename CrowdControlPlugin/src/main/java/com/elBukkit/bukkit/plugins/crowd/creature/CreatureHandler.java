@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -231,22 +230,26 @@ public class CreatureHandler implements Runnable {
 			setInfo(t, info);
 		}
 	}
-
-	public void run() {
-		// This controls the mob burning
-		for (World w : Bukkit.getServer().getWorlds()) {
-			for (Entity e : w.getEntities()) {
-				if (e instanceof Creature) {
-					CreatureInfo cInfo = getInfo(getCreatureType(e));
-					if (shouldBurn(e.getLocation()) && cInfo.isBurnDay()) {
-						e.setFireTicks(15);
-					} else {
-						e.setFireTicks(0);
-					}
-				}
+	
+	public void clearArrays(){
+		creatureHealthMap.clear();
+		attacked.clear();
+	}
+	
+	public void clearArrays(CreatureType type){
+		for (Creature c : creatureHealthMap.keySet()) {
+			if (getCreatureType((Entity)c) == type) {
+				creatureHealthMap.remove(c);
 			}
 		}
-		
+		for (Creature c : attacked.keySet()) {
+			if (getCreatureType((Entity)c) == type) {
+				attacked.remove(c);
+			}
+		}
+	}
+
+	public void run() {
 		// Check for dead/ removed creatures
 		for (Creature c : creatureHealthMap.keySet()) {
 			if (c != null) {

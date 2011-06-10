@@ -90,8 +90,8 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 		// Register the creature handler repeating task
 		getServer().getScheduler().scheduleSyncRepeatingTask(this,
-				creatureHandler, 0, 5); // Start immediately and call every 5
-										// ticks
+				creatureHandler, 0, 200); // Start immediately and call every 10
+										// seconds
 
 		// Register the damage handler
 		getServer().getScheduler().scheduleSyncRepeatingTask(this,

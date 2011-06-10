@@ -206,6 +206,7 @@ public class CrowdCommand implements CommandExecutor {
 							e.remove();
 						}
 					}
+					plugin.creatureHandler.clearArrays();
 				} else {
 					for (Entity e : w.getEntities()) {
 						if (e instanceof Creature) {
@@ -216,6 +217,7 @@ public class CrowdCommand implements CommandExecutor {
 							}
 						}
 					}
+					plugin.creatureHandler.clearArrays(CreatureType.valueOf(args[2]));
 				}
 				sender.sendMessage("Nuked!");
 				return true;
