@@ -82,6 +82,8 @@ public class CrowdControlPlugin extends JavaPlugin {
 				this);
 		pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Highest,
 				this);
+		pm.registerEvent(Type.ENTITY_EXPLODE, entityListener, Priority.Highest,
+				this);
 
 		// Register command
 		getCommand("crowd").setExecutor(new CrowdCommand(this));

@@ -146,6 +146,22 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.getCause() == DamageCause.ENTITY_ATTACK) {
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent entityDmgEvent = (EntityDamageByEntityEvent) event;
+
+				if (entityDmgEvent.getDamager() instanceof Fireball) {
+					CreatureInfo cInfo = plugin.creatureHandler
+							.getInfo(CreatureType.GHAST);
+
+					if (cInfo != null) {
+						if (event.getEntity() instanceof Creature) {
+							Creature c = (Creature) event.getEntity();
+							plugin.creatureHandler.damageCreature(c,
+									cInfo.getMiscDamage());
+						} else {
+							event.setDamage(cInfo.getMiscDamage());
+						}
+					}
+				}
+
 				if (entityDmgEvent.getEntity() instanceof Player) {
 					if (entityDmgEvent.getDamager() instanceof Creature) {
 						plugin.creatureHandler.addAttacked(
