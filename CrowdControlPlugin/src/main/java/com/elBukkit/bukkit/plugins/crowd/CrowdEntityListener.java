@@ -109,12 +109,12 @@ public class CrowdEntityListener extends EntityListener {
 				} else {
 					switch (event.getReason()) {
 					case CLOSEST_PLAYER:
-						if (cInfo.getCreatureNatureDay() != Nature.Aggressive) {
+						if (cInfo.getCreatureNatureNight() != Nature.Aggressive) {
 							event.setCancelled(true);
 						}
 						break;
 					case TARGET_ATTACKED_ENTITY:
-						if (cInfo.getCreatureNatureDay() == Nature.Passive) {
+						if (cInfo.getCreatureNatureNight() == Nature.Passive) {
 							event.setCancelled(true);
 						}
 						break;
