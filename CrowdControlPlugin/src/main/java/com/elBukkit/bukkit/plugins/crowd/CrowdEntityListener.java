@@ -135,7 +135,7 @@ public class CrowdEntityListener extends EntityListener {
 						.getEntity()));
 
 		if (cInfo != null) {
-			if (!cInfo.isBurnDay()) {
+			if (plugin.creatureHandler.isDay(event.getEntity().getWorld()) && !cInfo.isBurnDay()) {
 				event.setCancelled(true);
 			}
 		}
@@ -159,6 +159,13 @@ public class CrowdEntityListener extends EntityListener {
 						} else {
 							event.setDamage(cInfo.getMiscDamage());
 						}
+					}
+				} else if (entityDmgEvent.getDamager() instanceof Player) {
+					CreatureInfo cInfo = plugin.creatureHandler
+						.getInfo(plugin.creatureHandler.getCreatureType(entityDmgEvent.getEntity()));
+
+					if (cInfo != null) {
+						plugin.creatureHandler.damageCreature((Creature)event.getEntity(), event.getDamage());
 					}
 				}
 
@@ -185,11 +192,11 @@ public class CrowdEntityListener extends EntityListener {
 				}
 			} else if (event instanceof EntityDamageByProjectileEvent) {
 				EntityDamageByProjectileEvent entityProjectileEvent = (EntityDamageByProjectileEvent) event;
-
+				System.out.println("Projectile damage");
 				if (entityProjectileEvent.getProjectile() instanceof Arrow) {
 					CreatureInfo cInfo = plugin.creatureHandler
 							.getInfo(CreatureType.SKELETON);
-
+					System.out.println("Arrow");
 					if (cInfo != null) {
 						if (event.getEntity() instanceof Creature) {
 							Creature c = (Creature) event.getEntity();
@@ -197,13 +204,14 @@ public class CrowdEntityListener extends EntityListener {
 									cInfo.getMiscDamage());
 							event.setCancelled(true);
 						} else {
-							event.setDamage(cInfo.getMiscDamage());
+							System.out.println("Player hit");
+							entityProjectileEvent.setDamage(cInfo.getMiscDamage());
 						}
 					}
 				} else if (entityProjectileEvent.getProjectile() instanceof Fireball) {
 					CreatureInfo cInfo = plugin.creatureHandler
 							.getInfo(CreatureType.GHAST);
-
+					System.out.println("Fireball");
 					if (cInfo != null) {
 						if (event.getEntity() instanceof Creature) {
 							Creature c = (Creature) event.getEntity();
@@ -211,7 +219,8 @@ public class CrowdEntityListener extends EntityListener {
 									cInfo.getMiscDamage());
 							event.setCancelled(true);
 						} else {
-							event.setDamage(cInfo.getMiscDamage());
+							System.out.println("Player hit");
+							entityProjectileEvent.setDamage(cInfo.getMiscDamage());
 						}
 					}
 				}
