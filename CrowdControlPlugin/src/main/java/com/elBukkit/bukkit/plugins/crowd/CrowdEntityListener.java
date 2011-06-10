@@ -20,7 +20,6 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
 import com.elBukkit.bukkit.plugins.crowd.creature.CreatureInfo;
-import com.elBukkit.bukkit.plugins.crowd.creature.Nature;
 import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 /*
@@ -78,10 +77,14 @@ public class CrowdEntityListener extends EntityListener {
 			info.setCreature((Creature) event.getEntity());
 			info.setTarget(event.getTarget());
 			info.setReason(event.getReason());
-
-			CreatureInfo cInfo = plugin.creatureHandler
-					.getInfo(plugin.creatureHandler.getCreatureType(event
-							.getEntity()));
+			
+			if (event.getReason() == TargetReason.CUSTOM) {
+				if (!plugin.ruleHandler.passesRules(info, Type.Target)) {
+					event.setCancelled(true);
+				}
+				return;
+			}
+			
 			if (event.getTarget() instanceof Player) {
 				if (event.getReason() == TargetReason.FORGOT_TARGET) {
 					plugin.creatureHandler.removeAttacked(info.getCreature(),
@@ -92,39 +95,7 @@ public class CrowdEntityListener extends EntityListener {
 				}
 			}
 
-			if (cInfo != null) {
-				if (plugin.creatureHandler.isDay(event.getEntity().getWorld())) {
-					switch (event.getReason()) {
-					case CLOSEST_PLAYER:
-						if (cInfo.getCreatureNatureDay() != Nature.Aggressive) {
-							event.setCancelled(true);
-						}
-						break;
-					case TARGET_ATTACKED_ENTITY:
-						if (cInfo.getCreatureNatureDay() == Nature.Passive) {
-							event.setCancelled(true);
-						}
-						break;
-					}
-				} else {
-					switch (event.getReason()) {
-					case CLOSEST_PLAYER:
-						if (cInfo.getCreatureNatureNight() != Nature.Aggressive) {
-							event.setCancelled(true);
-						}
-						break;
-					case TARGET_ATTACKED_ENTITY:
-						if (cInfo.getCreatureNatureNight() == Nature.Passive) {
-							event.setCancelled(true);
-						}
-						break;
-					}
-				}
-
-				if (!plugin.ruleHandler.passesRules(info, Type.Target)) {
-					event.setCancelled(true);
-				}
-			}
+			event.setCancelled(true); // Targeting handled in the Damage Handler
 		}
 	}
 
