@@ -180,6 +180,7 @@ public class CrowdEntityListener extends EntityListener {
 					if (cInfo != null) {
 						plugin.creatureHandler.damageCreature(c,
 								cInfo.getCollisionDamage());
+						event.setCancelled(true);
 					}
 				}
 			} else if (event instanceof EntityDamageByProjectileEvent) {
@@ -194,6 +195,7 @@ public class CrowdEntityListener extends EntityListener {
 							Creature c = (Creature) event.getEntity();
 							plugin.creatureHandler.damageCreature(c,
 									cInfo.getMiscDamage());
+							event.setCancelled(true);
 						} else {
 							event.setDamage(cInfo.getMiscDamage());
 						}
@@ -207,6 +209,7 @@ public class CrowdEntityListener extends EntityListener {
 							Creature c = (Creature) event.getEntity();
 							plugin.creatureHandler.damageCreature(c,
 									cInfo.getMiscDamage());
+							event.setCancelled(true);
 						} else {
 							event.setDamage(cInfo.getMiscDamage());
 						}
