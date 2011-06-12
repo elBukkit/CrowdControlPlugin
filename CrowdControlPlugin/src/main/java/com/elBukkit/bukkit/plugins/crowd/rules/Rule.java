@@ -99,6 +99,8 @@ public class Rule {
 					if (entity instanceof Zombie) {
 						if (entity instanceof PigZombie) {
 							return CreatureType.PIG_ZOMBIE;
+						} else {
+							return CreatureType.ZOMBIE;
 						}
 					} else if (entity instanceof Creeper) {
 						return CreatureType.CREEPER;
