@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.CreatureType;
 
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
@@ -16,8 +17,8 @@ public class SpawnEnvironmentRule extends Rule {
 
 	private Environment spawnableEnvironment;
 
-	public SpawnEnvironmentRule(World world, CreatureType type) {
-		super(world, type);
+	public SpawnEnvironmentRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub
 	}

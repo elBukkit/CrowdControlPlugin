@@ -1,5 +1,7 @@
 package com.elBukkit.bukkit.plugins.crowd.creature;
 
+import org.bukkit.entity.CreatureType;
+
 /*
  * Info about a creature
  * 
@@ -15,7 +17,82 @@ public class CreatureInfo {
 	private int targetDistance = 24;
 	private boolean burnDay = false;
 	private float spawnChance = 0.7f;
+	private CreatureType type;
 
+	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.targetDistance = targetDistance;
+		this.burnDay = burnDay;
+		this.spawnChance = spawnChance;
+		this.type = type;
+	}
+	
+	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, CreatureType type) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.targetDistance = targetDistance;
+		this.burnDay = burnDay;
+		this.type = type;
+	}
+	
+	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, float spawnChance, CreatureType type) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.targetDistance = targetDistance;
+		this.spawnChance = spawnChance;
+		this.type = type;
+	}
+	
+	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, boolean burnDay, float spawnChance, CreatureType type) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.burnDay = burnDay;
+		this.spawnChance = spawnChance;
+		this.type = type;
+	}
+	
+	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, CreatureType type) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.targetDistance = targetDistance;
+		this.type = type;
+	}
+	
+	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, float spawnChance, CreatureType type) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.spawnChance = spawnChance;
+		this.type = type;
+	}
+	
+	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, CreatureType type) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.type = type;
+	}
+	
 	public void setCreatureNatureDay(Nature creatureNature) {
 		this.creatureNatureDay = creatureNature;
 	}
@@ -78,6 +155,18 @@ public class CreatureInfo {
 
 	public int getTargetDistance() {
 		return targetDistance;
+	}
+	
+	public CreatureType getType() {
+		return type;
+	}
+
+	public void setType(CreatureType type) {
+		this.type = type;
+	}
+	
+	public CreatureInfo copy() {
+		return new CreatureInfo(creatureNatureDay, creatureNatureNight, collisionDamage, miscDamage, health, targetDistance, burnDay, spawnChance, type);
 	}
 
 }

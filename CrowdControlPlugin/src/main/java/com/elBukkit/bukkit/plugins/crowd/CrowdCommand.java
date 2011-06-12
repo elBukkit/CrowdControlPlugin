@@ -83,10 +83,10 @@ public class CrowdCommand implements CommandExecutor {
 						Constructor<? extends Rule> c;
 						try {
 							c = ruleClass.getDeclaredConstructor(World.class,
-									CreatureType.class);
+									CreatureType.class, CrowdControlPlugin.class);
 							Object classObj = c.newInstance(Bukkit.getServer()
 									.getWorld(args[2]), CreatureType
-									.valueOf(args[3]));
+									.valueOf(args[3]), plugin);
 							if (classObj instanceof Rule) {
 								Rule r = (Rule) classObj;
 								r.init(args[4]);
@@ -227,16 +227,7 @@ public class CrowdCommand implements CommandExecutor {
 			}
 		} else if (args[0].equalsIgnoreCase("set")) {
 			if (args.length >= 9) {
-				CreatureInfo info = new CreatureInfo();
-				info.setCreatureNatureDay(Nature.valueOf(args[2]));
-				info.setCreatureNatureNight(Nature.valueOf(args[3]));
-				info.setCollisionDamage(Integer.parseInt(args[4]));
-				info.setMiscDamage(Integer.parseInt(args[5]));
-				info.setBurnDay(Boolean.parseBoolean(args[6]));
-				info.setHealth(Integer.parseInt(args[7]));
-				info.setTargetDistance(Integer.valueOf(args[8]));
-				info.setSpawnChance(Float.parseFloat(args[9]));
-
+				CreatureInfo info = new CreatureInfo(Nature.valueOf(args[2]), Nature.valueOf(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[7]), Integer.parseInt(args[8]), Boolean.parseBoolean(args[6]), Float.parseFloat(args[9]), CreatureType.valueOf(args[1]));
 				try {
 					plugin.creatureHandler.setInfo(
 							CreatureType.valueOf(args[1]), info);

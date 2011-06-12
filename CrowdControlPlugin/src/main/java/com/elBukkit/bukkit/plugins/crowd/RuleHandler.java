@@ -29,7 +29,7 @@ public class RuleHandler {
 
 	private sqlCore dbManage;
 
-	public RuleHandler(sqlCore dbManage) throws SQLException,
+	public RuleHandler(sqlCore dbManage, CrowdControlPlugin plugin) throws SQLException,
 			ClassNotFoundException, IllegalArgumentException,
 			SecurityException, InstantiationException, IllegalAccessException,
 			InvocationTargetException, NoSuchMethodException {
@@ -59,10 +59,10 @@ public class RuleHandler {
 				Class<? extends Rule> rule = Class.forName(ruleClass)
 						.asSubclass(Rule.class);
 				Constructor<? extends Rule> c = rule.getDeclaredConstructor(
-						World.class, CreatureType.class);
+						World.class, CreatureType.class, CrowdControlPlugin.class);
 				Object classObj = c.newInstance(
 						Bukkit.getServer().getWorld(world),
-						CreatureType.valueOf(creatures));
+						CreatureType.valueOf(creatures), plugin);
 
 				if (classObj instanceof Rule) {
 					((Rule) classObj).init(data);

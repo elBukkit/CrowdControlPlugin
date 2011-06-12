@@ -66,10 +66,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 		dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName,
 				this.getDataFolder().getAbsolutePath());
 		try {
-			ruleHandler = new RuleHandler(dbManage);
+			ruleHandler = new RuleHandler(dbManage, this);
 			creatureHandler = new CreatureHandler(dbManage);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			this.setEnabled(false);
 			return;
 		}

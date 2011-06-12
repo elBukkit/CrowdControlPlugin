@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.Vector;
 
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
@@ -19,8 +20,8 @@ public class SpawnLocationRule extends Rule {
 
 	private Vector point1, point2;
 
-	public SpawnLocationRule(World world, CreatureType type) {
-		super(world, type);
+	public SpawnLocationRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub
 	}

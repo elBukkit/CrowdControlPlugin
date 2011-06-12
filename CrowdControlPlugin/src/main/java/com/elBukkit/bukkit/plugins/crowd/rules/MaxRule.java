@@ -2,8 +2,8 @@ package com.elBukkit.bukkit.plugins.crowd.rules;
 
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
-import org.bukkit.entity.Entity;
 
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
@@ -18,8 +18,8 @@ public class MaxRule extends Rule {
 
 	private int maxMobs;
 
-	public MaxRule(World world, CreatureType type) {
-		super(world, type);
+	public MaxRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub
 	}
@@ -31,14 +31,8 @@ public class MaxRule extends Rule {
 
 	@Override
 	public boolean check(Info info) {
-		int number = 0;
-		for (Entity e : info.getLocation().getWorld().getEntities()) {
-			if (this.getCreatureType(e).equals(this.type)) {
-				number++;
-			}
-		}
 
-		if (number < maxMobs) {
+		if(plugin.creatureHandler.getCreatureCount(type) < maxMobs) {
 			return true;
 		}
 

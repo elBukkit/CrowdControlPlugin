@@ -23,6 +23,7 @@ import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Zombie;
 
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
@@ -37,10 +38,12 @@ public class Rule {
 	protected World world;
 	protected CreatureType type;
 	protected Type ruleType;
+	protected CrowdControlPlugin plugin;
 
-	public Rule(World world, CreatureType type) {
+	public Rule(World world, CreatureType type, CrowdControlPlugin plugin) {
 		this.world = world;
 		this.type = type;
+		this.plugin = plugin;
 	}
 
 	public boolean check(Info info) {

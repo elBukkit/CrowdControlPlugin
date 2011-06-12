@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
 
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
@@ -17,8 +18,8 @@ public class TargetPlayerRule extends Rule {
 	private String player;
 	private boolean targetable;
 
-	public TargetPlayerRule(World world, CreatureType type) {
-		super(world, type);
+	public TargetPlayerRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+		super(world, type, plugin);
 		this.ruleType = Type.Target;
 		// TODO Auto-generated constructor stub
 	}

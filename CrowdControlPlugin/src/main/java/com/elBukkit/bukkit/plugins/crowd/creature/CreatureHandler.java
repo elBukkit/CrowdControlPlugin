@@ -45,14 +45,14 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
 public class CreatureHandler implements Runnable {
 
 	private Map<CreatureType, CreatureInfo> creatureTypeMap;
-	private Map<Creature, Integer> creatureHealthMap;
+	private Map<Creature, CreatureInfo> creatureInfoMap;
 	private Map<Creature, Set<Player>> attacked;
 	private sqlCore dbManage;
 
 	public CreatureHandler(sqlCore dbManage) throws SQLException {
 		this.dbManage = dbManage;
 		creatureTypeMap = new HashMap<CreatureType, CreatureInfo>();
-		creatureHealthMap = new HashMap<Creature, Integer>();
+		creatureInfoMap = new HashMap<Creature, CreatureInfo>();
 		attacked = new HashMap<Creature, Set<Player>>();
 
 		dbManage.initialize();
@@ -73,18 +73,7 @@ public class CreatureHandler implements Runnable {
 
 			while (rs.next()) {
 				CreatureType type = CreatureType.valueOf(rs.getString(2));
-				CreatureInfo info = new CreatureInfo();
-
-				info.setCreatureNatureDay(Nature.valueOf(rs.getString(3)));
-				info.setCreatureNatureNight(Nature.valueOf(rs.getString(4)));
-				info.setCollisionDamage(rs.getInt(5));
-				info.setMiscDamage(rs.getInt(6));
-				if (rs.getInt(7) == 1) {
-					info.setBurnDay(true);
-				}
-				info.setHealth(rs.getInt(8));
-				info.setTargetDistance(rs.getInt(9));
-				info.setSpawnChance(rs.getFloat(10));
+				CreatureInfo info = new CreatureInfo(Nature.valueOf(rs.getString(3)), Nature.valueOf(rs.getString(4)), Integer.parseInt(rs.getString(5)), Integer.parseInt(rs.getString(6)), Integer.parseInt(rs.getString(8)), Integer.parseInt(rs.getString(9)), Boolean.parseBoolean(rs.getString(7)), Float.parseFloat(rs.getString(10)), type);
 
 				creatureTypeMap.put(type, info);
 			}
@@ -130,35 +119,37 @@ public class CreatureHandler implements Runnable {
 		CreatureInfo cInfo = getInfo(getCreatureType((Entity) c));
 
 		if (cInfo != null) {
-			creatureHealthMap.put(c, cInfo.getHealth());
+			creatureInfoMap.put(c, cInfo.copy());
 		}
 	}
 
 	public Integer getHealth(Creature c) {
 
-		if (!creatureHealthMap.containsKey(c)) {
+		if (!creatureInfoMap.containsKey(c)) {
 			addCreature(c);
 		}
 
-		return creatureHealthMap.get(c);
+		return creatureInfoMap.get(c).getHealth();
 	}
 
 	public void damageCreature(Creature c, int damage) {
 
-		if (!creatureHealthMap.containsKey(c)) {
+		if (!creatureInfoMap.containsKey(c)) {
 			addCreature(c);
 		}
 
-		int health = creatureHealthMap.get(c);
+		CreatureInfo cInfo = creatureInfoMap.get(c);
+		int health = cInfo.getHealth();
 		health -= damage;
+		cInfo.setHealth(health);
 		
 		if (health <= 0) {
 			removeAllAttacked(c);
 			c.setHealth(0);
 			c.remove();
-			creatureHealthMap.remove(c);
+			creatureInfoMap.remove(c);
 		}
-		creatureHealthMap.put(c, health);
+		creatureInfoMap.put(c, cInfo);
 	}
 
 	public void removeAllAttacked(Creature c) {
@@ -219,27 +210,36 @@ public class CreatureHandler implements Runnable {
 
 	public void generateDefaults() throws SQLException {
 		for (CreatureType t : CreatureType.values()) {
-			CreatureInfo info = new CreatureInfo();
-
-			info.setCollisionDamage(0);
-			info.setCreatureNatureDay(Nature.Passive);
-			info.setCreatureNatureNight(Nature.Neutral);
-			info.setHealth(10);
-			info.setMiscDamage(0);
+			CreatureInfo info = new CreatureInfo(Nature.Passive, Nature.Passive, 0, 0, 10, t);
 
 			setInfo(t, info);
 		}
 	}
 	
 	public void clearArrays(){
-		creatureHealthMap.clear();
+		creatureInfoMap.clear();
 		attacked.clear();
 	}
 	
+	public int getCreatureCount(CreatureType type) {
+		int count = 0;
+		for (Creature c : creatureInfoMap.keySet()) {
+			if (creatureInfoMap.get(c).getType() == type) {
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	public int getCreatureCount() {
+		return creatureInfoMap.size();
+	}
+	
 	public void clearArrays(CreatureType type){
-		for (Creature c : creatureHealthMap.keySet()) {
+		for (Creature c : creatureInfoMap.keySet()) {
 			if (getCreatureType((Entity)c) == type) {
-				creatureHealthMap.remove(c);
+				creatureInfoMap.remove(c);
 			}
 		}
 		for (Creature c : attacked.keySet()) {
@@ -251,15 +251,15 @@ public class CreatureHandler implements Runnable {
 
 	public void run() {
 		// Check for dead/ removed creatures
-		for (Creature c : creatureHealthMap.keySet()) {
+		for (Creature c : creatureInfoMap.keySet()) {
 			if (c != null) {
-				if (creatureHealthMap.get(c) <= 0) {
+				if (creatureInfoMap.get(c).getHealth() <= 0) {
 					c.remove();
 					c.setHealth(0);
-					creatureHealthMap.remove(c);
+					creatureInfoMap.remove(c);
 				}
 			} else {
-				creatureHealthMap.remove(c);
+				creatureInfoMap.remove(c);
 			}
 		}
 		

@@ -3,6 +3,7 @@ package com.elBukkit.bukkit.plugins.crowd.rules;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
@@ -15,8 +16,8 @@ public class SpawnReplaceRule extends Rule {
 
 	CreatureType replaceType;
 
-	public SpawnReplaceRule(World world, CreatureType type) {
-		super(world, type);
+	public SpawnReplaceRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub
 	}
