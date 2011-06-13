@@ -115,6 +115,9 @@ public class CrowdControlPlugin extends JavaPlugin {
 			CreatureHandler creatureHandler;
 			try {
 				creatureHandler = new CreatureHandler(dbManage, w);
+				// Register the despawner
+				getServer().getScheduler().scheduleSyncRepeatingTask(this,
+						creatureHandler, 0, 20);
 				creatureHandlers.put(w, creatureHandler);
 				return creatureHandler;
 			} catch (SQLException e) {

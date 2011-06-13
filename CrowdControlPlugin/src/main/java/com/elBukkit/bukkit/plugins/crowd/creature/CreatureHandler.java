@@ -43,7 +43,7 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
  * @author Andrew Querol(WinSock)
  */
 
-public class CreatureHandler {
+public class CreatureHandler implements Runnable {
 
 	World world;
 	private Map<CreatureType, CreatureInfo> enabledCreatures;
@@ -132,9 +132,9 @@ public class CreatureHandler {
 		}
 	}
 
-	public void kill(Creature c) {
-		livingEntityInfoMap.remove(c);
-		c.remove();
+	public void kill(LivingEntity entity) {
+		livingEntityInfoMap.remove(entity);
+		entity.remove();
 	}
 
 	public void removeAttacked(LivingEntity livingEntity, Player p) {
@@ -389,5 +389,33 @@ public class CreatureHandler {
 			}
 		}
 		return CreatureType.MONSTER;
+	}
+
+	public void run() {
+		
+		// Despawning code
+
+		Set<LivingEntity> copy = new HashSet<LivingEntity>(
+				livingEntityInfoMap.keySet());
+		for (LivingEntity e : copy) {
+			
+			if (!world.getLivingEntities().contains(e)) {
+				e.remove();
+				livingEntityInfoMap.remove(e);
+			} else if (e != null) {
+				if (livingEntityInfoMap.get(e).getHealth() <= 0) {
+					e.remove();
+					livingEntityInfoMap.remove(e);
+				}
+				
+				if (e.isDead()) {
+					e.remove();
+					livingEntityInfoMap.remove(e);
+				}
+			} else {
+				livingEntityInfoMap.remove(e);
+			}
+		}
+
 	}
 }

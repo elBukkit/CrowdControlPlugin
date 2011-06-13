@@ -22,7 +22,7 @@ public class DamageHandler implements Runnable {
 	public void run() {
 
 		for (Player p : plugin.getServer().getOnlinePlayers()) {
-			for (Entity e : p.getWorld().getEntities()) {
+			for (LivingEntity e : p.getWorld().getLivingEntities()) {
 				double deltax = Math.abs(e.getLocation().getX()
 						- p.getLocation().getX());
 				double deltay = Math.abs(e.getLocation().getY()
@@ -32,70 +32,25 @@ public class DamageHandler implements Runnable {
 				double distance = Math.sqrt((deltax * deltax)
 						+ (deltay * deltay) + (deltaz * deltaz));
 
-				if (e instanceof LivingEntity) {
-					CreatureInfo cInfo = plugin
-							.getCreatureHandler(p.getWorld()).getInfo(
-									plugin.getCreatureHandler(p.getWorld())
-											.getCreatureType((LivingEntity) e));
+				CreatureInfo cInfo = plugin.getCreatureHandler(p.getWorld())
+						.getInfo(
+								plugin.getCreatureHandler(p.getWorld())
+										.getCreatureType((LivingEntity) e));
 
-					if (cInfo != null) {
-						LivingEntity entity = (LivingEntity) e;
+				if (cInfo != null) {
+					LivingEntity entity = (LivingEntity) e;
 
-						if (entity instanceof Creature) { // Living entities
-															// cannot have
-															// targets?
-							Creature c = (Creature) entity;
-							// Targeting System
-							if (distance < cInfo.getTargetDistance()) {
-								if (plugin.getCreatureHandler(p.getWorld())
-										.isDay(e.getWorld())) {
-									switch (cInfo.getCreatureNatureDay()) {
-									case Aggressive:
-										c.setTarget((LivingEntity) p);
-										break;
-									case Neutral:
-										Set<Player> attackingPlayers = plugin
-												.getCreatureHandler(
-														p.getWorld())
-												.getAttackingPlayers(entity);
-										if (attackingPlayers != null
-												&& attackingPlayers.size() > 0) {
-											if (attackingPlayers.contains(p)) {
-												c.setTarget((LivingEntity) p);
-											}
-										}
-										break;
-									}
-								} else {
-									switch (cInfo.getCreatureNatureNight()) {
-									case Aggressive:
-										c.setTarget((LivingEntity) p);
-										break;
-									case Neutral:
-										Set<Player> attackingPlayers = plugin
-												.getCreatureHandler(
-														p.getWorld())
-												.getAttackingPlayers(entity);
-										if (attackingPlayers != null
-												&& attackingPlayers.size() > 0) {
-											if (attackingPlayers.contains(p)) {
-												c.setTarget((LivingEntity) p);
-											}
-										}
-										break;
-									}
-								}
-							}
-						}
-
-						// Collision damage system
-						if (distance <= 1.8) {
-
+					if (entity instanceof Creature) { // Living entities
+														// cannot have
+														// targets?
+						Creature c = (Creature) entity;
+						// Targeting System
+						if (distance < cInfo.getTargetDistance()) {
 							if (plugin.getCreatureHandler(p.getWorld()).isDay(
 									e.getWorld())) {
 								switch (cInfo.getCreatureNatureDay()) {
 								case Aggressive:
-									p.damage(cInfo.getCollisionDamage());
+									c.setTarget((LivingEntity) p);
 									break;
 								case Neutral:
 									Set<Player> attackingPlayers = plugin
@@ -104,7 +59,7 @@ public class DamageHandler implements Runnable {
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
-											p.damage(cInfo.getCollisionDamage());
+											c.setTarget((LivingEntity) p);
 										}
 									}
 									break;
@@ -112,7 +67,7 @@ public class DamageHandler implements Runnable {
 							} else {
 								switch (cInfo.getCreatureNatureNight()) {
 								case Aggressive:
-									p.damage(cInfo.getCollisionDamage());
+									c.setTarget((LivingEntity) p);
 									break;
 								case Neutral:
 									Set<Player> attackingPlayers = plugin
@@ -121,11 +76,52 @@ public class DamageHandler implements Runnable {
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
-											p.damage(cInfo.getCollisionDamage());
+											c.setTarget((LivingEntity) p);
 										}
 									}
 									break;
 								}
+							}
+						}
+					}
+
+					// Collision damage system
+					if (distance <= 1.8) {
+
+						if (plugin.getCreatureHandler(p.getWorld()).isDay(
+								e.getWorld())) {
+							switch (cInfo.getCreatureNatureDay()) {
+							case Aggressive:
+								p.damage(cInfo.getCollisionDamage());
+								break;
+							case Neutral:
+								Set<Player> attackingPlayers = plugin
+										.getCreatureHandler(p.getWorld())
+										.getAttackingPlayers(entity);
+								if (attackingPlayers != null
+										&& attackingPlayers.size() > 0) {
+									if (attackingPlayers.contains(p)) {
+										p.damage(cInfo.getCollisionDamage());
+									}
+								}
+								break;
+							}
+						} else {
+							switch (cInfo.getCreatureNatureNight()) {
+							case Aggressive:
+								p.damage(cInfo.getCollisionDamage());
+								break;
+							case Neutral:
+								Set<Player> attackingPlayers = plugin
+										.getCreatureHandler(p.getWorld())
+										.getAttackingPlayers(entity);
+								if (attackingPlayers != null
+										&& attackingPlayers.size() > 0) {
+									if (attackingPlayers.contains(p)) {
+										p.damage(cInfo.getCollisionDamage());
+									}
+								}
+								break;
 							}
 						}
 					}
