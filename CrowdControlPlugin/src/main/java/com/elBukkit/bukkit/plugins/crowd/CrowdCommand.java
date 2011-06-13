@@ -147,7 +147,7 @@ public class CrowdCommand implements CommandExecutor {
 		} else if (args[0].equalsIgnoreCase("rebuildDB")) {
 			try {
 				plugin.ruleHandler.rebuildDB();
-				sender.sendMessage("Database is rebuilt! All rules were re-added");
+				sender.sendMessage("Database is rebuilt! All rules were re-added!");
 				return true;
 			} catch (SQLException e) {
 				sender.sendMessage("Error rebuilding database!");
@@ -232,7 +232,7 @@ public class CrowdCommand implements CommandExecutor {
 			} else {
 				sender.sendMessage("usage crowd set [CreatureType] [World] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [Target Distance] [SpawnChance]");
 			}
-		} else if(args[0].equals("maxPerWorld")) {
+		} else if (args[0].equals("maxPerWorld")) {
 			if (args.length >= 2) {
 				plugin.maxPerWorld = Integer.parseInt(args[1]);
 			} else {
