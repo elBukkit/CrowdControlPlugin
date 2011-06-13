@@ -50,8 +50,6 @@ public class CrowdEntityListener extends EntityListener {
 				if (event.getEntity() instanceof LivingEntity) {
 					plugin.getCreatureHandler(event.getLocation().getWorld())
 							.addLivingEntity((LivingEntity) event.getEntity());
-					System.out.println(plugin.getCreatureHandler(
-							event.getLocation().getWorld()).getCreatureCount());
 				}
 				return;
 			}
