@@ -17,7 +17,6 @@ import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Giant;
@@ -45,17 +44,17 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
 public class CreatureHandler {
 
 	World world;
-	private Map<CreatureType, CreatureInfo> creatureTypeMap;
-	private Map<Creature, CreatureInfo> creatureInfoMap;
-	private Map<Creature, Set<Player>> attacked;
+	private Map<CreatureType, CreatureInfo> livingEntityTypeMap;
+	private Map<LivingEntity, CreatureInfo> livingEntityInfoMap;
+	private Map<LivingEntity, Set<Player>> attacked;
 	private sqlCore dbManage;
 
 	public CreatureHandler(sqlCore dbManage, World w) throws SQLException {
 		this.dbManage = dbManage;
 		this.world = w;
-		creatureTypeMap = new HashMap<CreatureType, CreatureInfo>();
-		creatureInfoMap = new HashMap<Creature, CreatureInfo>();
-		attacked = new HashMap<Creature, Set<Player>>();
+		livingEntityTypeMap = new HashMap<CreatureType, CreatureInfo>();
+		livingEntityInfoMap = new HashMap<LivingEntity, CreatureInfo>();
+		attacked = new HashMap<LivingEntity, Set<Player>>();
 
 		dbManage.initialize();
 		if (!dbManage.checkTable("creatureInfo")) {
@@ -84,111 +83,113 @@ public class CreatureHandler {
 								.getString(7)), Float.parseFloat(rs
 								.getString(10)), type);
 
-				creatureTypeMap.put(type, info);
+				livingEntityTypeMap.put(type, info);
 			}
 		}
 		dbManage.close();
 	}
 
 	public CreatureInfo getInfo(CreatureType type) {
-		return creatureTypeMap.get(type);
+		return livingEntityTypeMap.get(type);
 	}
 
-	public Set<Player> getAttackingPlayers(Creature c) {
-		return this.attacked.get(c);
+	public Set<Player> getAttackingPlayers(LivingEntity entity) {
+		return this.attacked.get(entity);
 	}
 
-	public void addAttacked(Creature c, Player p) {
-		if (this.attacked.containsKey(c)) {
-			Set<Player> pList = this.attacked.get(c);
+	public void addAttacked(LivingEntity livingEntity, Player p) {
+		if (this.attacked.containsKey(livingEntity)) {
+			Set<Player> pList = this.attacked.get(livingEntity);
 			pList.add(p);
-			this.attacked.put(c, pList);
+			this.attacked.put(livingEntity, pList);
 		} else {
 			Set<Player> pList = new HashSet<Player>();
 			pList.add(p);
-			attacked.put(c, pList);
+			attacked.put(livingEntity, pList);
 		}
 	}
 
 	public void killAll() {
-		for (Creature c : creatureInfoMap.keySet()) {
-			creatureInfoMap.remove(c);
-			c.remove();
+		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
+		for (LivingEntity entity : copy) {
+			livingEntityInfoMap.remove(entity);
+			entity.remove();
 		}
 	}
 
 	public void killAll(CreatureType type) {
-		for (Creature c : creatureInfoMap.keySet()) {
-			if (creatureInfoMap.get(c).getType() == type) {
-				creatureInfoMap.remove(c);
-				c.remove();
+		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
+		for (LivingEntity entity : copy) {
+			if (livingEntityInfoMap.get(entity).getType() == type) {
+				livingEntityInfoMap.remove(entity);
+				entity.remove();
 			}
 		}
 	}
 
 	public void kill(Creature c) {
-		creatureInfoMap.remove(c);
+		livingEntityInfoMap.remove(c);
 		c.remove();
 	}
 
-	public void removeAttacked(Creature c, Player p) {
-		if (this.attacked.containsKey(c)) {
-			Set<Player> pList = this.attacked.get(c);
+	public void removeAttacked(LivingEntity livingEntity, Player p) {
+		if (this.attacked.containsKey(livingEntity)) {
+			Set<Player> pList = this.attacked.get(livingEntity);
 			pList.remove(p);
-			this.attacked.put(c, pList);
+			this.attacked.put(livingEntity, pList);
 		}
 	}
 
 	public void removePlayer(Player p) {
-		for (Creature c : this.attacked.keySet()) {
-			this.attacked.get(c).remove(p);
+		for (LivingEntity entity : this.attacked.keySet()) {
+			this.attacked.get(entity).remove(p);
 		}
 	}
 
-	public void addCreature(Creature c) {
-		CreatureInfo cInfo = getInfo(getCreatureType((Entity) c));
+	public void addLivingEntity(LivingEntity entity) {
+		CreatureInfo cInfo = getInfo(getCreatureType(entity));
 
-		if (cInfo != null && getCreatureCount() < 1000) {
-			creatureInfoMap.put(c, cInfo.copy());
+		if (cInfo != null) {
+			livingEntityInfoMap.put(entity, cInfo.copy());
 		}
 	}
 
 	public Integer getHealth(Creature c) {
 
-		if (!creatureInfoMap.containsKey(c)) {
-			addCreature(c);
+		if (!livingEntityInfoMap.containsKey(c)) {
+			addLivingEntity(c);
 		}
 
-		return creatureInfoMap.get(c).getHealth();
+		return livingEntityInfoMap.get(c).getHealth();
 	}
 
-	public void damageCreature(Creature c, int damage) {
+	public void damageLivingEntity(LivingEntity entity, int damage) {
 
-		if (!creatureInfoMap.containsKey(c)) {
-			addCreature(c);
+		if (!livingEntityInfoMap.containsKey(entity)) {
+			addLivingEntity(entity);
 		}
 
-		CreatureInfo cInfo = creatureInfoMap.get(c);
+		CreatureInfo cInfo = livingEntityInfoMap.get(entity);
 		int health = cInfo.getHealth();
 		health -= damage;
 		cInfo.setHealth(health);
 
 		if (health <= 0) {
-			removeAllAttacked(c);
-			c.setHealth(0);
-			c.remove();
-			creatureInfoMap.remove(c);
+			removeAllAttacked(entity);
+			entity.setHealth(0);
+			entity.remove();
+			livingEntityInfoMap.remove(entity);
 		}
-		creatureInfoMap.put(c, cInfo);
+		livingEntityInfoMap.put(entity, cInfo);
 	}
 
-	public void removeAllAttacked(Creature c) {
-		this.attacked.remove(c);
+	public void removeAllAttacked(LivingEntity entity) {
+		this.attacked.remove(entity);
 	}
 
 	public void setInfo(CreatureType type, CreatureInfo info)
 			throws SQLException {
-		creatureTypeMap.put(type, info);
+		livingEntityTypeMap.put(type, info);
 
 		dbManage.initialize();
 		String selectSQL = "SELECT * FROM creatureInfo WHERE Creature = '"
@@ -248,14 +249,14 @@ public class CreatureHandler {
 	}
 
 	public void clearArrays() {
-		creatureInfoMap.clear();
+		livingEntityInfoMap.clear();
 		attacked.clear();
 	}
 
 	public int getCreatureCount(CreatureType type) {
 		int count = 0;
-		for (Creature c : creatureInfoMap.keySet()) {
-			if (creatureInfoMap.get(c).getType() == type) {
+		for (LivingEntity entity : livingEntityInfoMap.keySet()) {
+			if (livingEntityInfoMap.get(entity).getType() == type) {
 				count++;
 			}
 		}
@@ -264,18 +265,18 @@ public class CreatureHandler {
 	}
 
 	public int getCreatureCount() {
-		return creatureInfoMap.size();
+		return livingEntityInfoMap.size();
 	}
 
 	public void clearArrays(CreatureType type) {
-		for (Creature c : creatureInfoMap.keySet()) {
-			if (getCreatureType((Entity) c) == type) {
-				creatureInfoMap.remove(c);
+		for (LivingEntity entity : livingEntityInfoMap.keySet()) {
+			if (getCreatureType(entity) == type) {
+				livingEntityInfoMap.remove(entity);
 			}
 		}
-		for (Creature c : attacked.keySet()) {
-			if (getCreatureType((Entity) c) == type) {
-				attacked.remove(c);
+		for (LivingEntity entity : attacked.keySet()) {
+			if (getCreatureType(entity) == type) {
+				attacked.remove(entity);
 			}
 		}
 	}
@@ -321,58 +322,53 @@ public class CreatureHandler {
 		}
 	}
 
-	public CreatureType getCreatureType(Entity entity) {
-		if (entity instanceof LivingEntity) {
-			if (entity instanceof Creature) {
-				// Animals
-				if (entity instanceof Animals) {
-					if (entity instanceof Chicken) {
-						return CreatureType.CHICKEN;
-					} else if (entity instanceof Cow) {
-						return CreatureType.COW;
-					} else if (entity instanceof Pig) {
-						return CreatureType.PIG;
-					} else if (entity instanceof Sheep) {
-						return CreatureType.SHEEP;
-					}
-				}
-				// Monsters
-				else if (entity instanceof Monster) {
-					if (entity instanceof Zombie) {
-						if (entity instanceof PigZombie) {
-							return CreatureType.PIG_ZOMBIE;
-						} else {
-							return CreatureType.ZOMBIE;
-						}
-					} else if (entity instanceof Creeper) {
-						return CreatureType.CREEPER;
-					} else if (entity instanceof Giant) {
-						return CreatureType.GIANT;
-					} else if (entity instanceof Skeleton) {
-						return CreatureType.SKELETON;
-					} else if (entity instanceof Spider) {
-						return CreatureType.SPIDER;
-					} else if (entity instanceof Slime) {
-						return CreatureType.SLIME;
-					}
-				}
-				// Water Animals
-				else if (entity instanceof WaterMob) {
-					if (entity instanceof Squid) {
-						return CreatureType.SQUID;
-					}
+	public CreatureType getCreatureType(LivingEntity entity) {
+		if (entity instanceof Creature) {
+			// Animals
+			if (entity instanceof Animals) {
+				if (entity instanceof Chicken) {
+					return CreatureType.CHICKEN;
+				} else if (entity instanceof Cow) {
+					return CreatureType.COW;
+				} else if (entity instanceof Pig) {
+					return CreatureType.PIG;
+				} else if (entity instanceof Sheep) {
+					return CreatureType.SHEEP;
 				}
 			}
-			// Flying
-			else if (entity instanceof Flying) {
-				if (entity instanceof Ghast) {
-					return CreatureType.GHAST;
+			// Monsters
+			else if (entity instanceof Monster) {
+				if (entity instanceof Zombie) {
+					if (entity instanceof PigZombie) {
+						return CreatureType.PIG_ZOMBIE;
+					} else {
+						return CreatureType.ZOMBIE;
+					}
+				} else if (entity instanceof Creeper) {
+					return CreatureType.CREEPER;
+				} else if (entity instanceof Giant) {
+					return CreatureType.GIANT;
+				} else if (entity instanceof Skeleton) {
+					return CreatureType.SKELETON;
+				} else if (entity instanceof Spider) {
+					return CreatureType.SPIDER;
+				} else if (entity instanceof Slime) {
+					return CreatureType.SLIME;
 				}
-			} else {
-				return CreatureType.MONSTER;
+			}
+			// Water Animals
+			else if (entity instanceof WaterMob) {
+				if (entity instanceof Squid) {
+					return CreatureType.SQUID;
+				}
 			}
 		}
-		return null;
+		// Flying
+		else if (entity instanceof Flying) {
+			if (entity instanceof Ghast) {
+				return CreatureType.GHAST;
+			}
+		}
+		return CreatureType.MONSTER;
 	}
-
 }

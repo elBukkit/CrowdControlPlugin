@@ -6,7 +6,6 @@ import net.minecraft.server.EntityTypes;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -24,7 +23,6 @@ public class Info {
 	private Environment env;
 	private CreatureType type;
 	private LivingEntity entity;
-	private Creature creature;
 	private TargetReason reason;
 	private Entity target;
 	private int id;
@@ -35,14 +33,6 @@ public class Info {
 
 	public Entity getTarget() {
 		return target;
-	}
-
-	public void setCreature(Creature creature) {
-		this.creature = creature;
-	}
-
-	public Creature getCreature() {
-		return creature;
 	}
 
 	public void setReason(TargetReason reason) {
@@ -89,6 +79,10 @@ public class Info {
 
 	public LivingEntity getEntity() {
 		return entity;
+	}
+
+	public void setEntity(LivingEntity entity) {
+		this.entity = entity;
 	}
 
 	public int getID() {

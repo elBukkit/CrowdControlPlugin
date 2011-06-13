@@ -6,8 +6,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -103,11 +102,8 @@ public class CrowdControlPlugin extends JavaPlugin {
 																// the creature
 																// handlers
 
-			for (Entity e : w.getEntities()) {
-				if (e instanceof Creature) {
-					cHandler.addCreature((Creature) e); // Add existing
-														// creatures
-				}
+			for (LivingEntity e : w.getLivingEntities()) {
+				cHandler.addLivingEntity(e); // Add existing
 			}
 		}
 	}
@@ -119,6 +115,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 			CreatureHandler creatureHandler;
 			try {
 				creatureHandler = new CreatureHandler(dbManage, w);
+				creatureHandlers.put(w, creatureHandler);
 				return creatureHandler;
 			} catch (SQLException e) {
 				e.printStackTrace();

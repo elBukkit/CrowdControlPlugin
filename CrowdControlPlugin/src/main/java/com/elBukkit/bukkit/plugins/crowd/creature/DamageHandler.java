@@ -32,51 +32,58 @@ public class DamageHandler implements Runnable {
 				double distance = Math.sqrt((deltax * deltax)
 						+ (deltay * deltay) + (deltaz * deltaz));
 
-				if (e instanceof Creature) {
+				if (e instanceof LivingEntity) {
 					CreatureInfo cInfo = plugin
 							.getCreatureHandler(p.getWorld()).getInfo(
 									plugin.getCreatureHandler(p.getWorld())
-											.getCreatureType(e));
+											.getCreatureType((LivingEntity) e));
 
 					if (cInfo != null) {
-						Creature c = (Creature) e;
+						LivingEntity entity = (LivingEntity) e;
 
-						// Targeting System
-						if (distance < cInfo.getTargetDistance()) {
-							if (plugin.getCreatureHandler(p.getWorld()).isDay(
-									e.getWorld())) {
-								switch (cInfo.getCreatureNatureDay()) {
-								case Aggressive:
-									c.setTarget((LivingEntity) p);
-									break;
-								case Neutral:
-									Set<Player> attackingPlayers = plugin
-											.getCreatureHandler(p.getWorld())
-											.getAttackingPlayers(c);
-									if (attackingPlayers != null
-											&& attackingPlayers.size() > 0) {
-										if (attackingPlayers.contains(p)) {
-											c.setTarget((LivingEntity) p);
+						if (entity instanceof Creature) { // Living entities
+															// cannot have
+															// targets?
+							Creature c = (Creature) entity;
+							// Targeting System
+							if (distance < cInfo.getTargetDistance()) {
+								if (plugin.getCreatureHandler(p.getWorld())
+										.isDay(e.getWorld())) {
+									switch (cInfo.getCreatureNatureDay()) {
+									case Aggressive:
+										c.setTarget((LivingEntity) p);
+										break;
+									case Neutral:
+										Set<Player> attackingPlayers = plugin
+												.getCreatureHandler(
+														p.getWorld())
+												.getAttackingPlayers(entity);
+										if (attackingPlayers != null
+												&& attackingPlayers.size() > 0) {
+											if (attackingPlayers.contains(p)) {
+												c.setTarget((LivingEntity) p);
+											}
 										}
+										break;
 									}
-									break;
-								}
-							} else {
-								switch (cInfo.getCreatureNatureNight()) {
-								case Aggressive:
-									c.setTarget((LivingEntity) p);
-									break;
-								case Neutral:
-									Set<Player> attackingPlayers = plugin
-											.getCreatureHandler(p.getWorld())
-											.getAttackingPlayers(c);
-									if (attackingPlayers != null
-											&& attackingPlayers.size() > 0) {
-										if (attackingPlayers.contains(p)) {
-											c.setTarget((LivingEntity) p);
+								} else {
+									switch (cInfo.getCreatureNatureNight()) {
+									case Aggressive:
+										c.setTarget((LivingEntity) p);
+										break;
+									case Neutral:
+										Set<Player> attackingPlayers = plugin
+												.getCreatureHandler(
+														p.getWorld())
+												.getAttackingPlayers(entity);
+										if (attackingPlayers != null
+												&& attackingPlayers.size() > 0) {
+											if (attackingPlayers.contains(p)) {
+												c.setTarget((LivingEntity) p);
+											}
 										}
+										break;
 									}
-									break;
 								}
 							}
 						}
@@ -93,7 +100,7 @@ public class DamageHandler implements Runnable {
 								case Neutral:
 									Set<Player> attackingPlayers = plugin
 											.getCreatureHandler(p.getWorld())
-											.getAttackingPlayers(c);
+											.getAttackingPlayers(entity);
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
@@ -110,7 +117,7 @@ public class DamageHandler implements Runnable {
 								case Neutral:
 									Set<Player> attackingPlayers = plugin
 											.getCreatureHandler(p.getWorld())
-											.getAttackingPlayers(c);
+											.getAttackingPlayers(entity);
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
@@ -129,11 +136,11 @@ public class DamageHandler implements Runnable {
 		// This controls the mob burning
 		for (World w : Bukkit.getServer().getWorlds()) {
 			for (Entity e : w.getEntities()) {
-				if (e instanceof Creature) {
+				if (e instanceof LivingEntity) {
 					CreatureInfo cInfo = plugin
 							.getCreatureHandler(e.getWorld()).getInfo(
 									plugin.getCreatureHandler(e.getWorld())
-											.getCreatureType(e));
+											.getCreatureType((LivingEntity) e));
 					if (plugin.getCreatureHandler(e.getWorld()).shouldBurn(
 							e.getLocation())
 							&& cInfo.isBurnDay()) {
