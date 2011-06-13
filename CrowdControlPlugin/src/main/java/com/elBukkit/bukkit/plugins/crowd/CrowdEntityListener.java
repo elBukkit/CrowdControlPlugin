@@ -65,7 +65,6 @@ public class CrowdEntityListener extends EntityListener {
 			CreatureInfo cInfo = plugin.getCreatureHandler(
 					event.getLocation().getWorld()).getInfo(info.getType());
 			if (rand.nextFloat() <= cInfo.getSpawnChance()) {
-				pendingSpawn.add(info);
 				if (info.getType() == CreatureType.GIANT) {
 					for (int i = 0; i < 10; i++) {
 						Block b = info
@@ -80,7 +79,11 @@ public class CrowdEntityListener extends EntityListener {
 						}
 					}
 				}
-				info.spawn();
+				if (plugin.getCreatureHandler(event.getLocation().getWorld())
+						.getCreatureCount() < plugin.maxPerWorld) {
+					pendingSpawn.add(info);
+					info.spawn();
+				}
 			}
 		}
 

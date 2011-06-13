@@ -232,6 +232,13 @@ public class CrowdCommand implements CommandExecutor {
 			} else {
 				sender.sendMessage("usage crowd set [CreatureType] [World] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [Target Distance] [SpawnChance]");
 			}
+		} else if(args[0].equals("maxPerWorld")) {
+			if (args.length >= 2) {
+				plugin.maxPerWorld = Integer.parseInt(args[1]);
+			} else {
+				sender.sendMessage("Usage: crowd maxPerWorld [Max]");
+				return false;
+			}
 		}
 
 		return true;

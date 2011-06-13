@@ -129,6 +129,8 @@ public class Rule {
 				if (entity instanceof Ghast) {
 					return CreatureType.GHAST;
 				}
+			} else {
+				return CreatureType.MONSTER;
 			}
 		}
 		return null;

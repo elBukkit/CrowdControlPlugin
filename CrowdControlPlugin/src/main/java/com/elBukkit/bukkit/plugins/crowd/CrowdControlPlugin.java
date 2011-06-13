@@ -4,7 +4,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -34,6 +37,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 	private PluginDescriptionFile pdf;
 	public Map<Class<? extends Rule>, String> ruleCommands;
+	public int maxPerWorld = 1000;
 
 	public RuleHandler ruleHandler;
 	public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
@@ -92,6 +96,20 @@ public class CrowdControlPlugin extends JavaPlugin {
 		// Register the damage handler
 		getServer().getScheduler().scheduleSyncRepeatingTask(this,
 				new DamageHandler(this), 0, 20);
+
+		for (World w : Bukkit.getServer().getWorlds()) {
+
+			CreatureHandler cHandler = getCreatureHandler(w); // Create all of
+																// the creature
+																// handlers
+
+			for (Entity e : w.getEntities()) {
+				if (e instanceof Creature) {
+					cHandler.addCreature((Creature) e); // Add existing
+														// creatures
+				}
+			}
+		}
 	}
 
 	public CreatureHandler getCreatureHandler(World w) {
@@ -101,10 +119,6 @@ public class CrowdControlPlugin extends JavaPlugin {
 			CreatureHandler creatureHandler;
 			try {
 				creatureHandler = new CreatureHandler(dbManage, w);
-				// Register the creature handler repeating task
-				getServer().getScheduler().scheduleSyncRepeatingTask(this,
-						creatureHandler, 0, 20); // Start
-
 				return creatureHandler;
 			} catch (SQLException e) {
 				e.printStackTrace();

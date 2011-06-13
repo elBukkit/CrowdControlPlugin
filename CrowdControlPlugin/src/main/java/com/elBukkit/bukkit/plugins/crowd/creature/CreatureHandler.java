@@ -42,7 +42,7 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
  * @author Andrew Querol(WinSock)
  */
 
-public class CreatureHandler implements Runnable {
+public class CreatureHandler {
 
 	World world;
 	private Map<CreatureType, CreatureInfo> creatureTypeMap;
@@ -112,20 +112,23 @@ public class CreatureHandler implements Runnable {
 
 	public void killAll() {
 		for (Creature c : creatureInfoMap.keySet()) {
-			this.damageCreature(c, creatureInfoMap.get(c).getHealth());
+			creatureInfoMap.remove(c);
+			c.remove();
 		}
 	}
 
 	public void killAll(CreatureType type) {
 		for (Creature c : creatureInfoMap.keySet()) {
 			if (creatureInfoMap.get(c).getType() == type) {
-				this.damageCreature(c, creatureInfoMap.get(c).getHealth());
+				creatureInfoMap.remove(c);
+				c.remove();
 			}
 		}
 	}
 
 	public void kill(Creature c) {
-		this.damageCreature(c, creatureInfoMap.get(c).getHealth());
+		creatureInfoMap.remove(c);
+		c.remove();
 	}
 
 	public void removeAttacked(Creature c, Player p) {
@@ -145,7 +148,7 @@ public class CreatureHandler implements Runnable {
 	public void addCreature(Creature c) {
 		CreatureInfo cInfo = getInfo(getCreatureType((Entity) c));
 
-		if (cInfo != null) {
+		if (cInfo != null && getCreatureCount() < 1000) {
 			creatureInfoMap.put(c, cInfo.copy());
 		}
 	}
@@ -277,44 +280,6 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public void run() {
-		// Check for dead/ removed creatures
-		for (Creature c : creatureInfoMap.keySet()) {
-			if (c != null) {
-				if (creatureInfoMap.get(c).getHealth() <= 0) {
-					c.remove();
-					c.setHealth(0);
-					creatureInfoMap.remove(c);
-				}
-			} else {
-				creatureInfoMap.remove(c);
-			}
-		}
-
-		// Check for dead/ removed creatures
-		for (Creature c : attacked.keySet()) {
-			if (c != null) {
-				if (attacked.get(c).size() <= 0) {
-					c.remove();
-					c.setHealth(0);
-					attacked.remove(c);
-				}
-			} else {
-				attacked.remove(c);
-			}
-		}
-		
-		// Remove non-tracked entities
-		for (Entity e : world.getEntities()) {
-			if (e instanceof Creature) {
-				if (!creatureInfoMap.containsKey((Creature)e)){
-					((Creature)e).damage(99999);
-					((Creature)e).remove();
-				}
-			}
-		}
-	}
-
 	public boolean shouldBurn(Location loc) {
 		if (isDay(loc.getWorld())) {
 			if (loc.getWorld()
@@ -403,6 +368,8 @@ public class CreatureHandler implements Runnable {
 				if (entity instanceof Ghast) {
 					return CreatureType.GHAST;
 				}
+			} else {
+				return CreatureType.MONSTER;
 			}
 		}
 		return null;
