@@ -16,7 +16,8 @@ public class SpawnLightRule extends Rule {
 
 	private int min, max;
 
-	public SpawnLightRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public SpawnLightRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub

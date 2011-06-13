@@ -18,7 +18,8 @@ public class SpawnMaterialRule extends Rule {
 	private Material material;
 	private boolean spawnable = true;
 
-	public SpawnMaterialRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public SpawnMaterialRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub

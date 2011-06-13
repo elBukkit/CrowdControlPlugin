@@ -32,7 +32,8 @@ public class MaxRule extends Rule {
 	@Override
 	public boolean check(Info info) {
 
-		if(plugin.creatureHandler.getCreatureCount(type) < maxMobs) {
+		if (plugin.getCreatureHandler(info.getLocation().getWorld())
+				.getCreatureCount(type) < maxMobs) {
 			return true;
 		}
 

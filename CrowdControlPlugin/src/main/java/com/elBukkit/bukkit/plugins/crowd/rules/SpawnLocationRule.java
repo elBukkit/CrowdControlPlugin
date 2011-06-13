@@ -20,7 +20,8 @@ public class SpawnLocationRule extends Rule {
 
 	private Vector point1, point2;
 
-	public SpawnLocationRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public SpawnLocationRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub

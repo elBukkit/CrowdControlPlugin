@@ -1,8 +1,10 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.World;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -34,7 +36,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public Map<Class<? extends Rule>, String> ruleCommands;
 
 	public RuleHandler ruleHandler;
-	public CreatureHandler creatureHandler;
+	public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
 
 	public sqlCore dbManage; // import SQLite lib
 
@@ -67,7 +69,6 @@ public class CrowdControlPlugin extends JavaPlugin {
 				this.getDataFolder().getAbsolutePath());
 		try {
 			ruleHandler = new RuleHandler(dbManage, this);
-			creatureHandler = new CreatureHandler(dbManage);
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.setEnabled(false);
@@ -88,15 +89,29 @@ public class CrowdControlPlugin extends JavaPlugin {
 		// Register command
 		getCommand("crowd").setExecutor(new CrowdCommand(this));
 
-		// Register the creature handler repeating task
-		getServer().getScheduler().scheduleSyncRepeatingTask(this,
-				creatureHandler, 0, 200); // Start immediately and call every 10
-										// seconds
-
 		// Register the damage handler
 		getServer().getScheduler().scheduleSyncRepeatingTask(this,
 				new DamageHandler(this), 0, 20); // Start immediately and call
 													// every 20
 		// ticks(1 second)
+	}
+
+	public CreatureHandler getCreatureHandler(World w) {
+		if (creatureHandlers.containsKey(w)) {
+			return creatureHandlers.get(w);
+		} else {
+			CreatureHandler creatureHandler;
+			try {
+				creatureHandler = new CreatureHandler(dbManage);
+				// Register the creature handler repeating task
+				getServer().getScheduler().scheduleSyncRepeatingTask(this,
+						creatureHandler, 0, 200); // Start
+
+				return creatureHandler;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 }

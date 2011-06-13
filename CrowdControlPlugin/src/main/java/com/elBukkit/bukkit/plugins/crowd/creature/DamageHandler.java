@@ -33,21 +33,25 @@ public class DamageHandler implements Runnable {
 						+ (deltay * deltay) + (deltaz * deltaz));
 
 				if (e instanceof Creature) {
-					CreatureInfo cInfo = plugin.creatureHandler
-							.getInfo(plugin.creatureHandler.getCreatureType(e));
+					CreatureInfo cInfo = plugin
+							.getCreatureHandler(p.getWorld()).getInfo(
+									plugin.getCreatureHandler(p.getWorld())
+											.getCreatureType(e));
 
 					if (cInfo != null) {
 						Creature c = (Creature) e;
 
 						// Targeting System
 						if (distance < cInfo.getTargetDistance()) {
-							if (plugin.creatureHandler.isDay(e.getWorld())) {
+							if (plugin.getCreatureHandler(p.getWorld()).isDay(
+									e.getWorld())) {
 								switch (cInfo.getCreatureNatureDay()) {
 								case Aggressive:
 									c.setTarget((LivingEntity) p);
 									break;
 								case Neutral:
-									Set<Player> attackingPlayers = plugin.creatureHandler
+									Set<Player> attackingPlayers = plugin
+											.getCreatureHandler(p.getWorld())
 											.getAttackingPlayers(c);
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
@@ -63,7 +67,8 @@ public class DamageHandler implements Runnable {
 									c.setTarget((LivingEntity) p);
 									break;
 								case Neutral:
-									Set<Player> attackingPlayers = plugin.creatureHandler
+									Set<Player> attackingPlayers = plugin
+											.getCreatureHandler(p.getWorld())
 											.getAttackingPlayers(c);
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
@@ -79,13 +84,15 @@ public class DamageHandler implements Runnable {
 						// Collision damage system
 						if (distance <= 1.8) {
 
-							if (plugin.creatureHandler.isDay(e.getWorld())) {
+							if (plugin.getCreatureHandler(p.getWorld()).isDay(
+									e.getWorld())) {
 								switch (cInfo.getCreatureNatureDay()) {
 								case Aggressive:
 									p.damage(cInfo.getCollisionDamage());
 									break;
 								case Neutral:
-									Set<Player> attackingPlayers = plugin.creatureHandler
+									Set<Player> attackingPlayers = plugin
+											.getCreatureHandler(p.getWorld())
 											.getAttackingPlayers(c);
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
@@ -101,7 +108,8 @@ public class DamageHandler implements Runnable {
 									p.damage(cInfo.getCollisionDamage());
 									break;
 								case Neutral:
-									Set<Player> attackingPlayers = plugin.creatureHandler
+									Set<Player> attackingPlayers = plugin
+											.getCreatureHandler(p.getWorld())
 											.getAttackingPlayers(c);
 									if (attackingPlayers != null
 											&& attackingPlayers.size() > 0) {
@@ -117,13 +125,18 @@ public class DamageHandler implements Runnable {
 				}
 			}
 		}
-		
+
 		// This controls the mob burning
 		for (World w : Bukkit.getServer().getWorlds()) {
 			for (Entity e : w.getEntities()) {
 				if (e instanceof Creature) {
-					CreatureInfo cInfo = plugin.creatureHandler.getInfo(plugin.creatureHandler.getCreatureType(e));
-					if (plugin.creatureHandler.shouldBurn(e.getLocation()) && cInfo.isBurnDay()) {
+					CreatureInfo cInfo = plugin
+							.getCreatureHandler(e.getWorld()).getInfo(
+									plugin.getCreatureHandler(e.getWorld())
+											.getCreatureType(e));
+					if (plugin.getCreatureHandler(e.getWorld()).shouldBurn(
+							e.getLocation())
+							&& cInfo.isBurnDay()) {
 						e.setFireTicks(15);
 					} else {
 						e.setFireTicks(0);

@@ -16,7 +16,8 @@ public class SpawnReplaceRule extends Rule {
 
 	CreatureType replaceType;
 
-	public SpawnReplaceRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public SpawnReplaceRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub

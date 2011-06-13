@@ -12,9 +12,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
-import org.bukkit.entity.Entity;
 
 import com.elBukkit.bukkit.plugins.crowd.creature.CreatureInfo;
 import com.elBukkit.bukkit.plugins.crowd.creature.Nature;
@@ -83,7 +81,8 @@ public class CrowdCommand implements CommandExecutor {
 						Constructor<? extends Rule> c;
 						try {
 							c = ruleClass.getDeclaredConstructor(World.class,
-									CreatureType.class, CrowdControlPlugin.class);
+									CreatureType.class,
+									CrowdControlPlugin.class);
 							Object classObj = c.newInstance(Bukkit.getServer()
 									.getWorld(args[2]), CreatureType
 									.valueOf(args[3]), plugin);
@@ -200,24 +199,13 @@ public class CrowdCommand implements CommandExecutor {
 			if (args.length >= 3) {
 				World w = Bukkit.getServer().getWorld(args[1]);
 				if (args[2].equalsIgnoreCase("all")) {
-					for (Entity e : w.getEntities()) {
-						if (e instanceof Creature) {
-							((Creature) e).setHealth(0);
-							e.remove();
-						}
-					}
-					plugin.creatureHandler.clearArrays();
+					plugin.getCreatureHandler(w).killAll();
+					plugin.getCreatureHandler(w).clearArrays();
 				} else {
-					for (Entity e : w.getEntities()) {
-						if (e instanceof Creature) {
-							if (plugin.creatureHandler.getCreatureType(e)
-									.equals(CreatureType.valueOf(args[2]))) {
-								((Creature) e).setHealth(0);
-								e.remove();
-							}
-						}
-					}
-					plugin.creatureHandler.clearArrays(CreatureType.valueOf(args[2]));
+					plugin.getCreatureHandler(w).killAll(
+							CreatureType.valueOf(args[2]));
+					plugin.getCreatureHandler(w).clearArrays(
+							CreatureType.valueOf(args[2]));
 				}
 				sender.sendMessage("Nuked!");
 				return true;
@@ -227,15 +215,22 @@ public class CrowdCommand implements CommandExecutor {
 			}
 		} else if (args[0].equalsIgnoreCase("set")) {
 			if (args.length >= 9) {
-				CreatureInfo info = new CreatureInfo(Nature.valueOf(args[2]), Nature.valueOf(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[7]), Integer.parseInt(args[8]), Boolean.parseBoolean(args[6]), Float.parseFloat(args[9]), CreatureType.valueOf(args[1]));
+				CreatureInfo info = new CreatureInfo(Nature.valueOf(args[3]),
+						Nature.valueOf(args[4]), Integer.parseInt(args[5]),
+						Integer.parseInt(args[6]), Integer.parseInt(args[8]),
+						Integer.parseInt(args[9]),
+						Boolean.parseBoolean(args[7]),
+						Float.parseFloat(args[10]),
+						CreatureType.valueOf(args[1]));
 				try {
-					plugin.creatureHandler.setInfo(
+					plugin.getCreatureHandler(
+							Bukkit.getServer().getWorld(args[2])).setInfo(
 							CreatureType.valueOf(args[1]), info);
 				} catch (SQLException e) {
 					sender.sendMessage("Error saving creature info!");
 				}
 			} else {
-				sender.sendMessage("usage crowd set [CreatureType] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [Target Distance] [SpawnChance]");
+				sender.sendMessage("usage crowd set [CreatureType] [World] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [Target Distance] [SpawnChance]");
 			}
 		}
 

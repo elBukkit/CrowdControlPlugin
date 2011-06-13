@@ -23,7 +23,8 @@ public class MovmentLocationRule extends Rule {
 
 	private Vector point1, point2;
 
-	public MovmentLocationRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public MovmentLocationRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Movement;
 		// TODO Auto-generated constructor stub

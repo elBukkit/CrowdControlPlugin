@@ -16,7 +16,8 @@ public class SpawnHeightRule extends Rule {
 
 	int min, max;
 
-	public SpawnHeightRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public SpawnHeightRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub

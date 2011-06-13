@@ -18,7 +18,8 @@ public class TargetPlayerRule extends Rule {
 	private String player;
 	private boolean targetable;
 
-	public TargetPlayerRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public TargetPlayerRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Target;
 		// TODO Auto-generated constructor stub

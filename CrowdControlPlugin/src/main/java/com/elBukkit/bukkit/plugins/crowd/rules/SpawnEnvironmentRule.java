@@ -17,7 +17,8 @@ public class SpawnEnvironmentRule extends Rule {
 
 	private Environment spawnableEnvironment;
 
-	public SpawnEnvironmentRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+	public SpawnEnvironmentRule(World world, CreatureType type,
+			CrowdControlPlugin plugin) {
 		super(world, type, plugin);
 		this.ruleType = Type.Spawn;
 		// TODO Auto-generated constructor stub

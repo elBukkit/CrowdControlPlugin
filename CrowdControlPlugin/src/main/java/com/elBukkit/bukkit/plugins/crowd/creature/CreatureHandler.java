@@ -73,7 +73,14 @@ public class CreatureHandler implements Runnable {
 
 			while (rs.next()) {
 				CreatureType type = CreatureType.valueOf(rs.getString(2));
-				CreatureInfo info = new CreatureInfo(Nature.valueOf(rs.getString(3)), Nature.valueOf(rs.getString(4)), Integer.parseInt(rs.getString(5)), Integer.parseInt(rs.getString(6)), Integer.parseInt(rs.getString(8)), Integer.parseInt(rs.getString(9)), Boolean.parseBoolean(rs.getString(7)), Float.parseFloat(rs.getString(10)), type);
+				CreatureInfo info = new CreatureInfo(Nature.valueOf(rs
+						.getString(3)), Nature.valueOf(rs.getString(4)),
+						Integer.parseInt(rs.getString(5)), Integer.parseInt(rs
+								.getString(6)), Integer.parseInt(rs
+								.getString(8)), Integer.parseInt(rs
+								.getString(9)), Boolean.parseBoolean(rs
+								.getString(7)), Float.parseFloat(rs
+								.getString(10)), type);
 
 				creatureTypeMap.put(type, info);
 			}
@@ -99,6 +106,24 @@ public class CreatureHandler implements Runnable {
 			pList.add(p);
 			attacked.put(c, pList);
 		}
+	}
+
+	public void killAll() {
+		for (Creature c : creatureInfoMap.keySet()) {
+			this.damageCreature(c, creatureInfoMap.get(c).getHealth());
+		}
+	}
+
+	public void killAll(CreatureType type) {
+		for (Creature c : creatureInfoMap.keySet()) {
+			if (creatureInfoMap.get(c).getType() == type) {
+				this.damageCreature(c, creatureInfoMap.get(c).getHealth());
+			}
+		}
+	}
+
+	public void kill(Creature c) {
+		this.damageCreature(c, creatureInfoMap.get(c).getHealth());
 	}
 
 	public void removeAttacked(Creature c, Player p) {
@@ -142,7 +167,7 @@ public class CreatureHandler implements Runnable {
 		int health = cInfo.getHealth();
 		health -= damage;
 		cInfo.setHealth(health);
-		
+
 		if (health <= 0) {
 			removeAllAttacked(c);
 			c.setHealth(0);
@@ -210,17 +235,18 @@ public class CreatureHandler implements Runnable {
 
 	public void generateDefaults() throws SQLException {
 		for (CreatureType t : CreatureType.values()) {
-			CreatureInfo info = new CreatureInfo(Nature.Passive, Nature.Passive, 0, 0, 10, t);
+			CreatureInfo info = new CreatureInfo(Nature.Passive,
+					Nature.Passive, 0, 0, 10, t);
 
 			setInfo(t, info);
 		}
 	}
-	
-	public void clearArrays(){
+
+	public void clearArrays() {
 		creatureInfoMap.clear();
 		attacked.clear();
 	}
-	
+
 	public int getCreatureCount(CreatureType type) {
 		int count = 0;
 		for (Creature c : creatureInfoMap.keySet()) {
@@ -228,22 +254,22 @@ public class CreatureHandler implements Runnable {
 				count++;
 			}
 		}
-		
+
 		return count;
 	}
-	
+
 	public int getCreatureCount() {
 		return creatureInfoMap.size();
 	}
-	
-	public void clearArrays(CreatureType type){
+
+	public void clearArrays(CreatureType type) {
 		for (Creature c : creatureInfoMap.keySet()) {
-			if (getCreatureType((Entity)c) == type) {
+			if (getCreatureType((Entity) c) == type) {
 				creatureInfoMap.remove(c);
 			}
 		}
 		for (Creature c : attacked.keySet()) {
-			if (getCreatureType((Entity)c) == type) {
+			if (getCreatureType((Entity) c) == type) {
 				attacked.remove(c);
 			}
 		}
@@ -262,7 +288,7 @@ public class CreatureHandler implements Runnable {
 				creatureInfoMap.remove(c);
 			}
 		}
-		
+
 		// Check for dead/ removed creatures
 		for (Creature c : attacked.keySet()) {
 			if (c != null) {
