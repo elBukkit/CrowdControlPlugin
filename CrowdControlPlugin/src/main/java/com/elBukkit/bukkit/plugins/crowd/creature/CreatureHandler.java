@@ -2,8 +2,10 @@ package com.elBukkit.bukkit.plugins.crowd.creature;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,7 +46,7 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
 public class CreatureHandler {
 
 	World world;
-	private Map<CreatureType, CreatureInfo> livingEntityTypeMap;
+	private Map<CreatureType, CreatureInfo> enabledCreatures;
 	private Map<LivingEntity, CreatureInfo> livingEntityInfoMap;
 	private Map<LivingEntity, Set<Player>> attacked;
 	private sqlCore dbManage;
@@ -52,7 +54,7 @@ public class CreatureHandler {
 	public CreatureHandler(sqlCore dbManage, World w) throws SQLException {
 		this.dbManage = dbManage;
 		this.world = w;
-		livingEntityTypeMap = new HashMap<CreatureType, CreatureInfo>();
+		enabledCreatures = new HashMap<CreatureType, CreatureInfo>();
 		livingEntityInfoMap = new HashMap<LivingEntity, CreatureInfo>();
 		attacked = new HashMap<LivingEntity, Set<Player>>();
 
@@ -64,7 +66,7 @@ public class CreatureHandler {
 					+ "NatureNight VARCHAR(255), " + "CollisionDmg INT(10), "
 					+ "MiscDmg INT(10)," + "BurnDay TINYINT(1),"
 					+ "Health INT(10), " + "TargetDistance INT(10), "
-					+ "SpawnChance FLOAT(1,2)" + ");";
+					+ "SpawnChance FLOAT(1,2), " + "Enabled TINYINT(1)" + ");";
 			dbManage.createTable(createDB);
 			generateDefaults();
 		} else {
@@ -81,16 +83,17 @@ public class CreatureHandler {
 								.getString(8)), Integer.parseInt(rs
 								.getString(9)), Boolean.parseBoolean(rs
 								.getString(7)), Float.parseFloat(rs
-								.getString(10)), type);
+								.getString(10)), type, Boolean.parseBoolean(rs
+								.getString(11)));
 
-				livingEntityTypeMap.put(type, info);
+				enabledCreatures.put(type, info);
 			}
 		}
 		dbManage.close();
 	}
 
 	public CreatureInfo getInfo(CreatureType type) {
-		return livingEntityTypeMap.get(type);
+		return enabledCreatures.get(type);
 	}
 
 	public Set<Player> getAttackingPlayers(LivingEntity entity) {
@@ -110,7 +113,8 @@ public class CreatureHandler {
 	}
 
 	public void killAll() {
-		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
+		Set<LivingEntity> copy = new HashSet<LivingEntity>(
+				livingEntityInfoMap.keySet());
 		for (LivingEntity entity : copy) {
 			livingEntityInfoMap.remove(entity);
 			entity.remove();
@@ -118,7 +122,8 @@ public class CreatureHandler {
 	}
 
 	public void killAll(CreatureType type) {
-		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
+		Set<LivingEntity> copy = new HashSet<LivingEntity>(
+				livingEntityInfoMap.keySet());
 		for (LivingEntity entity : copy) {
 			if (livingEntityInfoMap.get(entity).getType() == type) {
 				livingEntityInfoMap.remove(entity);
@@ -189,7 +194,7 @@ public class CreatureHandler {
 
 	public void setInfo(CreatureType type, CreatureInfo info)
 			throws SQLException {
-		livingEntityTypeMap.put(type, info);
+		enabledCreatures.put(type, info);
 
 		dbManage.initialize();
 		String selectSQL = "SELECT * FROM creatureInfo WHERE Creature = '"
@@ -210,12 +215,13 @@ public class CreatureHandler {
 					+ "', TargetDistance = '"
 					+ String.valueOf(info.getTargetDistance())
 					+ "', SpawnChance = '"
-					+ String.valueOf(info.getSpawnChance())
-					+ "' WHERE Creature = '" + type.toString() + "';";
+					+ String.valueOf(info.getSpawnChance()) + "', Enabled = '"
+					+ (info.isEnabled() ? 1 : 0) + "' WHERE Creature = '"
+					+ type.toString() + "';";
 
 			dbManage.updateQuery(updateSQL);
 		} else {
-			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance) VALUES ('"
+			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance, Enabled) VALUES ('"
 					+ type.toString()
 					+ "', '"
 					+ info.getCreatureNatureDay().toString()
@@ -232,7 +238,9 @@ public class CreatureHandler {
 					+ "', '"
 					+ String.valueOf(info.getTargetDistance())
 					+ "', '"
-					+ String.valueOf(info.getSpawnChance()) + "');";
+					+ String.valueOf(info.getSpawnChance())
+					+ "', '"
+					+ (info.isBurnDay() ? 1 : 0) + "');";
 
 			dbManage.insertQuery(addSQL);
 		}
@@ -320,6 +328,17 @@ public class CreatureHandler {
 		} else {
 			return true;
 		}
+	}
+
+	public List<CreatureType> getEnabledCreatureTypes() {
+		List<CreatureType> enabled = new ArrayList<CreatureType>();
+		for (CreatureType cType : enabledCreatures.keySet()) {
+			if (enabledCreatures.get(cType).isEnabled()) {
+				enabled.add(cType);
+			}
+		}
+
+		return enabled;
 	}
 
 	public CreatureType getCreatureType(LivingEntity entity) {

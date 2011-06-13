@@ -58,31 +58,38 @@ public class CrowdEntityListener extends EntityListener {
 		Info info = new Info();
 		info.setEnv(event.getLocation().getWorld().getEnvironment());
 		info.setLocation(event.getLocation());
-		int random = rand.nextInt(CreatureType.values().length);
-		info.setType(CreatureType.values()[random]);
+		if (plugin.getCreatureHandler(event.getLocation().getWorld())
+				.getEnabledCreatureTypes().size() > 0) {
+			int random = rand.nextInt(plugin
+					.getCreatureHandler(event.getLocation().getWorld())
+					.getEnabledCreatureTypes().size());
+			info.setType(plugin
+					.getCreatureHandler(event.getLocation().getWorld())
+					.getEnabledCreatureTypes().get(random));
 
-		if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
-			CreatureInfo cInfo = plugin.getCreatureHandler(
-					event.getLocation().getWorld()).getInfo(info.getType());
-			if (rand.nextFloat() <= cInfo.getSpawnChance()) {
-				if (info.getType() == CreatureType.GIANT) {
-					for (int i = 0; i < 10; i++) {
-						Block b = info
-								.getLocation()
-								.getWorld()
-								.getBlockAt(info.getLocation().getBlockX(),
-										info.getLocation().getBlockY() + i,
-										info.getLocation().getBlockZ());
-						if (b.getType() != Material.AIR
-								|| b.getType() != Material.WATER) {
-							return; // Not enough room for the giant.
+			if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
+				CreatureInfo cInfo = plugin.getCreatureHandler(
+						event.getLocation().getWorld()).getInfo(info.getType());
+				if (rand.nextFloat() <= cInfo.getSpawnChance()) {
+					if (info.getType() == CreatureType.GIANT) {
+						for (int i = 0; i < 10; i++) {
+							Block b = info
+									.getLocation()
+									.getWorld()
+									.getBlockAt(info.getLocation().getBlockX(),
+											info.getLocation().getBlockY() + i,
+											info.getLocation().getBlockZ());
+							if (b.getType() != Material.AIR
+									|| b.getType() != Material.WATER) {
+								return; // Not enough room for the giant.
+							}
 						}
 					}
-				}
-				if (plugin.getCreatureHandler(event.getLocation().getWorld())
-						.getCreatureCount() < plugin.maxPerWorld) {
-					pendingSpawn.add(info);
-					info.spawn();
+					if (plugin.getCreatureHandler(
+							event.getLocation().getWorld()).getCreatureCount() < plugin.maxPerWorld) {
+						pendingSpawn.add(info);
+						info.spawn();
+					}
 				}
 			}
 		}

@@ -221,7 +221,8 @@ public class CrowdCommand implements CommandExecutor {
 						Integer.parseInt(args[9]),
 						Boolean.parseBoolean(args[7]),
 						Float.parseFloat(args[10]),
-						CreatureType.valueOf(args[1]));
+						CreatureType.valueOf(args[1]),
+						Boolean.parseBoolean(args[11]));
 				try {
 					plugin.getCreatureHandler(
 							Bukkit.getServer().getWorld(args[2])).setInfo(
@@ -230,7 +231,7 @@ public class CrowdCommand implements CommandExecutor {
 					sender.sendMessage("Error saving creature info!");
 				}
 			} else {
-				sender.sendMessage("usage crowd set [CreatureType] [World] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [Target Distance] [SpawnChance]");
+				sender.sendMessage("usage crowd set [CreatureType] [World] [Passive,Aggressive,Neutral] [Passive,Aggressive,Neutral] [TouchDmg] [MiscDmg] [true,false] [Health] [Target Distance] [SpawnChance] [Enabled]");
 			}
 		} else if (args[0].equals("maxPerWorld")) {
 			if (args.length >= 2) {

@@ -18,11 +18,12 @@ public class CreatureInfo {
 	private boolean burnDay = false;
 	private float spawnChance = 0.7f;
 	private CreatureType type;
+	private boolean enabled = false;
 
 	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight,
 			int collisionDamage, int miscDamage, int health,
 			int targetDistance, boolean burnDay, float spawnChance,
-			CreatureType type) {
+			CreatureType type, boolean enabled) {
 		this.creatureNatureDay = creatureNatureDay;
 		this.creatureNatureNight = creatureNatureNight;
 		this.collisionDamage = collisionDamage;
@@ -32,69 +33,7 @@ public class CreatureInfo {
 		this.burnDay = burnDay;
 		this.spawnChance = spawnChance;
 		this.type = type;
-	}
-
-	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight,
-			int collisionDamage, int miscDamage, int health,
-			int targetDistance, boolean burnDay, CreatureType type) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.targetDistance = targetDistance;
-		this.burnDay = burnDay;
-		this.type = type;
-	}
-
-	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight,
-			int collisionDamage, int miscDamage, int health,
-			int targetDistance, float spawnChance, CreatureType type) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.targetDistance = targetDistance;
-		this.spawnChance = spawnChance;
-		this.type = type;
-	}
-
-	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight,
-			int collisionDamage, int miscDamage, int health, boolean burnDay,
-			float spawnChance, CreatureType type) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.burnDay = burnDay;
-		this.spawnChance = spawnChance;
-		this.type = type;
-	}
-
-	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight,
-			int collisionDamage, int miscDamage, int health,
-			int targetDistance, CreatureType type) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.targetDistance = targetDistance;
-		this.type = type;
-	}
-
-	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight,
-			int collisionDamage, int miscDamage, int health, float spawnChance,
-			CreatureType type) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.spawnChance = spawnChance;
-		this.type = type;
+		this.enabled = enabled;
 	}
 
 	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight,
@@ -105,6 +44,14 @@ public class CreatureInfo {
 		this.miscDamage = miscDamage;
 		this.health = health;
 		this.type = type;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public void setCreatureNatureDay(Nature creatureNature) {
@@ -182,7 +129,7 @@ public class CreatureInfo {
 	public CreatureInfo copy() {
 		return new CreatureInfo(creatureNatureDay, creatureNatureNight,
 				collisionDamage, miscDamage, health, targetDistance, burnDay,
-				spawnChance, type);
+				spawnChance, type, enabled);
 	}
 
 }
