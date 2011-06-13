@@ -91,9 +91,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 		// Register the damage handler
 		getServer().getScheduler().scheduleSyncRepeatingTask(this,
-				new DamageHandler(this), 0, 20); // Start immediately and call
-													// every 20
-		// ticks(1 second)
+				new DamageHandler(this), 0, 20);
 	}
 
 	public CreatureHandler getCreatureHandler(World w) {
@@ -102,10 +100,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 		} else {
 			CreatureHandler creatureHandler;
 			try {
-				creatureHandler = new CreatureHandler(dbManage);
+				creatureHandler = new CreatureHandler(dbManage, w);
 				// Register the creature handler repeating task
 				getServer().getScheduler().scheduleSyncRepeatingTask(this,
-						creatureHandler, 0, 200); // Start
+						creatureHandler, 0, 20); // Start
 
 				return creatureHandler;
 			} catch (SQLException e) {

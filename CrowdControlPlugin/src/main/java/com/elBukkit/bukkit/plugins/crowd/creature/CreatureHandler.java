@@ -44,13 +44,15 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
 
 public class CreatureHandler implements Runnable {
 
+	World world;
 	private Map<CreatureType, CreatureInfo> creatureTypeMap;
 	private Map<Creature, CreatureInfo> creatureInfoMap;
 	private Map<Creature, Set<Player>> attacked;
 	private sqlCore dbManage;
 
-	public CreatureHandler(sqlCore dbManage) throws SQLException {
+	public CreatureHandler(sqlCore dbManage, World w) throws SQLException {
 		this.dbManage = dbManage;
+		this.world = w;
 		creatureTypeMap = new HashMap<CreatureType, CreatureInfo>();
 		creatureInfoMap = new HashMap<Creature, CreatureInfo>();
 		attacked = new HashMap<Creature, Set<Player>>();
@@ -299,6 +301,16 @@ public class CreatureHandler implements Runnable {
 				}
 			} else {
 				attacked.remove(c);
+			}
+		}
+		
+		// Remove non-tracked entities
+		for (Entity e : world.getEntities()) {
+			if (e instanceof Creature) {
+				if (!creatureInfoMap.containsKey((Creature)e)){
+					((Creature)e).damage(99999);
+					((Creature)e).remove();
+				}
 			}
 		}
 	}
