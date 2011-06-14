@@ -32,9 +32,9 @@ public class SpawnMaterialRule extends Rule {
     @Override
     public boolean check(Info info) {
         if (material.equals(info.getLocation().getBlock().getType())) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     @Override

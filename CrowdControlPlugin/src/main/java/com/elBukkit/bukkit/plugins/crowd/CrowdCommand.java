@@ -1,5 +1,6 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -209,7 +210,13 @@ public class CrowdCommand implements CommandExecutor {
             }
         } else if (args[0].equals("maxPerWorld")) {
             if (args.length >= 2) {
-                plugin.maxPerWorld = Integer.parseInt(args[1]);
+                try {
+                    plugin.setMaxPerWorld(Integer.parseInt(args[1]));
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("Error, [Max] must be a whole positive number!");
+                } catch (IOException e) {
+                    sender.sendMessage("Error saving max to file!");
+                }
                 sender.sendMessage("Max set");
             } else {
                 sender.sendMessage("Usage: crowd maxPerWorld [Max]");
@@ -217,7 +224,13 @@ public class CrowdCommand implements CommandExecutor {
             }
         } else if (args[0].equals("maxPerChunk")) {
             if (args.length >= 2) {
-                plugin.maxPerChunk = Integer.parseInt(args[1]);
+                try {
+                    plugin.setMaxPerChunk(Integer.parseInt(args[1]));
+                } catch (NumberFormatException e) {
+                    sender.sendMessage("Error, [Max] must be a whole positive number!");
+                } catch (IOException e) {
+                    sender.sendMessage("Error saving max to file!");
+                }
                 sender.sendMessage("Max set");
             } else {
                 sender.sendMessage("Usage: crowd maxPerChunk [Max]");

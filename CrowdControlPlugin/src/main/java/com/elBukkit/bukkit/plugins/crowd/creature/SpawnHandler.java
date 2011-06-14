@@ -59,8 +59,8 @@ public class SpawnHandler implements Runnable {
             for (int i = 0; i <= 3; i++) { // 4 chances to spawn
 
                 for (Chunk c : spawningChunks) {
-                    if (handler.getCreatureCount() < plugin.maxPerWorld) {
-                        if (c.getEntities().length < plugin.maxPerChunk) {
+                    if (handler.getCreatureCount() < plugin.getMaxPerWorld()) {
+                        if (c.getEntities().length < plugin.getMaxPerChunk()) {
 
                             List<CreatureType> enabledTypes = handler.getEnabledCreatureTypes();
                             CreatureType type = enabledTypes.get(rand.nextInt(enabledTypes.size()));
@@ -74,14 +74,14 @@ public class SpawnHandler implements Runnable {
                                     info.setLocation(spawnBlock.getLocation());
                                     info.setEnv(world.getEnvironment());
                                     info.setType(type);
-                                    
-                                    if(rand.nextFloat() < handler.getInfo(type).getSpawnChance()) {
+
+                                    if (rand.nextFloat() < handler.getInfo(type).getSpawnChance()) {
 
                                         if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
                                             plugin.pendingSpawn.add(info);
                                             info.spawn();
                                         }
-                                    
+
                                     }
                                 }
                             }
