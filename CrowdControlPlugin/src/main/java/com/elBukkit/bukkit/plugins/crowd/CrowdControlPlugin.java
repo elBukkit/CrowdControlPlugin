@@ -39,7 +39,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public Set<Info> pendingSpawn = new HashSet<Info>();
 	private PluginDescriptionFile pdf;
 	public Map<Class<? extends Rule>, String> ruleCommands;
-	
+
 	public int maxPerWorld = 200;
 	public int maxPerChunk = 4;
 
@@ -56,7 +56,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public void onEnable() {
 		pdf = this.getDescription();
 		System.out.println(pdf.getFullName() + " is enabled!");
-		
+
 		ruleCommands = new HashMap<Class<? extends Rule>, String>();
 		ruleCommands.put(MaxRule.class, "[max number]");
 		ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");

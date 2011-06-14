@@ -40,7 +40,7 @@ public class CrowdEntityListener extends EntityListener {
 	@Override
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
 		if (event.isCancelled())
-            return;
+			return;
 		for (Info i : plugin.pendingSpawn) {
 			if (i.getID() == event.getEntity().getEntityId()) {
 				plugin.pendingSpawn.remove(i);
@@ -104,7 +104,7 @@ public class CrowdEntityListener extends EntityListener {
 	@Override
 	public void onEntityTarget(EntityTargetEvent event) {
 		if (event.isCancelled())
-            return;
+			return;
 		if (event.getEntity() instanceof LivingEntity) {
 			Info info = new Info();
 			info.setEntity((LivingEntity) event.getEntity());
@@ -137,7 +137,7 @@ public class CrowdEntityListener extends EntityListener {
 	@Override
 	public void onEntityCombust(EntityCombustEvent event) {
 		if (event.isCancelled())
-            return;
+			return;
 		if (event.getEntity() instanceof LivingEntity) {
 			CreatureInfo cInfo = plugin.getCreatureHandler(
 					event.getEntity().getWorld()).getInfo(
@@ -157,7 +157,7 @@ public class CrowdEntityListener extends EntityListener {
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
 		if (event.isCancelled())
-            return;
+			return;
 		if (event.getCause() == DamageCause.ENTITY_ATTACK) {
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent entityDmgEvent = (EntityDamageByEntityEvent) event;

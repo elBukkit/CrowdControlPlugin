@@ -54,7 +54,8 @@ public class CreatureHandler implements Runnable {
 	private sqlCore dbManage;
 	Random random = new Random();
 
-	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
+	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin)
+			throws SQLException {
 		this.dbManage = dbManage;
 		this.world = w;
 		enabledCreatures = new HashMap<CreatureType, CreatureInfo>();
@@ -67,9 +68,9 @@ public class CreatureHandler implements Runnable {
 					+ "Id INTEGER PRIMARY KEY AUTOINCREMENT, "
 					+ "Creature VARCHAR(255), " + "NatureDay VARCHAR(255), "
 					+ "NatureNight VARCHAR(255), " + "CollisionDmg INT(10), "
-					+ "MiscDmg INT(10)," + "BurnDay TINYINT(1),"
+					+ "MiscDmg INT(10)," + "BurnDay VARCHAR(5),"
 					+ "Health INT(10), " + "TargetDistance INT(10), "
-					+ "SpawnChance FLOAT(1,2), " + "Enabled TINYINT(1)" + ");";
+					+ "SpawnChance FLOAT(1,2), " + "Enabled VARCHAR(5)" + ");";
 			dbManage.createTable(createDB);
 			generateDefaults();
 		} else {
@@ -213,13 +214,13 @@ public class CreatureHandler implements Runnable {
 					+ "', CollisionDmg = '"
 					+ String.valueOf(info.getCollisionDamage())
 					+ "', MiscDmg = '" + String.valueOf(info.getMiscDamage())
-					+ "', BurnDay = '" + (info.isBurnDay() ? 1 : 0)
+					+ "', BurnDay = '" + String.valueOf(info.isBurnDay())
 					+ "', Health = '" + String.valueOf(info.getHealth())
 					+ "', TargetDistance = '"
 					+ String.valueOf(info.getTargetDistance())
 					+ "', SpawnChance = '"
 					+ String.valueOf(info.getSpawnChance()) + "', Enabled = '"
-					+ (info.isEnabled() ? 1 : 0) + "' WHERE Creature = '"
+					+ String.valueOf(info.isEnabled()) + "' WHERE Creature = '"
 					+ type.toString() + "';";
 
 			dbManage.updateQuery(updateSQL);
@@ -235,7 +236,7 @@ public class CreatureHandler implements Runnable {
 					+ "', '"
 					+ String.valueOf(info.getMiscDamage())
 					+ "', '"
-					+ (info.isBurnDay() ? 1 : 0)
+					+ String.valueOf(info.isBurnDay())
 					+ "', '"
 					+ String.valueOf(info.getHealth())
 					+ "', '"
@@ -243,7 +244,7 @@ public class CreatureHandler implements Runnable {
 					+ "', '"
 					+ String.valueOf(info.getSpawnChance())
 					+ "', '"
-					+ (info.isBurnDay() ? 1 : 0) + "');";
+					+ String.valueOf(info.isEnabled()) + "');";
 
 			dbManage.insertQuery(addSQL);
 		}
@@ -460,31 +461,34 @@ public class CreatureHandler implements Runnable {
 		if (world.getPlayers().size() <= 0) {
 			killAll();
 		}
-		
+
 		// Forget target
-		
+
 		for (LivingEntity e : copy) {
 			Set<Player> players = attacked.get(e);
-			
-			for (Player p : players) {
-				double deltax = Math.abs(e.getLocation().getX()
-						- p.getLocation().getX());
-				double deltay = Math.abs(e.getLocation().getY()
-						- p.getLocation().getY());
-				double deltaz = Math.abs(e.getLocation().getZ()
-						- p.getLocation().getZ());
-				double distance = Math.sqrt((deltax * deltax)
-						+ (deltay * deltay) + (deltaz * deltaz));
-				
-				if (distance > livingEntityInfoMap.get(e).getTargetDistance()) {
-					players.remove(p);
-				}
-			}
-			
+
+			if (players != null)
+				if (players.size() > 0)
+					for (Player p : players) {
+						double deltax = Math.abs(e.getLocation().getX()
+								- p.getLocation().getX());
+						double deltay = Math.abs(e.getLocation().getY()
+								- p.getLocation().getY());
+						double deltaz = Math.abs(e.getLocation().getZ()
+								- p.getLocation().getZ());
+						double distance = Math.sqrt((deltax * deltax)
+								+ (deltay * deltay) + (deltaz * deltaz));
+
+						if (distance > livingEntityInfoMap.get(e)
+								.getTargetDistance()) {
+							players.remove(p);
+						}
+					}
+
 			attacked.put(e, players);
-			
+
 			if (e instanceof Creature) {
-				Creature c = (Creature)e;
+				Creature c = (Creature) e;
 				if (c.getTarget() != null) {
 					double deltax = Math.abs(e.getLocation().getX()
 							- c.getTarget().getLocation().getX());
@@ -494,8 +498,9 @@ public class CreatureHandler implements Runnable {
 							- c.getTarget().getLocation().getZ());
 					double distance = Math.sqrt((deltax * deltax)
 							+ (deltay * deltay) + (deltaz * deltaz));
-					
-					if (distance > livingEntityInfoMap.get(e).getTargetDistance()) {
+
+					if (distance > livingEntityInfoMap.get(e)
+							.getTargetDistance()) {
 						c.setTarget(null);
 					}
 				}
