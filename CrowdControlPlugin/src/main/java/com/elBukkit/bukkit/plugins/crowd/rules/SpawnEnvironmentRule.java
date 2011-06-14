@@ -15,30 +15,29 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class SpawnEnvironmentRule extends Rule {
 
-	private Environment spawnableEnvironment;
+    private Environment spawnableEnvironment;
 
-	public SpawnEnvironmentRule(World world, CreatureType type,
-			CrowdControlPlugin plugin) {
-		super(world, type, plugin);
-		this.ruleType = Type.Spawn;
-		// TODO Auto-generated constructor stub
-	}
+    public SpawnEnvironmentRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(world, type, plugin);
+        this.ruleType = Type.Spawn;
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
-	public void init(String data) {
-		this.spawnableEnvironment = Environment.valueOf(data);
-	}
+    @Override
+    public void init(String data) {
+        this.spawnableEnvironment = Environment.valueOf(data);
+    }
 
-	@Override
-	public boolean check(Info info) {
-		if (this.spawnableEnvironment.equals(info.getEnv())) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean check(Info info) {
+        if (this.spawnableEnvironment.equals(info.getEnv())) {
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public String getData() {
-		return spawnableEnvironment.toString();
-	}
+    @Override
+    public String getData() {
+        return spawnableEnvironment.toString();
+    }
 }

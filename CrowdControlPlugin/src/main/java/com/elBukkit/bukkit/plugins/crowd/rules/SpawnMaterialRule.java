@@ -15,34 +15,31 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class SpawnMaterialRule extends Rule {
 
-	private Material material;
-	private boolean spawnable = true;
+    private Material material;
 
-	public SpawnMaterialRule(World world, CreatureType type,
-			CrowdControlPlugin plugin) {
-		super(world, type, plugin);
-		this.ruleType = Type.Spawn;
-		// TODO Auto-generated constructor stub
-	}
+    public SpawnMaterialRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(world, type, plugin);
+        this.ruleType = Type.Spawn;
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
-	public void init(String data) {
-		String[] split = data.split(",");
-		material = Material.valueOf(split[0]);
-		spawnable = Boolean.valueOf(split[1]);
-	}
+    @Override
+    public void init(String data) {
+        String[] split = data.split(",");
+        material = Material.valueOf(split[0]);
+    }
 
-	@Override
-	public boolean check(Info info) {
-		if (material.equals(info.getLocation().getBlock().getType())) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public boolean check(Info info) {
+        if (material.equals(info.getLocation().getBlock().getType())) {
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public String getData() {
-		return material.toString() + "," + String.valueOf(spawnable);
-	}
+    @Override
+    public String getData() {
+        return material.toString();
+    }
 
 }

@@ -14,33 +14,32 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class SpawnReplaceRule extends Rule {
 
-	CreatureType replaceType;
+    CreatureType replaceType;
 
-	public SpawnReplaceRule(World world, CreatureType type,
-			CrowdControlPlugin plugin) {
-		super(world, type, plugin);
-		this.ruleType = Type.Spawn;
-		// TODO Auto-generated constructor stub
-	}
+    public SpawnReplaceRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(world, type, plugin);
+        this.ruleType = Type.Spawn;
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
-	public void init(String data) {
-		replaceType = CreatureType.valueOf(data);
-	}
+    @Override
+    public void init(String data) {
+        replaceType = CreatureType.valueOf(data);
+    }
 
-	public void init(CreatureType type) {
-		replaceType = type;
-	}
+    public void init(CreatureType type) {
+        replaceType = type;
+    }
 
-	@Override
-	public boolean check(Info info) {
-		info.setType(replaceType);
-		return true;
-	}
+    @Override
+    public boolean check(Info info) {
+        info.setType(replaceType);
+        return true;
+    }
 
-	@Override
-	public String getData() {
-		return replaceType.toString();
-	}
+    @Override
+    public String getData() {
+        return replaceType.toString();
+    }
 
 }

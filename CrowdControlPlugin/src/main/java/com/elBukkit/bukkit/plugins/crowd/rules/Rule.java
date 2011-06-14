@@ -35,105 +35,105 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class Rule {
 
-	protected World world;
-	protected CreatureType type;
-	protected Type ruleType;
-	protected CrowdControlPlugin plugin;
+    protected World world;
+    protected CreatureType type;
+    protected Type ruleType;
+    protected CrowdControlPlugin plugin;
 
-	public Rule(World world, CreatureType type, CrowdControlPlugin plugin) {
-		this.world = world;
-		this.type = type;
-		this.plugin = plugin;
-	}
+    public Rule(World world, CreatureType type, CrowdControlPlugin plugin) {
+        this.world = world;
+        this.type = type;
+        this.plugin = plugin;
+    }
 
-	public boolean check(Info info) {
-		return true;
-	} // Check if creature passes
+    public boolean check(Info info) {
+        return true;
+    } // Check if creature passes
 
-	public boolean checkWorld(World world) { // Check if the world is effected
-												// by this rule
-		return this.world.equals(world);
-	}
+    public boolean checkWorld(World world) { // Check if the world is effected
+                                             // by this rule
+        return this.world.equals(world);
+    }
 
-	public boolean checkCreatureType(CreatureType type) { // Check if the
-															// creature is
-															// effected by the
-															// rule
-		return this.type.equals(type);
-	}
+    public boolean checkCreatureType(CreatureType type) { // Check if the
+                                                          // creature is
+                                                          // effected by the
+                                                          // rule
+        return this.type.equals(type);
+    }
 
-	// Classes used for saving data
-	public CreatureType getCreatureType() {
-		return type;
-	}
+    // Classes used for saving data
+    public CreatureType getCreatureType() {
+        return type;
+    }
 
-	public World getWorld() {
-		return world;
-	}
+    public World getWorld() {
+        return world;
+    }
 
-	public Type getType() {
-		return ruleType;
-	}
+    public Type getType() {
+        return ruleType;
+    }
 
-	public String getData() {
-		return "";
-	}
+    public String getData() {
+        return "";
+    }
 
-	public void init(String data) {
-	}
+    public void init(String data) {
+    }
 
-	protected CreatureType getCreatureType(Entity entity) {
-		if (entity instanceof LivingEntity) {
-			if (entity instanceof Creature) {
-				// Animals
-				if (entity instanceof Animals) {
-					if (entity instanceof Chicken) {
-						return CreatureType.CHICKEN;
-					} else if (entity instanceof Cow) {
-						return CreatureType.COW;
-					} else if (entity instanceof Pig) {
-						return CreatureType.PIG;
-					} else if (entity instanceof Sheep) {
-						return CreatureType.SHEEP;
-					}
-				}
-				// Monsters
-				else if (entity instanceof Monster) {
-					if (entity instanceof Zombie) {
-						if (entity instanceof PigZombie) {
-							return CreatureType.PIG_ZOMBIE;
-						} else {
-							return CreatureType.ZOMBIE;
-						}
-					} else if (entity instanceof Creeper) {
-						return CreatureType.CREEPER;
-					} else if (entity instanceof Giant) {
-						return CreatureType.GIANT;
-					} else if (entity instanceof Skeleton) {
-						return CreatureType.SKELETON;
-					} else if (entity instanceof Spider) {
-						return CreatureType.SPIDER;
-					} else if (entity instanceof Slime) {
-						return CreatureType.SLIME;
-					}
-				}
-				// Water Animals
-				else if (entity instanceof WaterMob) {
-					if (entity instanceof Squid) {
-						return CreatureType.SQUID;
-					}
-				}
-			}
-			// Flying
-			else if (entity instanceof Flying) {
-				if (entity instanceof Ghast) {
-					return CreatureType.GHAST;
-				}
-			} else {
-				return CreatureType.MONSTER;
-			}
-		}
-		return null;
-	}
+    protected CreatureType getCreatureType(Entity entity) {
+        if (entity instanceof LivingEntity) {
+            if (entity instanceof Creature) {
+                // Animals
+                if (entity instanceof Animals) {
+                    if (entity instanceof Chicken) {
+                        return CreatureType.CHICKEN;
+                    } else if (entity instanceof Cow) {
+                        return CreatureType.COW;
+                    } else if (entity instanceof Pig) {
+                        return CreatureType.PIG;
+                    } else if (entity instanceof Sheep) {
+                        return CreatureType.SHEEP;
+                    }
+                }
+                // Monsters
+                else if (entity instanceof Monster) {
+                    if (entity instanceof Zombie) {
+                        if (entity instanceof PigZombie) {
+                            return CreatureType.PIG_ZOMBIE;
+                        } else {
+                            return CreatureType.ZOMBIE;
+                        }
+                    } else if (entity instanceof Creeper) {
+                        return CreatureType.CREEPER;
+                    } else if (entity instanceof Giant) {
+                        return CreatureType.GIANT;
+                    } else if (entity instanceof Skeleton) {
+                        return CreatureType.SKELETON;
+                    } else if (entity instanceof Spider) {
+                        return CreatureType.SPIDER;
+                    } else if (entity instanceof Slime) {
+                        return CreatureType.SLIME;
+                    }
+                }
+                // Water Animals
+                else if (entity instanceof WaterMob) {
+                    if (entity instanceof Squid) {
+                        return CreatureType.SQUID;
+                    }
+                }
+            }
+            // Flying
+            else if (entity instanceof Flying) {
+                if (entity instanceof Ghast) {
+                    return CreatureType.GHAST;
+                }
+            } else {
+                return CreatureType.MONSTER;
+            }
+        }
+        return null;
+    }
 
 }
