@@ -92,7 +92,6 @@ public class CrowdControlPlugin extends JavaPlugin {
         
         try {
             if (!configFile.exists()) {
-                configFile.mkdirs();
                 configFile.createNewFile();
                 
                 PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
