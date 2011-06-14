@@ -87,27 +87,27 @@ public class CrowdControlPlugin extends JavaPlugin {
             this.setEnabled(false);
             return;
         }
-        
+
         configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.txt");
-        
+
         try {
             if (!configFile.exists()) {
                 configFile.createNewFile();
-                
+
                 PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
-                
-                globalConfigWriter.println("maxPerWorld:"+String.valueOf(this.maxPerWorld));
-                globalConfigWriter.println("maxPerChunk:"+String.valueOf(this.maxPerChunk));
-                
+
+                globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
+                globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
+
                 globalConfigWriter.close();
-            }         
-            
+            }
+
             Scanner globalConfigReader = new Scanner(new FileInputStream(configFile));
             globalConfigReader.useDelimiter(System.getProperty("line.separator"));
 
             while (globalConfigReader.hasNext()) {
                 String[] data = processLine(globalConfigReader.next());
-                
+
                 if (data != null) {
                     if (data[0].equalsIgnoreCase("maxPerWorld")) {
                         this.maxPerWorld = Integer.parseInt(data[1]);
@@ -116,9 +116,7 @@ public class CrowdControlPlugin extends JavaPlugin {
                     }
                 }
             }
-            
-            
-            
+
             globalConfigReader.reset();
 
         } catch (IOException e) {
@@ -165,40 +163,40 @@ public class CrowdControlPlugin extends JavaPlugin {
             return null;
         }
     }
-    
+
     public void setMaxPerChunk(int max) throws IOException {
         PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
-        
+
         this.maxPerChunk = max;
-        
+
         this.configFile.delete();
         this.configFile.createNewFile();
-        
-        globalConfigWriter.println("maxPerWorld:"+String.valueOf(this.maxPerWorld));
-        globalConfigWriter.println("maxPerChunk:"+String.valueOf(this.maxPerChunk));
-        
+
+        globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
+        globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
+
         globalConfigWriter.close();
     }
-    
+
     public void setMaxPerWorld(int max) throws IOException {
-        
+
         PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
-        
+
         this.maxPerWorld = max;
-        
+
         this.configFile.delete();
         this.configFile.createNewFile();
-        
-        globalConfigWriter.println("maxPerWorld:"+String.valueOf(this.maxPerWorld));
-        globalConfigWriter.println("maxPerChunk:"+String.valueOf(this.maxPerChunk));
-        
+
+        globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
+        globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
+
         globalConfigWriter.close();
     }
-    
-    public int getMaxPerWorld(){
+
+    public int getMaxPerWorld() {
         return this.maxPerWorld;
     }
-    
+
     public int getMaxPerChunk() {
         return this.maxPerChunk;
     }

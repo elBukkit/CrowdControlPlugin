@@ -2,7 +2,6 @@ package com.elBukkit.bukkit.plugins.crowd.rules;
 
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.CreatureType;
 
 import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
@@ -32,11 +31,11 @@ public class SpawnMaterialRule extends Rule {
 
     @Override
     public boolean check(Info info) {
-        Block block = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() -1, info.getLocation().getBlockZ());
-        if (material.equals(block.getType())) {
-            return false;
+        Material blockMaterial = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
+        if (material != blockMaterial) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

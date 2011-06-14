@@ -96,10 +96,9 @@ public class RuleHandler {
             if (r.getType().equals(type)) {
                 if (r.checkWorld(info.getLocation().getWorld())) {
                     if (r.checkCreatureType(info.getType())) {
-                        if (r.check(info)) {
-                            return true;
+                        if (!r.check(info)) {
+                            return false;
                         }
-                        return false;
                     }
                 }
             }
