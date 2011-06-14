@@ -200,11 +200,8 @@ public class CrowdCommand implements CommandExecutor {
 				World w = Bukkit.getServer().getWorld(args[1]);
 				if (args[2].equalsIgnoreCase("all")) {
 					plugin.getCreatureHandler(w).killAll();
-					plugin.getCreatureHandler(w).clearArrays();
 				} else {
 					plugin.getCreatureHandler(w).killAll(
-							CreatureType.valueOf(args[2]));
-					plugin.getCreatureHandler(w).clearArrays(
 							CreatureType.valueOf(args[2]));
 				}
 				sender.sendMessage("Nuked!");
@@ -227,6 +224,7 @@ public class CrowdCommand implements CommandExecutor {
 					plugin.getCreatureHandler(
 							Bukkit.getServer().getWorld(args[2])).setInfo(
 							CreatureType.valueOf(args[1]), info);
+					sender.sendMessage("Set creature info!");
 				} catch (SQLException e) {
 					sender.sendMessage("Error saving creature info!");
 				}
@@ -236,8 +234,17 @@ public class CrowdCommand implements CommandExecutor {
 		} else if (args[0].equals("maxPerWorld")) {
 			if (args.length >= 2) {
 				plugin.maxPerWorld = Integer.parseInt(args[1]);
+				sender.sendMessage("Max set");
 			} else {
 				sender.sendMessage("Usage: crowd maxPerWorld [Max]");
+				return false;
+			}
+		} else if (args[0].equals("maxPerChunk")) {
+			if (args.length >= 2) {
+				plugin.maxPerChunk = Integer.parseInt(args[1]);
+				sender.sendMessage("Max set");
+			} else {
+				sender.sendMessage("Usage: crowd maxPerChunk [Max]");
 				return false;
 			}
 		}

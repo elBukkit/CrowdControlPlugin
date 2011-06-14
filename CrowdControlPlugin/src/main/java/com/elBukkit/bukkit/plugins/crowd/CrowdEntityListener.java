@@ -1,8 +1,6 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,14 +37,13 @@ public class CrowdEntityListener extends EntityListener {
 		this.plugin = plugin;
 	}
 
-	private Set<Info> pendingSpawn = new HashSet<Info>();
-
 	@Override
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-
-		for (Info i : pendingSpawn) {
+		if (event.isCancelled())
+            return;
+		for (Info i : plugin.pendingSpawn) {
 			if (i.getID() == event.getEntity().getEntityId()) {
-				pendingSpawn.remove(i);
+				plugin.pendingSpawn.remove(i);
 				if (event.getEntity() instanceof LivingEntity) {
 					plugin.getCreatureHandler(event.getLocation().getWorld())
 							.addLivingEntity((LivingEntity) event.getEntity());
@@ -85,10 +82,17 @@ public class CrowdEntityListener extends EntityListener {
 							}
 						}
 					}
-					if (plugin.getCreatureHandler(
-							event.getLocation().getWorld()).getCreatureCount() < plugin.maxPerWorld) {
-						pendingSpawn.add(info);
-						info.spawn();
+					if (event.getLocation().getWorld().getPlayers().size() > 0) {
+						if (plugin.getCreatureHandler(
+								event.getLocation().getWorld())
+								.getCreatureCount() < plugin.maxPerWorld) {
+							if (event.getLocation().getWorld()
+									.getChunkAt(event.getLocation())
+									.getEntities().length < plugin.maxPerChunk) {
+								plugin.pendingSpawn.add(info);
+								info.spawn();
+							}
+						}
 					}
 				}
 			}
@@ -99,6 +103,8 @@ public class CrowdEntityListener extends EntityListener {
 
 	@Override
 	public void onEntityTarget(EntityTargetEvent event) {
+		if (event.isCancelled())
+            return;
 		if (event.getEntity() instanceof LivingEntity) {
 			Info info = new Info();
 			info.setEntity((LivingEntity) event.getEntity());
@@ -130,6 +136,8 @@ public class CrowdEntityListener extends EntityListener {
 
 	@Override
 	public void onEntityCombust(EntityCombustEvent event) {
+		if (event.isCancelled())
+            return;
 		if (event.getEntity() instanceof LivingEntity) {
 			CreatureInfo cInfo = plugin.getCreatureHandler(
 					event.getEntity().getWorld()).getInfo(
@@ -148,6 +156,8 @@ public class CrowdEntityListener extends EntityListener {
 
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
+		if (event.isCancelled())
+            return;
 		if (event.getCause() == DamageCause.ENTITY_ATTACK) {
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent entityDmgEvent = (EntityDamageByEntityEvent) event;

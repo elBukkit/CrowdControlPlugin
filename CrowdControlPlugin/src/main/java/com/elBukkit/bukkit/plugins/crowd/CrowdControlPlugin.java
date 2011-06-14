@@ -2,7 +2,9 @@ package com.elBukkit.bukkit.plugins.crowd;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -34,9 +36,12 @@ import com.elBukkit.bukkit.plugins.crowd.rules.TargetPlayerRule;
 public class CrowdControlPlugin extends JavaPlugin {
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
+	public Set<Info> pendingSpawn = new HashSet<Info>();
 	private PluginDescriptionFile pdf;
 	public Map<Class<? extends Rule>, String> ruleCommands;
-	public int maxPerWorld = 1000;
+	
+	public int maxPerWorld = 200;
+	public int maxPerChunk = 4;
 
 	public RuleHandler ruleHandler;
 	public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
@@ -51,7 +56,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public void onEnable() {
 		pdf = this.getDescription();
 		System.out.println(pdf.getFullName() + " is enabled!");
-
+		
 		ruleCommands = new HashMap<Class<? extends Rule>, String>();
 		ruleCommands.put(MaxRule.class, "[max number]");
 		ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
@@ -114,7 +119,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		} else {
 			CreatureHandler creatureHandler;
 			try {
-				creatureHandler = new CreatureHandler(dbManage, w);
+				creatureHandler = new CreatureHandler(dbManage, w, this);
 				// Register the despawner
 				getServer().getScheduler().scheduleSyncRepeatingTask(this,
 						creatureHandler, 0, 20);

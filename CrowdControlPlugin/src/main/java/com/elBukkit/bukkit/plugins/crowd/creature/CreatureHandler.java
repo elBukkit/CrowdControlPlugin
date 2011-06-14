@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Location;
@@ -36,6 +37,7 @@ import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Zombie;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 
 /*
  * Handles retrieving custom creature info from a standard CreatureType
@@ -50,8 +52,9 @@ public class CreatureHandler implements Runnable {
 	private Map<LivingEntity, CreatureInfo> livingEntityInfoMap;
 	private Map<LivingEntity, Set<Player>> attacked;
 	private sqlCore dbManage;
+	Random random = new Random();
 
-	public CreatureHandler(sqlCore dbManage, World w) throws SQLException {
+	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
 		this.dbManage = dbManage;
 		this.world = w;
 		enabledCreatures = new HashMap<CreatureType, CreatureInfo>();
@@ -392,13 +395,13 @@ public class CreatureHandler implements Runnable {
 	}
 
 	public void run() {
-		
+
 		// Despawning code
 
 		Set<LivingEntity> copy = new HashSet<LivingEntity>(
 				livingEntityInfoMap.keySet());
 		for (LivingEntity e : copy) {
-			
+
 			if (!world.getLivingEntities().contains(e)) {
 				e.remove();
 				livingEntityInfoMap.remove(e);
@@ -407,7 +410,7 @@ public class CreatureHandler implements Runnable {
 					e.remove();
 					livingEntityInfoMap.remove(e);
 				}
-				
+
 				if (e.isDead()) {
 					e.remove();
 					livingEntityInfoMap.remove(e);
@@ -415,7 +418,88 @@ public class CreatureHandler implements Runnable {
 			} else {
 				livingEntityInfoMap.remove(e);
 			}
+
+			boolean keep = false;
+
+			for (Player p : world.getPlayers()) {
+				double deltax = Math.abs(e.getLocation().getX()
+						- p.getLocation().getX());
+				double deltay = Math.abs(e.getLocation().getY()
+						- p.getLocation().getY());
+				double deltaz = Math.abs(e.getLocation().getZ()
+						- p.getLocation().getZ());
+				double distance = Math.sqrt((deltax * deltax)
+						+ (deltay * deltay) + (deltaz * deltaz));
+
+				if (distance < 128) {
+					keep = true;
+				}
+			}
+
+			if (keep) {
+				if (e instanceof Creature) {
+					if (((Creature) e).getTarget() == null) {
+						if (e instanceof Animals) {
+							if (random.nextFloat() < .10) {
+								keep = false;
+							}
+						} else {
+							if (random.nextFloat() < .025) {
+								keep = false;
+							}
+						}
+					}
+				}
+			}
+
+			if (!keep) {
+				kill(e);
+			}
 		}
 
+		if (world.getPlayers().size() <= 0) {
+			killAll();
+		}
+		
+		// Forget target
+		
+		for (LivingEntity e : copy) {
+			Set<Player> players = attacked.get(e);
+			
+			for (Player p : players) {
+				double deltax = Math.abs(e.getLocation().getX()
+						- p.getLocation().getX());
+				double deltay = Math.abs(e.getLocation().getY()
+						- p.getLocation().getY());
+				double deltaz = Math.abs(e.getLocation().getZ()
+						- p.getLocation().getZ());
+				double distance = Math.sqrt((deltax * deltax)
+						+ (deltay * deltay) + (deltaz * deltaz));
+				
+				if (distance > livingEntityInfoMap.get(e).getTargetDistance()) {
+					players.remove(p);
+				}
+			}
+			
+			attacked.put(e, players);
+			
+			if (e instanceof Creature) {
+				Creature c = (Creature)e;
+				if (c.getTarget() != null) {
+					double deltax = Math.abs(e.getLocation().getX()
+							- c.getTarget().getLocation().getX());
+					double deltay = Math.abs(e.getLocation().getY()
+							- c.getTarget().getLocation().getY());
+					double deltaz = Math.abs(e.getLocation().getZ()
+							- c.getTarget().getLocation().getZ());
+					double distance = Math.sqrt((deltax * deltax)
+							+ (deltay * deltay) + (deltaz * deltaz));
+					
+					if (distance > livingEntityInfoMap.get(e).getTargetDistance()) {
+						c.setTarget(null);
+					}
+				}
+			}
+		}
 	}
 }
