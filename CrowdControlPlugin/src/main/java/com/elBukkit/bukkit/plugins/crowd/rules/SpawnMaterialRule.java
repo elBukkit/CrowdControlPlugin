@@ -32,7 +32,8 @@ public class SpawnMaterialRule extends Rule {
     @Override
     public boolean check(Info info) {
         Material blockMaterial = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
-        if (material != blockMaterial) {
+        Material spawnBlockMaterial = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY(), info.getLocation().getBlockZ()).getType();
+        if (material != blockMaterial && material != spawnBlockMaterial) {
             return true;
         }
         return false;
