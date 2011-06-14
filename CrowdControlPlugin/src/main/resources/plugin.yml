@@ -1,12 +1,10 @@
 name: CrowdControl
 main: com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin
-version: 0.25.04
+version: 0.25.05
 website: https://github.com/elBukkit/CrowdControlPlugin
 author: elBukkit
 description : Simple console-based creature control
 commands:
   crowd:
     description: Control mob spawning
-    usage: crowd [add,finish,listPending,listEnabledRules,rebuildDB,listRules,getDetailedInfo] 
-                
-                
+    usage: crowd [add,finish,listPending,listEnabledRules,rebuildDB,listRules,getDetailedInfo]     
