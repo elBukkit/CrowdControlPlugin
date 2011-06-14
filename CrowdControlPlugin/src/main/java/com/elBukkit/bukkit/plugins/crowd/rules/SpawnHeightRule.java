@@ -31,8 +31,8 @@ public class SpawnHeightRule extends Rule {
     }
 
     public boolean spawn(Info info) {
-        if (info.getLocation().getBlockY() > min) {
-            if (info.getLocation().getBlockY() < max) {
+        if (info.getLocation().getBlockY() >= min) {
+            if (info.getLocation().getBlockY() <= max) {
                 return true;
             }
         }

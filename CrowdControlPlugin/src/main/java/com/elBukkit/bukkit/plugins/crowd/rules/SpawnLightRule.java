@@ -32,8 +32,8 @@ public class SpawnLightRule extends Rule {
 
     @Override
     public boolean check(Info info) {
-        if (info.getLocation().getBlock().getLightLevel() > min) {
-            if (info.getLocation().getBlock().getLightLevel() < max) {
+        if (info.getLocation().getBlock().getLightLevel() >= min) {
+            if (info.getLocation().getBlock().getLightLevel() <= max) {
                 return true;
             }
         }
