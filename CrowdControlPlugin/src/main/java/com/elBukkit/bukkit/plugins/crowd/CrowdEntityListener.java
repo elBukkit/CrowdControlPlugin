@@ -168,7 +168,6 @@ public class CrowdEntityListener extends EntityListener {
                 plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity(entity, event.getDamage());
                 entity.damage(0);
                 event.setCancelled(true);
-                System.out.println("Fall death");
             }
         }
 
