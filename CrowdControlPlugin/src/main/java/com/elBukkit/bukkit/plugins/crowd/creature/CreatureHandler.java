@@ -82,7 +82,7 @@ public class CreatureHandler implements Runnable {
         dbManage.close();
 
         spawnHandler = new SpawnHandler(plugin, world, this);
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, spawnHandler, 0, 1);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, spawnHandler, 0, 20);
     }
 
     public CreatureInfo getInfo(CreatureType type) {
