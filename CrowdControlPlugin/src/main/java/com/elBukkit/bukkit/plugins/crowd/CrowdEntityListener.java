@@ -162,7 +162,7 @@ public class CrowdEntityListener extends EntityListener {
                     }
                 }
             }
-        } else if (event.getCause() == DamageCause.FALL) {
+        } else {
             if (!(event.getEntity() instanceof Player)) {
                 LivingEntity entity = (LivingEntity) event.getEntity();
                 plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity(entity, event.getDamage());
