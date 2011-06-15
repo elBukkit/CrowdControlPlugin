@@ -1,11 +1,7 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityTypes;
-
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
-import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -67,11 +63,8 @@ public class Info {
         return type;
     }
 
-    public void spawn() {
-        EntityLiving entityCreature = (EntityLiving) EntityTypes.a(type.getName(), ((CraftWorld) location.getWorld()).getHandle());
-        entityCreature.setPosition(location.getX(), location.getY(), location.getZ());
-        this.id = entityCreature.id;
-        (((CraftWorld) location.getWorld()).getHandle()).addEntity(entityCreature);
+    public void spawn() { 
+        location.getWorld().spawnCreature(location, type);
     }
 
     public LivingEntity getEntity() {

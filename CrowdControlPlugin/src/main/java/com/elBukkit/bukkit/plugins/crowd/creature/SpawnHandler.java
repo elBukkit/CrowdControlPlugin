@@ -78,7 +78,7 @@ public class SpawnHandler implements Runnable {
                                     if (rand.nextFloat() < handler.getInfo(type).getSpawnChance()) {
 
                                         if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
-                                            plugin.pendingSpawn.add(info);
+                                            plugin.pendingSpawn = true;
                                             info.spawn();
                                         }
 

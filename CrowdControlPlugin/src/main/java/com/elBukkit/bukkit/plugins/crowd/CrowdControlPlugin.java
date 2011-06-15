@@ -8,10 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -43,7 +41,7 @@ import com.elBukkit.bukkit.plugins.crowd.rules.TargetPlayerRule;
 public class CrowdControlPlugin extends JavaPlugin {
 
     private CrowdEntityListener entityListener = new CrowdEntityListener(this);
-    public Set<Info> pendingSpawn = new HashSet<Info>();
+    public boolean pendingSpawn = false;
     private PluginDescriptionFile pdf;
     public Map<Class<? extends Rule>, String> ruleCommands;
 
