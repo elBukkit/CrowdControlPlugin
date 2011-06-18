@@ -21,6 +21,7 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.Spider;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
+import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 
 import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
@@ -95,6 +96,8 @@ public class Rule {
                         return CreatureType.PIG;
                     } else if (entity instanceof Sheep) {
                         return CreatureType.SHEEP;
+                    } else if (entity instanceof Wolf) {
+                    	return CreatureType.WOLF;
                     }
                 }
                 // Monsters

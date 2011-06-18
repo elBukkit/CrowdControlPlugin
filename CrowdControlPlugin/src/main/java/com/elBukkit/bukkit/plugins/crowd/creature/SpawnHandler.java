@@ -78,8 +78,8 @@ public class SpawnHandler implements Runnable {
                                     if (rand.nextFloat() < handler.getInfo(type).getSpawnChance()) {
 
                                         if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
-                                            plugin.pendingSpawn = true;
                                             info.spawn();
+                                            plugin.getCreatureHandler(spawnBlock.getLocation().getWorld()).addLivingEntity(info.getEntity());
                                         }
 
                                     }

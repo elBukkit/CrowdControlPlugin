@@ -37,14 +37,6 @@ public class CrowdEntityListener extends EntityListener {
         if (event.isCancelled())
             return;
         
-        if(plugin.pendingSpawn) {
-            plugin.pendingSpawn = false;
-            if (event.getEntity() instanceof LivingEntity) {
-                plugin.getCreatureHandler(event.getLocation().getWorld()).addLivingEntity((LivingEntity) event.getEntity());
-            }
-            return;
-        }
-        
         event.setCancelled(true);
     }
 

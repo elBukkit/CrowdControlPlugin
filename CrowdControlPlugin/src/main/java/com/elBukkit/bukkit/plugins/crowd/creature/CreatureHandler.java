@@ -34,6 +34,7 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.Spider;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
+import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
@@ -311,6 +312,8 @@ public class CreatureHandler implements Runnable {
                     return CreatureType.PIG;
                 } else if (entity instanceof Sheep) {
                     return CreatureType.SHEEP;
+                } else if (entity instanceof Wolf) {
+                	return CreatureType.WOLF;
                 }
             }
             // Monsters
