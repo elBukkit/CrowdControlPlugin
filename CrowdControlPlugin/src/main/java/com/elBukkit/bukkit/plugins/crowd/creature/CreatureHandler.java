@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Location;
@@ -52,9 +51,8 @@ public class CreatureHandler implements Runnable {
 	private sqlCore dbManage;
 	private Map<CreatureType, CreatureInfo> enabledCreatures;
 	private Map<LivingEntity, CreatureInfo> livingEntityInfoMap;
-	Random random = new Random();
-	SpawnHandler spawnHandler;
-	World world;
+	private SpawnHandler spawnHandler;
+	private World world;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
 		this.dbManage = dbManage;
