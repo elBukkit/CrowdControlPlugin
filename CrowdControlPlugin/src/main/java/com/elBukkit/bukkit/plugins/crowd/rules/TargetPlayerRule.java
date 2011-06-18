@@ -25,13 +25,6 @@ public class TargetPlayerRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		String[] split = data.split(",");
-		this.player = split[0];
-		this.targetable = Boolean.valueOf(split[1]);
-	}
-
-	@Override
 	public boolean check(Info info) {
 		if (!targetable) {
 			if (info.getTarget() instanceof Player) {
@@ -44,8 +37,16 @@ public class TargetPlayerRule extends Rule {
 		return true;
 	}
 
+	@Override
 	public String getData() {
 		return player + "," + String.valueOf(targetable);
+	}
+
+	@Override
+	public void init(String data) {
+		String[] split = data.split(",");
+		this.player = split[0];
+		this.targetable = Boolean.valueOf(split[1]);
 	}
 
 }

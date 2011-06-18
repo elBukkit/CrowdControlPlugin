@@ -27,8 +27,8 @@ import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 
 public class CrowdCommand implements CommandExecutor {
 
-	CrowdControlPlugin plugin;
 	List<Class<? extends Rule>> pendingCommands = new ArrayList<Class<? extends Rule>>();
+	CrowdControlPlugin plugin;
 
 	public CrowdCommand(CrowdControlPlugin plugin) {
 		this.plugin = plugin;

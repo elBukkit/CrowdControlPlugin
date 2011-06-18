@@ -24,12 +24,6 @@ public class SpawnMaterialRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		String[] split = data.split(",");
-		material = Material.valueOf(split[0]);
-	}
-
-	@Override
 	public boolean check(Info info) {
 		Material blockMaterial = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
 		Material spawnBlockMaterial = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY(), info.getLocation().getBlockZ()).getType();
@@ -42,6 +36,12 @@ public class SpawnMaterialRule extends Rule {
 	@Override
 	public String getData() {
 		return material.toString();
+	}
+
+	@Override
+	public void init(String data) {
+		String[] split = data.split(",");
+		material = Material.valueOf(split[0]);
 	}
 
 }

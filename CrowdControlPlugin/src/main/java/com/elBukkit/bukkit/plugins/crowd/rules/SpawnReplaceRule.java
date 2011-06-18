@@ -23,15 +23,6 @@ public class SpawnReplaceRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		replaceType = CreatureType.valueOf(data);
-	}
-
-	public void init(CreatureType type) {
-		replaceType = type;
-	}
-
-	@Override
 	public boolean check(Info info) {
 		info.setType(replaceType);
 		return true;
@@ -40,6 +31,15 @@ public class SpawnReplaceRule extends Rule {
 	@Override
 	public String getData() {
 		return replaceType.toString();
+	}
+
+	public void init(CreatureType type) {
+		replaceType = type;
+	}
+
+	@Override
+	public void init(String data) {
+		replaceType = CreatureType.valueOf(data);
 	}
 
 }

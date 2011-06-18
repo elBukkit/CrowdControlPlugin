@@ -28,10 +28,10 @@ public class DamageHandler implements Runnable {
 				double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
 				double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
-				CreatureInfo cInfo = plugin.getCreatureHandler(p.getWorld()).getInfo(plugin.getCreatureHandler(p.getWorld()).getCreatureType((LivingEntity) e));
+				CreatureInfo cInfo = plugin.getCreatureHandler(p.getWorld()).getInfo(plugin.getCreatureHandler(p.getWorld()).getCreatureType(e));
 
 				if (cInfo != null) {
-					LivingEntity entity = (LivingEntity) e;
+					LivingEntity entity = e;
 
 					if (entity instanceof Creature) { // Living entities
 														// cannot have
@@ -42,13 +42,13 @@ public class DamageHandler implements Runnable {
 							if (plugin.getCreatureHandler(p.getWorld()).isDay(e.getWorld())) {
 								switch (cInfo.getCreatureNatureDay()) {
 								case Aggressive:
-									c.setTarget((LivingEntity) p);
+									c.setTarget(p);
 									break;
 								case Neutral:
 									Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
 									if (attackingPlayers != null && attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
-											c.setTarget((LivingEntity) p);
+											c.setTarget(p);
 										}
 									}
 									break;
@@ -56,13 +56,13 @@ public class DamageHandler implements Runnable {
 							} else {
 								switch (cInfo.getCreatureNatureNight()) {
 								case Aggressive:
-									c.setTarget((LivingEntity) p);
+									c.setTarget(p);
 									break;
 								case Neutral:
 									Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
 									if (attackingPlayers != null && attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
-											c.setTarget((LivingEntity) p);
+											c.setTarget(p);
 										}
 									}
 									break;

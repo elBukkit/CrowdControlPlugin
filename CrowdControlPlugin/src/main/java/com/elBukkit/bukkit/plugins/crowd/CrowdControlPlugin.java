@@ -40,19 +40,45 @@ import com.elBukkit.bukkit.plugins.crowd.rules.TargetPlayerRule;
 
 public class CrowdControlPlugin extends JavaPlugin {
 
+	private File configFile;
+	public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
+	public sqlCore dbManage; // import SQLite lib
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
-	public boolean pendingSpawn = false;
+
+	private int maxPerChunk = 4;
+	private int maxPerWorld = 200;
 	private PluginDescriptionFile pdf;
+
+	public boolean pendingSpawn = false;
 	public Map<Class<? extends Rule>, String> ruleCommands;
 
-	private int maxPerWorld = 200;
-	private int maxPerChunk = 4;
-	private File configFile;
-
 	public RuleHandler ruleHandler;
-	public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
 
-	public sqlCore dbManage; // import SQLite lib
+	public CreatureHandler getCreatureHandler(World w) {
+		if (creatureHandlers.containsKey(w)) {
+			return creatureHandlers.get(w);
+		} else {
+			CreatureHandler creatureHandler;
+			try {
+				creatureHandler = new CreatureHandler(dbManage, w, this);
+				// Register the despawner
+				getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20);
+				creatureHandlers.put(w, creatureHandler);
+				return creatureHandler;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	public int getMaxPerChunk() {
+		return this.maxPerChunk;
+	}
+
+	public int getMaxPerWorld() {
+		return this.maxPerWorld;
+	}
 
 	public void onDisable() {
 		System.out.println(pdf.getFullName() + " is disabled!");
@@ -71,8 +97,9 @@ public class CrowdControlPlugin extends JavaPlugin {
 		ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
 		ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
 
-		if (!this.getDataFolder().exists())
+		if (!this.getDataFolder().exists()) {
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
+		}
 
 		String prefix = "[CrowdControl]";
 		String dbName = pdf.getName() + ".db";
@@ -189,31 +216,5 @@ public class CrowdControlPlugin extends JavaPlugin {
 		globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
 
 		globalConfigWriter.close();
-	}
-
-	public int getMaxPerWorld() {
-		return this.maxPerWorld;
-	}
-
-	public int getMaxPerChunk() {
-		return this.maxPerChunk;
-	}
-
-	public CreatureHandler getCreatureHandler(World w) {
-		if (creatureHandlers.containsKey(w)) {
-			return creatureHandlers.get(w);
-		} else {
-			CreatureHandler creatureHandler;
-			try {
-				creatureHandler = new CreatureHandler(dbManage, w, this);
-				// Register the despawner
-				getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20);
-				creatureHandlers.put(w, creatureHandler);
-				return creatureHandler;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
 	}
 }

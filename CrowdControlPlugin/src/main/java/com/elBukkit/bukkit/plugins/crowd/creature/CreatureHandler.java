@@ -48,13 +48,13 @@ import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 
 public class CreatureHandler implements Runnable {
 
-	World world;
-	private Map<CreatureType, CreatureInfo> enabledCreatures;
-	private Map<LivingEntity, CreatureInfo> livingEntityInfoMap;
 	private Map<LivingEntity, Set<Player>> attacked;
 	private sqlCore dbManage;
+	private Map<CreatureType, CreatureInfo> enabledCreatures;
+	private Map<LivingEntity, CreatureInfo> livingEntityInfoMap;
 	Random random = new Random();
 	SpawnHandler spawnHandler;
+	World world;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
 		this.dbManage = dbManage;
@@ -86,20 +86,6 @@ public class CreatureHandler implements Runnable {
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, spawnHandler, 0, 20);
 	}
 
-	public CreatureInfo getInfo(CreatureType type) {
-		if (enabledCreatures.containsKey(type)) {
-			return enabledCreatures.get(type);
-		} else {
-			CreatureInfo info = new CreatureInfo(Nature.Passive, Nature.Passive, 0, 0, 10, type);
-			enabledCreatures.put(type, info);
-			return info;
-		}
-	}
-
-	public Set<Player> getAttackingPlayers(LivingEntity entity) {
-		return this.attacked.get(entity);
-	}
-
 	public void addAttacked(LivingEntity livingEntity, Player p) {
 		if (this.attacked.containsKey(livingEntity)) {
 			Set<Player> pList = this.attacked.get(livingEntity);
@@ -115,48 +101,6 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public void killAll() {
-		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
-		for (LivingEntity entity : copy) {
-			livingEntityInfoMap.remove(entity);
-			attacked.remove(entity);
-			entity.remove();
-		}
-	}
-
-	public void killAll(CreatureType type) {
-		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
-		for (LivingEntity entity : copy) {
-			if (livingEntityInfoMap.get(entity).getType() == type) {
-				livingEntityInfoMap.remove(entity);
-				attacked.remove(entity);
-				entity.remove();
-			}
-		}
-	}
-
-	public void kill(LivingEntity entity) {
-		livingEntityInfoMap.remove(entity);
-		attacked.remove(entity);
-		entity.remove();
-	}
-
-	public void removeAttacked(LivingEntity livingEntity, Player p) {
-		if (this.attacked.containsKey(livingEntity)) {
-			Set<Player> pList = this.attacked.get(livingEntity);
-			pList.remove(p);
-			this.attacked.put(livingEntity, pList);
-		}
-	}
-
-	public void removePlayer(Player p) {
-		for (LivingEntity entity : this.attacked.keySet()) {
-			if (this.attacked.get(entity) != null) {
-				this.attacked.get(entity).remove(p);
-			}
-		}
-	}
-
 	public void addLivingEntity(LivingEntity entity) {
 		CreatureInfo cInfo = getInfo(getCreatureType(entity));
 
@@ -165,13 +109,35 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public Integer getHealth(Creature c) {
-
-		if (!livingEntityInfoMap.containsKey(c)) {
-			addLivingEntity(c);
+	public boolean canSeeSky(Location loc) {
+		for (int i = 128; i >= 0; i++) {
+			if (isTransparentBlock(loc.getWorld().getBlockAt(loc.getBlockX(), i, loc.getBlockZ()))) {
+				if (loc.getBlockY() == i) {
+					return true;
+				}
+			} else {
+				break;
+			}
 		}
+		return false;
+	}
 
-		return livingEntityInfoMap.get(c).getHealth();
+	public void clearArrays() {
+		livingEntityInfoMap.clear();
+		attacked.clear();
+	}
+
+	public void clearArrays(CreatureType type) {
+		for (LivingEntity entity : livingEntityInfoMap.keySet()) {
+			if (getCreatureType(entity) == type) {
+				livingEntityInfoMap.remove(entity);
+			}
+		}
+		for (LivingEntity entity : attacked.keySet()) {
+			if (getCreatureType(entity) == type) {
+				attacked.remove(entity);
+			}
+		}
 	}
 
 	public void damageLivingEntity(LivingEntity entity, int damage) {
@@ -193,30 +159,6 @@ public class CreatureHandler implements Runnable {
 		livingEntityInfoMap.put(entity, cInfo);
 	}
 
-	public void removeAllAttacked(LivingEntity entity) {
-		this.attacked.remove(entity);
-	}
-
-	public void setInfo(CreatureType type, CreatureInfo info) throws SQLException {
-		enabledCreatures.put(type, info);
-
-		dbManage.initialize();
-		String selectSQL = "SELECT * FROM creatureInfo WHERE Creature = '" + type.toString() + "';";
-		ResultSet rs = dbManage.sqlQuery(selectSQL);
-
-		if (rs.next()) {
-			// Creature type is in db
-			String updateSQL = "UPDATE creatureInfo SET NatureDay = '" + info.getCreatureNatureDay().toString() + "', NatureNight = '" + info.getCreatureNatureNight().toString() + "', CollisionDmg = '" + String.valueOf(info.getCollisionDamage()) + "', MiscDmg = '" + String.valueOf(info.getMiscDamage()) + "', BurnDay = '" + String.valueOf(info.isBurnDay()) + "', Health = '" + String.valueOf(info.getHealth()) + "', TargetDistance = '" + String.valueOf(info.getTargetDistance()) + "', SpawnChance = '" + String.valueOf(info.getSpawnChance()) + "', Enabled = '" + String.valueOf(info.isEnabled()) + "' WHERE Creature = '" + type.toString() + "';";
-
-			dbManage.updateQuery(updateSQL);
-		} else {
-			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance, Enabled) VALUES ('" + type.toString() + "', '" + info.getCreatureNatureDay().toString() + "', '" + info.getCreatureNatureNight().toString() + "', '" + String.valueOf(info.getCollisionDamage()) + "', '" + String.valueOf(info.getMiscDamage()) + "', '" + String.valueOf(info.isBurnDay()) + "', '" + String.valueOf(info.getHealth()) + "', '" + String.valueOf(info.getTargetDistance()) + "', '" + String.valueOf(info.getSpawnChance()) + "', '" + String.valueOf(info.isEnabled()) + "');";
-
-			dbManage.insertQuery(addSQL);
-		}
-		dbManage.close();
-	}
-
 	public void generateDefaults() throws SQLException {
 		for (CreatureType t : CreatureType.values()) {
 			CreatureInfo info = new CreatureInfo(Nature.Passive, Nature.Passive, 0, 0, 10, t);
@@ -225,9 +167,12 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public void clearArrays() {
-		livingEntityInfoMap.clear();
-		attacked.clear();
+	public Set<Player> getAttackingPlayers(LivingEntity entity) {
+		return this.attacked.get(entity);
+	}
+
+	public int getCreatureCount() {
+		return livingEntityInfoMap.size();
 	}
 
 	public int getCreatureCount(CreatureType type) {
@@ -239,71 +184,6 @@ public class CreatureHandler implements Runnable {
 		}
 
 		return count;
-	}
-
-	public int getCreatureCount() {
-		return livingEntityInfoMap.size();
-	}
-
-	public void clearArrays(CreatureType type) {
-		for (LivingEntity entity : livingEntityInfoMap.keySet()) {
-			if (getCreatureType(entity) == type) {
-				livingEntityInfoMap.remove(entity);
-			}
-		}
-		for (LivingEntity entity : attacked.keySet()) {
-			if (getCreatureType(entity) == type) {
-				attacked.remove(entity);
-			}
-		}
-	}
-
-	public boolean shouldBurn(Location loc) {
-		if (isDay(loc.getWorld())) {
-			if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() > 7) {
-				if (canSeeSky(loc)) {
-					return true;
-				}
-			}
-
-		}
-		return false;
-	}
-
-	public boolean canSeeSky(Location loc) {
-		for (int i = 128; i >= 0; i++) {
-			if (isTransparentBlock(loc.getWorld().getBlockAt(loc.getBlockX(), i, loc.getBlockZ()))) {
-				if (loc.getBlockY() == i) {
-					return true;
-				}
-			} else {
-				break;
-			}
-		}
-		return false;
-	}
-
-	public boolean isDay(World world) {
-		return world.getTime() < 12000 || world.getTime() == 24000;
-	}
-
-	public boolean isTransparentBlock(Block block) {
-		if (block.getType() != Material.AIR || block.getType() != Material.LEAVES) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-	public List<CreatureType> getEnabledCreatureTypes() {
-		List<CreatureType> enabled = new ArrayList<CreatureType>();
-		for (CreatureType cType : enabledCreatures.keySet()) {
-			if (enabledCreatures.get(cType).isEnabled()) {
-				enabled.add(cType);
-			}
-		}
-
-		return enabled;
 	}
 
 	public CreatureType getCreatureType(LivingEntity entity) {
@@ -358,6 +238,94 @@ public class CreatureHandler implements Runnable {
 		return CreatureType.MONSTER;
 	}
 
+	public List<CreatureType> getEnabledCreatureTypes() {
+		List<CreatureType> enabled = new ArrayList<CreatureType>();
+		for (CreatureType cType : enabledCreatures.keySet()) {
+			if (enabledCreatures.get(cType).isEnabled()) {
+				enabled.add(cType);
+			}
+		}
+
+		return enabled;
+	}
+
+	public Integer getHealth(Creature c) {
+
+		if (!livingEntityInfoMap.containsKey(c)) {
+			addLivingEntity(c);
+		}
+
+		return livingEntityInfoMap.get(c).getHealth();
+	}
+
+	public CreatureInfo getInfo(CreatureType type) {
+		if (enabledCreatures.containsKey(type)) {
+			return enabledCreatures.get(type);
+		} else {
+			CreatureInfo info = new CreatureInfo(Nature.Passive, Nature.Passive, 0, 0, 10, type);
+			enabledCreatures.put(type, info);
+			return info;
+		}
+	}
+
+	public boolean isDay(World world) {
+		return world.getTime() < 12000 || world.getTime() == 24000;
+	}
+
+	public boolean isTransparentBlock(Block block) {
+		if (block.getType() != Material.AIR || block.getType() != Material.LEAVES) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public void kill(LivingEntity entity) {
+		livingEntityInfoMap.remove(entity);
+		attacked.remove(entity);
+		entity.remove();
+	}
+
+	public void killAll() {
+		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
+		for (LivingEntity entity : copy) {
+			livingEntityInfoMap.remove(entity);
+			attacked.remove(entity);
+			entity.remove();
+		}
+	}
+
+	public void killAll(CreatureType type) {
+		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
+		for (LivingEntity entity : copy) {
+			if (livingEntityInfoMap.get(entity).getType() == type) {
+				livingEntityInfoMap.remove(entity);
+				attacked.remove(entity);
+				entity.remove();
+			}
+		}
+	}
+
+	public void removeAllAttacked(LivingEntity entity) {
+		this.attacked.remove(entity);
+	}
+
+	public void removeAttacked(LivingEntity livingEntity, Player p) {
+		if (this.attacked.containsKey(livingEntity)) {
+			Set<Player> pList = this.attacked.get(livingEntity);
+			pList.remove(p);
+			this.attacked.put(livingEntity, pList);
+		}
+	}
+
+	public void removePlayer(Player p) {
+		for (LivingEntity entity : this.attacked.keySet()) {
+			if (this.attacked.get(entity) != null) {
+				this.attacked.get(entity).remove(p);
+			}
+		}
+	}
+
 	public void run() {
 
 		// Despawning code
@@ -401,8 +369,8 @@ public class CreatureHandler implements Runnable {
 
 			Set<Player> players = attacked.get(e);
 
-			if (players != null)
-				if (players.size() > 0)
+			if (players != null) {
+				if (players.size() > 0) {
 					for (Player p : players) {
 						double deltax = Math.abs(e.getLocation().getX() - p.getLocation().getX());
 						double deltay = Math.abs(e.getLocation().getY() - p.getLocation().getY());
@@ -420,6 +388,8 @@ public class CreatureHandler implements Runnable {
 							}
 						}
 					}
+				}
+			}
 
 			attacked.put(e, players);
 		}
@@ -427,5 +397,37 @@ public class CreatureHandler implements Runnable {
 		if (world.getPlayers().size() <= 0) {
 			killAll();
 		}
+	}
+
+	public void setInfo(CreatureType type, CreatureInfo info) throws SQLException {
+		enabledCreatures.put(type, info);
+
+		dbManage.initialize();
+		String selectSQL = "SELECT * FROM creatureInfo WHERE Creature = '" + type.toString() + "';";
+		ResultSet rs = dbManage.sqlQuery(selectSQL);
+
+		if (rs.next()) {
+			// Creature type is in db
+			String updateSQL = "UPDATE creatureInfo SET NatureDay = '" + info.getCreatureNatureDay().toString() + "', NatureNight = '" + info.getCreatureNatureNight().toString() + "', CollisionDmg = '" + String.valueOf(info.getCollisionDamage()) + "', MiscDmg = '" + String.valueOf(info.getMiscDamage()) + "', BurnDay = '" + String.valueOf(info.isBurnDay()) + "', Health = '" + String.valueOf(info.getHealth()) + "', TargetDistance = '" + String.valueOf(info.getTargetDistance()) + "', SpawnChance = '" + String.valueOf(info.getSpawnChance()) + "', Enabled = '" + String.valueOf(info.isEnabled()) + "' WHERE Creature = '" + type.toString() + "';";
+
+			dbManage.updateQuery(updateSQL);
+		} else {
+			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance, Enabled) VALUES ('" + type.toString() + "', '" + info.getCreatureNatureDay().toString() + "', '" + info.getCreatureNatureNight().toString() + "', '" + String.valueOf(info.getCollisionDamage()) + "', '" + String.valueOf(info.getMiscDamage()) + "', '" + String.valueOf(info.isBurnDay()) + "', '" + String.valueOf(info.getHealth()) + "', '" + String.valueOf(info.getTargetDistance()) + "', '" + String.valueOf(info.getSpawnChance()) + "', '" + String.valueOf(info.isEnabled()) + "');";
+
+			dbManage.insertQuery(addSQL);
+		}
+		dbManage.close();
+	}
+
+	public boolean shouldBurn(Location loc) {
+		if (isDay(loc.getWorld())) {
+			if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() > 7) {
+				if (canSeeSky(loc)) {
+					return true;
+				}
+			}
+
+		}
+		return false;
 	}
 }

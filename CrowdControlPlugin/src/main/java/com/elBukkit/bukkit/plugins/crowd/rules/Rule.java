@@ -36,10 +36,10 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class Rule {
 
-	protected World world;
-	protected CreatureType type;
-	protected Type ruleType;
 	protected CrowdControlPlugin plugin;
+	protected Type ruleType;
+	protected CreatureType type;
+	protected World world;
 
 	public Rule(World world, CreatureType type, CrowdControlPlugin plugin) {
 		this.world = world;
@@ -51,11 +51,6 @@ public class Rule {
 		return true;
 	} // Check if creature passes
 
-	public boolean checkWorld(World world) { // Check if the world is effected
-												// by this rule
-		return this.world.equals(world);
-	}
-
 	public boolean checkCreatureType(CreatureType type) { // Check if the
 															// creature is
 															// effected by the
@@ -63,24 +58,14 @@ public class Rule {
 		return this.type.equals(type);
 	}
 
+	public boolean checkWorld(World world) { // Check if the world is effected
+												// by this rule
+		return this.world.equals(world);
+	}
+
 	// Classes used for saving data
 	public CreatureType getCreatureType() {
 		return type;
-	}
-
-	public World getWorld() {
-		return world;
-	}
-
-	public Type getType() {
-		return ruleType;
-	}
-
-	public String getData() {
-		return "";
-	}
-
-	public void init(String data) {
 	}
 
 	protected CreatureType getCreatureType(Entity entity) {
@@ -137,6 +122,21 @@ public class Rule {
 			}
 		}
 		return null;
+	}
+
+	public String getData() {
+		return "";
+	}
+
+	public Type getType() {
+		return ruleType;
+	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public void init(String data) {
 	}
 
 }

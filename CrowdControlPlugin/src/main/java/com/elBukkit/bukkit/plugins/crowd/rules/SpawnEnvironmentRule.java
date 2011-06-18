@@ -24,11 +24,6 @@ public class SpawnEnvironmentRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		this.spawnableEnvironment = Environment.valueOf(data);
-	}
-
-	@Override
 	public boolean check(Info info) {
 		if (this.spawnableEnvironment.equals(info.getEnv())) {
 			return true;
@@ -39,5 +34,10 @@ public class SpawnEnvironmentRule extends Rule {
 	@Override
 	public String getData() {
 		return spawnableEnvironment.toString();
+	}
+
+	@Override
+	public void init(String data) {
+		this.spawnableEnvironment = Environment.valueOf(data);
 	}
 }

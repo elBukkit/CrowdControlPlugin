@@ -25,11 +25,6 @@ public class MaxRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		this.maxMobs = Integer.parseInt(data);
-	}
-
-	@Override
 	public boolean check(Info info) {
 
 		if (plugin.getCreatureHandler(info.getLocation().getWorld()).getCreatureCount(type) < maxMobs) {
@@ -42,6 +37,11 @@ public class MaxRule extends Rule {
 	@Override
 	public String getData() {
 		return String.valueOf(maxMobs);
+	}
+
+	@Override
+	public void init(String data) {
+		this.maxMobs = Integer.parseInt(data);
 	}
 
 }

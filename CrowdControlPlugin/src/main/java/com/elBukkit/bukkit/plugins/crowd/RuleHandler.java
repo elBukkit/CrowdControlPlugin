@@ -25,9 +25,9 @@ import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 public class RuleHandler {
 
-	private Map<Integer, Rule> rules;
-
 	private sqlCore dbManage;
+
+	private Map<Integer, Rule> rules;
 
 	public RuleHandler(sqlCore dbManage, CrowdControlPlugin plugin) throws SQLException, ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		rules = new HashMap<Integer, Rule>();
@@ -87,8 +87,8 @@ public class RuleHandler {
 		rules.put(id, rule);
 	}
 
-	public void RemoveRule(int id) {
-		rules.remove(id);
+	public Map<Integer, Rule> getRules() {
+		return rules;
 	}
 
 	public boolean passesRules(Info info, Type type) {
@@ -122,7 +122,7 @@ public class RuleHandler {
 		}
 	}
 
-	public Map<Integer, Rule> getRules() {
-		return rules;
+	public void RemoveRule(int id) {
+		rules.remove(id);
 	}
 }

@@ -23,13 +23,6 @@ public class SpawnLightRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		String[] split = data.split(",");
-		this.max = Integer.parseInt(split[0]);
-		this.min = Integer.parseInt(split[1]);
-	}
-
-	@Override
 	public boolean check(Info info) {
 		if (info.getLocation().getBlock().getLightLevel() >= min) {
 			if (info.getLocation().getBlock().getLightLevel() <= max) {
@@ -42,6 +35,13 @@ public class SpawnLightRule extends Rule {
 	@Override
 	public String getData() {
 		return String.valueOf(max) + "," + String.valueOf(min);
+	}
+
+	@Override
+	public void init(String data) {
+		String[] split = data.split(",");
+		this.max = Integer.parseInt(split[0]);
+		this.min = Integer.parseInt(split[1]);
 	}
 
 }

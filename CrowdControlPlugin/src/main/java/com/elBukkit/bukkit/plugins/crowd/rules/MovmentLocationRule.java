@@ -30,8 +30,11 @@ public class MovmentLocationRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		// TODO Finish init()
+	public boolean check(Info info) {
+		if (info.getLocation().toVector().isInAABB(point1, point2)) {
+			return true;
+		}
+		return false;
 	}
 
 	// TODO Move the constructors to init()
@@ -61,11 +64,8 @@ public class MovmentLocationRule extends Rule {
 	 */
 
 	@Override
-	public boolean check(Info info) {
-		if (info.getLocation().toVector().isInAABB(point1, point2)) {
-			return true;
-		}
-		return false;
+	public void init(String data) {
+		// TODO Finish init()
 	}
 
 	/*

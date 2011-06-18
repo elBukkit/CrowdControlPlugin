@@ -8,12 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseHandler {
-	private mysqlCore core;
 	private Connection connection;
-	private String dblocation;
-	private String username;
-	private String password;
+	private mysqlCore core;
 	private String database;
+	private String dblocation;
+	private String password;
+	private String username;
 
 	public DatabaseHandler(mysqlCore core, String dbLocation, String database, String username, String password) {
 		this.core = core;
@@ -21,17 +21,6 @@ public class DatabaseHandler {
 		this.database = database;
 		this.username = username;
 		this.password = password;
-	}
-
-	private void openConnection() throws MalformedURLException, InstantiationException, IllegalAccessException {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://" + dblocation + "/" + database, username, password);
-		} catch (ClassNotFoundException e) {
-			core.writeError("ClassNotFoundException! " + e.getMessage(), true);
-		} catch (SQLException e) {
-			core.writeError("SQLException! " + e.getMessage(), true);
-		}
 	}
 
 	public Boolean checkConnection() {
@@ -51,12 +40,72 @@ public class DatabaseHandler {
 		return true;
 	}
 
+	public Boolean checkTable(String table) throws MalformedURLException, InstantiationException, IllegalAccessException {
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+
+			ResultSet result = statement.executeQuery("SELECT * FROM " + table);
+
+			if (result == null) {
+				return false;
+			}
+			if (result != null) {
+				return true;
+			}
+		} catch (SQLException ex) {
+			if (ex.getMessage().contains("exist")) {
+				return false;
+			} else {
+				core.writeError("Error at SQL Query: " + ex.getMessage(), false);
+			}
+		}
+
+		if (sqlQuery("SELECT * FROM " + table) == null) {
+			return true;
+		}
+		return false;
+	}
+
 	public void closeConnection() {
 		try {
-			if (connection != null)
+			if (connection != null) {
 				connection.close();
+			}
 		} catch (Exception e) {
 			core.writeError("Failed to close database connection! " + e.getMessage(), true);
+		}
+	}
+
+	public Boolean createTable(String query) {
+		try {
+			if (query == null) {
+				core.writeError("SQL Create Table query empty.", true);
+				return false;
+			}
+
+			Statement statement = connection.createStatement();
+			statement.execute(query);
+			return true;
+		} catch (SQLException ex) {
+			core.writeError(ex.getMessage(), true);
+			return false;
+		}
+	}
+
+	public void deleteQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+
+			statement.executeUpdate(query);
+
+		} catch (SQLException ex) {
+
+			if (!ex.toString().contains("not return ResultSet")) {
+				core.writeError("Error at SQL DELETE Query: " + ex, false);
+			}
+
 		}
 	}
 
@@ -65,6 +114,33 @@ public class DatabaseHandler {
 			openConnection();
 		}
 		return connection;
+	}
+
+	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
+		try {
+			Connection connection = getConnection();
+			Statement statement = connection.createStatement();
+
+			statement.executeUpdate(query);
+
+		} catch (SQLException ex) {
+
+			if (!ex.toString().contains("not return ResultSet")) {
+				core.writeError("Error at SQL INSERT Query: " + ex, false);
+			}
+
+		}
+	}
+
+	private void openConnection() throws MalformedURLException, InstantiationException, IllegalAccessException {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			connection = DriverManager.getConnection("jdbc:mysql://" + dblocation + "/" + database, username, password);
+		} catch (ClassNotFoundException e) {
+			core.writeError("ClassNotFoundException! " + e.getMessage(), true);
+		} catch (SQLException e) {
+			core.writeError("SQLException! " + e.getMessage(), true);
+		}
 	}
 
 	public ResultSet sqlQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
@@ -81,21 +157,6 @@ public class DatabaseHandler {
 		return null;
 	}
 
-	public void insertQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
-		try {
-			Connection connection = getConnection();
-			Statement statement = connection.createStatement();
-
-			statement.executeUpdate(query);
-
-		} catch (SQLException ex) {
-
-			if (!ex.toString().contains("not return ResultSet"))
-				core.writeError("Error at SQL INSERT Query: " + ex, false);
-
-		}
-	}
-
 	public void updateQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
 		try {
 			Connection connection = getConnection();
@@ -105,49 +166,11 @@ public class DatabaseHandler {
 
 		} catch (SQLException ex) {
 
-			if (!ex.toString().contains("not return ResultSet"))
+			if (!ex.toString().contains("not return ResultSet")) {
 				core.writeError("Error at SQL UPDATE Query: " + ex, false);
-
-		}
-	}
-
-	public void deleteQuery(String query) throws MalformedURLException, InstantiationException, IllegalAccessException {
-		try {
-			Connection connection = getConnection();
-			Statement statement = connection.createStatement();
-
-			statement.executeUpdate(query);
-
-		} catch (SQLException ex) {
-
-			if (!ex.toString().contains("not return ResultSet"))
-				core.writeError("Error at SQL DELETE Query: " + ex, false);
-
-		}
-	}
-
-	public Boolean checkTable(String table) throws MalformedURLException, InstantiationException, IllegalAccessException {
-		try {
-			Connection connection = getConnection();
-			Statement statement = connection.createStatement();
-
-			ResultSet result = statement.executeQuery("SELECT * FROM " + table);
-
-			if (result == null)
-				return false;
-			if (result != null)
-				return true;
-		} catch (SQLException ex) {
-			if (ex.getMessage().contains("exist")) {
-				return false;
-			} else {
-				core.writeError("Error at SQL Query: " + ex.getMessage(), false);
 			}
-		}
 
-		if (sqlQuery("SELECT * FROM " + table) == null)
-			return true;
-		return false;
+		}
 	}
 
 	public Boolean wipeTable(String table) throws MalformedURLException, InstantiationException, IllegalAccessException {
@@ -163,24 +186,9 @@ public class DatabaseHandler {
 
 			return true;
 		} catch (SQLException ex) {
-			if (!ex.toString().contains("not return ResultSet"))
+			if (!ex.toString().contains("not return ResultSet")) {
 				core.writeError("Error at SQL WIPE TABLE Query: " + ex, false);
-			return false;
-		}
-	}
-
-	public Boolean createTable(String query) {
-		try {
-			if (query == null) {
-				core.writeError("SQL Create Table query empty.", true);
-				return false;
 			}
-
-			Statement statement = connection.createStatement();
-			statement.execute(query);
-			return true;
-		} catch (SQLException ex) {
-			core.writeError(ex.getMessage(), true);
 			return false;
 		}
 	}

@@ -23,6 +23,11 @@ public class SpawnHeightRule extends Rule {
 	}
 
 	@Override
+	public String getData() {
+		return String.valueOf(max) + "," + String.valueOf(min);
+	}
+
+	@Override
 	public void init(String data) {
 		String[] split = data.split(",");
 		this.max = Integer.parseInt(split[0]);
@@ -36,11 +41,6 @@ public class SpawnHeightRule extends Rule {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public String getData() {
-		return String.valueOf(max) + "," + String.valueOf(min);
 	}
 
 }

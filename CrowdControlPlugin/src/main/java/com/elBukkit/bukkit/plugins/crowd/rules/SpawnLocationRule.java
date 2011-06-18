@@ -27,8 +27,11 @@ public class SpawnLocationRule extends Rule {
 	}
 
 	@Override
-	public void init(String data) {
-		// TODO Finish init()
+	public boolean check(Info info) {
+		if (info.getLocation().toVector().isInAABB(point1, point2)) {
+			return true;
+		}
+		return false;
 	}
 
 	// TODO Move the constructors to init()
@@ -58,11 +61,9 @@ public class SpawnLocationRule extends Rule {
 	 */
 
 	@Override
-	public boolean check(Info info) {
-		if (info.getLocation().toVector().isInAABB(point1, point2)) {
-			return true;
-		}
-		return false;
+	public String getData() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*
@@ -72,8 +73,7 @@ public class SpawnLocationRule extends Rule {
 	 */
 
 	@Override
-	public String getData() {
-		// TODO Auto-generated method stub
-		return null;
+	public void init(String data) {
+		// TODO Finish init()
 	}
 }

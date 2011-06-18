@@ -34,45 +34,18 @@ public class CrowdEntityListener extends EntityListener {
 
 	@Override
 	public void onCreatureSpawn(CreatureSpawnEvent event) {
-		if (event.isCancelled())
+		if (event.isCancelled()) {
 			return;
+		}
 
 		event.setCancelled(true);
 	}
 
 	@Override
-	public void onEntityTarget(EntityTargetEvent event) {
-		if (event.isCancelled())
-			return;
-		if (event.getEntity() instanceof LivingEntity) {
-			Info info = new Info();
-			info.setEntity((LivingEntity) event.getEntity());
-			info.setTarget(event.getTarget());
-			info.setReason(event.getReason());
-
-			if (event.getReason() == TargetReason.CUSTOM) {
-				if (!plugin.ruleHandler.passesRules(info, Type.Target)) {
-					event.setCancelled(true);
-				}
-				return;
-			}
-
-			if (event.getTarget() instanceof Player) {
-				if (event.getReason() == TargetReason.FORGOT_TARGET) {
-					plugin.getCreatureHandler(event.getEntity().getWorld()).removeAttacked((LivingEntity) info.getEntity(), (Player) event.getTarget());
-				} else if (event.getReason() == TargetReason.TARGET_DIED) {
-					plugin.getCreatureHandler(event.getEntity().getWorld()).removeAttacked((LivingEntity) info.getEntity(), (Player) event.getTarget());
-				}
-			}
-
-			event.setCancelled(true); // Targeting handled in the Damage Handler
-		}
-	}
-
-	@Override
 	public void onEntityCombust(EntityCombustEvent event) {
-		if (event.isCancelled())
+		if (event.isCancelled()) {
 			return;
+		}
 		if (event.getEntity() instanceof LivingEntity) {
 			CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(plugin.getCreatureHandler(event.getEntity().getWorld()).getCreatureType((LivingEntity) event.getEntity()));
 
@@ -86,8 +59,9 @@ public class CrowdEntityListener extends EntityListener {
 
 	@Override
 	public void onEntityDamage(EntityDamageEvent event) {
-		if (event.isCancelled())
+		if (event.isCancelled()) {
 			return;
+		}
 		if (event.getCause() == DamageCause.ENTITY_ATTACK) {
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent entityDmgEvent = (EntityDamageByEntityEvent) event;
@@ -167,6 +141,36 @@ public class CrowdEntityListener extends EntityListener {
 			if (p.isDead() || (p.getHealth() - event.getDamage()) <= 0) {
 				plugin.getCreatureHandler(event.getEntity().getWorld()).removePlayer(p);
 			}
+		}
+	}
+
+	@Override
+	public void onEntityTarget(EntityTargetEvent event) {
+		if (event.isCancelled()) {
+			return;
+		}
+		if (event.getEntity() instanceof LivingEntity) {
+			Info info = new Info();
+			info.setEntity((LivingEntity) event.getEntity());
+			info.setTarget(event.getTarget());
+			info.setReason(event.getReason());
+
+			if (event.getReason() == TargetReason.CUSTOM) {
+				if (!plugin.ruleHandler.passesRules(info, Type.Target)) {
+					event.setCancelled(true);
+				}
+				return;
+			}
+
+			if (event.getTarget() instanceof Player) {
+				if (event.getReason() == TargetReason.FORGOT_TARGET) {
+					plugin.getCreatureHandler(event.getEntity().getWorld()).removeAttacked(info.getEntity(), (Player) event.getTarget());
+				} else if (event.getReason() == TargetReason.TARGET_DIED) {
+					plugin.getCreatureHandler(event.getEntity().getWorld()).removeAttacked(info.getEntity(), (Player) event.getTarget());
+				}
+			}
+
+			event.setCancelled(true); // Targeting handled in the Damage Handler
 		}
 	}
 }
