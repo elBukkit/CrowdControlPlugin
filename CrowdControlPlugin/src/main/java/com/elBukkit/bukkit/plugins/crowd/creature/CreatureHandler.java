@@ -266,7 +266,7 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public boolean isDay(World world) {
+	public boolean isDay() {
 		return world.getTime() < 12000 || world.getTime() == 24000;
 	}
 
@@ -418,7 +418,7 @@ public class CreatureHandler implements Runnable {
 	}
 
 	public boolean shouldBurn(Location loc) {
-		if (isDay(loc.getWorld())) {
+		if (isDay()) {
 			if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() > 7) {
 				if (canSeeSky(loc)) {
 					return true;

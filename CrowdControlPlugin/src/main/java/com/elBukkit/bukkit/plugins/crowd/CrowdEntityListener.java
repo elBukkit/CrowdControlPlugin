@@ -50,7 +50,7 @@ public class CrowdEntityListener extends EntityListener {
 			CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(plugin.getCreatureHandler(event.getEntity().getWorld()).getCreatureType((LivingEntity) event.getEntity()));
 
 			if (cInfo != null) {
-				if (plugin.getCreatureHandler(event.getEntity().getWorld()).isDay(event.getEntity().getWorld()) && !cInfo.isBurnDay()) {
+				if (plugin.getCreatureHandler(event.getEntity().getWorld()).isDay() && !cInfo.isBurnDay()) {
 					event.setCancelled(true);
 				}
 			}

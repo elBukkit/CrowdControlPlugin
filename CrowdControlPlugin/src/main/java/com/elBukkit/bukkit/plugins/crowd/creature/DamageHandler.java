@@ -39,7 +39,7 @@ public class DamageHandler implements Runnable {
 						Creature c = (Creature) entity;
 						// Targeting System
 						if (distance < cInfo.getTargetDistance()) {
-							if (plugin.getCreatureHandler(p.getWorld()).isDay(e.getWorld())) {
+							if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
 								switch (cInfo.getCreatureNatureDay()) {
 								case Aggressive:
 									c.setTarget(p);
@@ -74,7 +74,7 @@ public class DamageHandler implements Runnable {
 					// Collision damage system
 					if (distance <= 1.8) {
 
-						if (plugin.getCreatureHandler(p.getWorld()).isDay(e.getWorld())) {
+						if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
 							switch (cInfo.getCreatureNatureDay()) {
 							case Aggressive:
 								p.damage(cInfo.getCollisionDamage());
