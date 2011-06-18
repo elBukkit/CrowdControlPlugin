@@ -11,7 +11,8 @@ import org.bukkit.entity.CreatureType;
 public class CreatureInfo {
 
 	private boolean burnDay = false;
-	private int collisionDamage, miscDamage; // Misc damage is for like ghast fireballs, and other damage
+	private int collisionDamage, miscDamage; // Misc damage is for like ghast
+												// fireballs, and other damage
 	private Nature creatureNatureDay, creatureNatureNight;
 	private boolean enabled = false;
 	private int health;
