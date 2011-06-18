@@ -8,7 +8,7 @@ import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
 
 /*
- * A rule that prevents creatures from targeting certian players.
+ * A rule that prevents creatures from targeting certain players.
  * 
  * @author Andrew Querol(WinSock)
  */

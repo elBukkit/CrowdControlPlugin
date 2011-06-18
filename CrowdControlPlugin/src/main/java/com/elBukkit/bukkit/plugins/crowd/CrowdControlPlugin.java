@@ -28,6 +28,7 @@ import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnEnvironmentRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnHeightRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnLightRule;
+import com.elBukkit.bukkit.plugins.crowd.rules.SpawnLocationRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnMaterialRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnReplaceRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.TargetPlayerRule;
@@ -96,6 +97,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		ruleCommands.put(SpawnMaterialRule.class, "[material name]");
 		ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
 		ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
+		ruleCommands.put(SpawnLocationRule.class, "[x1,y1,z1,x2,y2,z2]");
 
 		if (!this.getDataFolder().exists()) {
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
