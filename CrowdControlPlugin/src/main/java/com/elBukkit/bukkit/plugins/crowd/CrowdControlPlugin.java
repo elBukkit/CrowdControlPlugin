@@ -40,180 +40,180 @@ import com.elBukkit.bukkit.plugins.crowd.rules.TargetPlayerRule;
 
 public class CrowdControlPlugin extends JavaPlugin {
 
-    private CrowdEntityListener entityListener = new CrowdEntityListener(this);
-    public boolean pendingSpawn = false;
-    private PluginDescriptionFile pdf;
-    public Map<Class<? extends Rule>, String> ruleCommands;
+	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
+	public boolean pendingSpawn = false;
+	private PluginDescriptionFile pdf;
+	public Map<Class<? extends Rule>, String> ruleCommands;
 
-    private int maxPerWorld = 200;
-    private int maxPerChunk = 4;
-    private File configFile;
+	private int maxPerWorld = 200;
+	private int maxPerChunk = 4;
+	private File configFile;
 
-    public RuleHandler ruleHandler;
-    public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
+	public RuleHandler ruleHandler;
+	public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
 
-    public sqlCore dbManage; // import SQLite lib
+	public sqlCore dbManage; // import SQLite lib
 
-    public void onDisable() {
-        System.out.println(pdf.getFullName() + " is disabled!");
-    }
+	public void onDisable() {
+		System.out.println(pdf.getFullName() + " is disabled!");
+	}
 
-    public void onEnable() {
-        pdf = this.getDescription();
-        System.out.println(pdf.getFullName() + " is enabled!");
+	public void onEnable() {
+		pdf = this.getDescription();
+		System.out.println(pdf.getFullName() + " is enabled!");
 
-        ruleCommands = new HashMap<Class<? extends Rule>, String>();
-        ruleCommands.put(MaxRule.class, "[max number]");
-        ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
-        ruleCommands.put(SpawnHeightRule.class, "[max,min]");
-        ruleCommands.put(SpawnLightRule.class, "[max,min]");
-        ruleCommands.put(SpawnMaterialRule.class, "[material name]");
-        ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
-        ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
+		ruleCommands = new HashMap<Class<? extends Rule>, String>();
+		ruleCommands.put(MaxRule.class, "[max number]");
+		ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
+		ruleCommands.put(SpawnHeightRule.class, "[max,min]");
+		ruleCommands.put(SpawnLightRule.class, "[max,min]");
+		ruleCommands.put(SpawnMaterialRule.class, "[material name]");
+		ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
+		ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
 
-        if (!this.getDataFolder().exists())
-            this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
+		if (!this.getDataFolder().exists())
+			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
 
-        String prefix = "[CrowdControl]";
-        String dbName = pdf.getName() + ".db";
+		String prefix = "[CrowdControl]";
+		String dbName = pdf.getName() + ".db";
 
-        dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName, this.getDataFolder().getAbsolutePath());
-        try {
-            ruleHandler = new RuleHandler(dbManage, this);
-        } catch (Exception e) {
-            e.printStackTrace();
-            this.setEnabled(false);
-            return;
-        }
+		dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName, this.getDataFolder().getAbsolutePath());
+		try {
+			ruleHandler = new RuleHandler(dbManage, this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.setEnabled(false);
+			return;
+		}
 
-        configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.txt");
+		configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.txt");
 
-        try {
-            if (!configFile.exists()) {
-                configFile.createNewFile();
+		try {
+			if (!configFile.exists()) {
+				configFile.createNewFile();
 
-                PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
+				PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
 
-                globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
-                globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
+				globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
+				globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
 
-                globalConfigWriter.close();
-            }
+				globalConfigWriter.close();
+			}
 
-            Scanner globalConfigReader = new Scanner(new FileInputStream(configFile));
-            globalConfigReader.useDelimiter(System.getProperty("line.separator"));
+			Scanner globalConfigReader = new Scanner(new FileInputStream(configFile));
+			globalConfigReader.useDelimiter(System.getProperty("line.separator"));
 
-            while (globalConfigReader.hasNext()) {
-                String[] data = processLine(globalConfigReader.next());
+			while (globalConfigReader.hasNext()) {
+				String[] data = processLine(globalConfigReader.next());
 
-                if (data != null) {
-                    if (data[0].equalsIgnoreCase("maxPerWorld")) {
-                        this.maxPerWorld = Integer.parseInt(data[1]);
-                    } else if (data[0].equalsIgnoreCase("maxPerChunk")) {
-                        this.maxPerChunk = Integer.parseInt(data[1]);
-                    }
-                }
-            }
+				if (data != null) {
+					if (data[0].equalsIgnoreCase("maxPerWorld")) {
+						this.maxPerWorld = Integer.parseInt(data[1]);
+					} else if (data[0].equalsIgnoreCase("maxPerChunk")) {
+						this.maxPerChunk = Integer.parseInt(data[1]);
+					}
+				}
+			}
 
-            globalConfigReader.reset();
+			globalConfigReader.reset();
 
-        } catch (IOException e) {
-            System.out.println("Failed to read config file!");
-            this.setEnabled(false);
-        }
+		} catch (IOException e) {
+			System.out.println("Failed to read config file!");
+			this.setEnabled(false);
+		}
 
-        // Register our events
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Type.CREATURE_SPAWN, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);
+		// Register our events
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Type.CREATURE_SPAWN, entityListener, Priority.Highest, this);
+		pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Highest, this);
+		pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Highest, this);
+		pm.registerEvent(Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);
+		pm.registerEvent(Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);
 
-        // Register command
-        getCommand("crowd").setExecutor(new CrowdCommand(this));
+		// Register command
+		getCommand("crowd").setExecutor(new CrowdCommand(this));
 
-        // Register the damage handler
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new DamageHandler(this), 0, 20);
+		// Register the damage handler
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new DamageHandler(this), 0, 20);
 
-        for (World w : Bukkit.getServer().getWorlds()) {
+		for (World w : Bukkit.getServer().getWorlds()) {
 
-            CreatureHandler cHandler = getCreatureHandler(w); // Create all of
-                                                              // the creature
-                                                              // handlers
+			CreatureHandler cHandler = getCreatureHandler(w); // Create all of
+																// the creature
+																// handlers
 
-            for (LivingEntity e : w.getLivingEntities()) {
-                cHandler.addLivingEntity(e); // Add existing
-            }
-        }
-    }
+			for (LivingEntity e : w.getLivingEntities()) {
+				cHandler.addLivingEntity(e); // Add existing
+			}
+		}
+	}
 
-    private String[] processLine(String aLine) {
-        Scanner scanner = new Scanner(aLine);
-        scanner.useDelimiter(":");
-        if (scanner.hasNext()) {
-            String[] returnData = { "", "" };
-            returnData[0] = scanner.next();
-            returnData[1] = scanner.next();
-            return returnData;
-        } else {
-            System.out.println("Empty or invalid line. Unable to process.");
-            return null;
-        }
-    }
+	private String[] processLine(String aLine) {
+		Scanner scanner = new Scanner(aLine);
+		scanner.useDelimiter(":");
+		if (scanner.hasNext()) {
+			String[] returnData = { "", "" };
+			returnData[0] = scanner.next();
+			returnData[1] = scanner.next();
+			return returnData;
+		} else {
+			System.out.println("Empty or invalid line. Unable to process.");
+			return null;
+		}
+	}
 
-    public void setMaxPerChunk(int max) throws IOException {
-        PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
+	public void setMaxPerChunk(int max) throws IOException {
+		PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
 
-        this.maxPerChunk = max;
+		this.maxPerChunk = max;
 
-        this.configFile.delete();
-        this.configFile.createNewFile();
+		this.configFile.delete();
+		this.configFile.createNewFile();
 
-        globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
-        globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
+		globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
+		globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
 
-        globalConfigWriter.close();
-    }
+		globalConfigWriter.close();
+	}
 
-    public void setMaxPerWorld(int max) throws IOException {
+	public void setMaxPerWorld(int max) throws IOException {
 
-        PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
+		PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
 
-        this.maxPerWorld = max;
+		this.maxPerWorld = max;
 
-        this.configFile.delete();
-        this.configFile.createNewFile();
+		this.configFile.delete();
+		this.configFile.createNewFile();
 
-        globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
-        globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
+		globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
+		globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
 
-        globalConfigWriter.close();
-    }
+		globalConfigWriter.close();
+	}
 
-    public int getMaxPerWorld() {
-        return this.maxPerWorld;
-    }
+	public int getMaxPerWorld() {
+		return this.maxPerWorld;
+	}
 
-    public int getMaxPerChunk() {
-        return this.maxPerChunk;
-    }
+	public int getMaxPerChunk() {
+		return this.maxPerChunk;
+	}
 
-    public CreatureHandler getCreatureHandler(World w) {
-        if (creatureHandlers.containsKey(w)) {
-            return creatureHandlers.get(w);
-        } else {
-            CreatureHandler creatureHandler;
-            try {
-                creatureHandler = new CreatureHandler(dbManage, w, this);
-                // Register the despawner
-                getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20);
-                creatureHandlers.put(w, creatureHandler);
-                return creatureHandler;
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
+	public CreatureHandler getCreatureHandler(World w) {
+		if (creatureHandlers.containsKey(w)) {
+			return creatureHandlers.get(w);
+		} else {
+			CreatureHandler creatureHandler;
+			try {
+				creatureHandler = new CreatureHandler(dbManage, w, this);
+				// Register the despawner
+				getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20);
+				creatureHandlers.put(w, creatureHandler);
+				return creatureHandler;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 }
