@@ -14,7 +14,7 @@ import com.elBukkit.bukkit.plugins.crowd.Info;
 
 public class SpawnReplaceRule extends Rule {
 
-	CreatureType replaceType;
+	private CreatureType replaceType;
 
 	public SpawnReplaceRule(World world, CreatureType type, CrowdControlPlugin plugin) {
 		super(world, type, plugin);

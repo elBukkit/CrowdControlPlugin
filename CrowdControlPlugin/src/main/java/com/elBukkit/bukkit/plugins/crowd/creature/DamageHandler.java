@@ -13,7 +13,7 @@ import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 
 public class DamageHandler implements Runnable {
 
-	CrowdControlPlugin plugin;
+	private CrowdControlPlugin plugin;
 
 	public DamageHandler(CrowdControlPlugin plugin) {
 		this.plugin = plugin;

@@ -18,10 +18,10 @@ import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 public class SpawnHandler implements Runnable {
 
-	CreatureHandler handler;
-	CrowdControlPlugin plugin;
-	Random rand = new Random();
-	World world;
+	private CreatureHandler handler;
+	private CrowdControlPlugin plugin;
+	private Random rand = new Random();
+	private World world;
 
 	public SpawnHandler(CrowdControlPlugin plugin, World world, CreatureHandler handler) {
 		this.plugin = plugin;
