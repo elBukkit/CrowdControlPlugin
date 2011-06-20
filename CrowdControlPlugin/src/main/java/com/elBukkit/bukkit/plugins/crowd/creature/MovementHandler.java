@@ -12,6 +12,12 @@ import com.elBukkit.bukkit.plugins.crowd.events.CreatureMoveEvent;
 import com.elBukkit.bukkit.plugins.crowd.events.CrowdListener;
 import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
+/*
+ * This handler is what detects creature movements
+ * 
+ * @author Andrew Querol(winsock)
+ */
+
 public class MovementHandler implements Runnable {
 
 	CreatureHandler handler;

@@ -4,7 +4,7 @@ import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 
 /*
- * Info about a creature
+ * This class represents a creature, when entity equals null its just base info for making crowd creatures
  * 
  * @author Andrew Querol(WinSock)
  */
