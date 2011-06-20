@@ -51,6 +51,7 @@ public class CreatureHandler implements Runnable {
 	private ConcurrentHashMap<CreatureType, CrowdCreature> enabledCreatures;
 	private ConcurrentSkipListSet<CrowdCreature> crowdCreatureSet;
 	private SpawnHandler spawnHandler;
+	private MovementHandler movementHandler;
 	private World world;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
@@ -81,6 +82,9 @@ public class CreatureHandler implements Runnable {
 
 		spawnHandler = new SpawnHandler(plugin, world, this);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, spawnHandler, 0, 20);
+		
+		movementHandler = new MovementHandler(plugin, this);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, movementHandler, 0, 1);
 	}
 
 	public void addAttacked(CrowdCreature c, Player p) {
@@ -118,6 +122,10 @@ public class CreatureHandler implements Runnable {
 	
 	public CrowdCreature getBaseInfo(CreatureType type) {
 		return enabledCreatures.get(type);
+	}
+	
+	public ConcurrentSkipListSet<CrowdCreature> getCrowdCreatures() {
+		return crowdCreatureSet;
 	}
 
 	public void clearArrays(CreatureType type) {
