@@ -9,13 +9,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
+
 /*
  * This handles all of the damage stuff for my plugin
  * 
  * @author Andrew Querol(winsock)
  */
-
-import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 
 public class DamageHandler implements Runnable {
 

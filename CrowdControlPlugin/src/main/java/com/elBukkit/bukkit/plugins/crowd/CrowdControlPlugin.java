@@ -7,11 +7,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -44,50 +46,63 @@ import com.elBukkit.bukkit.plugins.crowd.rules.TargetPlayerRule;
 
 public class CrowdControlPlugin extends JavaPlugin {
 
+	private static Lock cHandlerLock = new ReentrantLock();
 	private File configFile;
-	public Map<World, CreatureHandler> creatureHandlers = new HashMap<World, CreatureHandler>();
+	public ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
 	public sqlCore dbManage; // import SQLite lib
-	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 
+	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 	private ConcurrentSkipListSet<CrowdListener> listeners = new ConcurrentSkipListSet<CrowdListener>();
-	private int maxPerChunk = 4;
-	private int maxPerWorld = 200;
+	private volatile int maxPerChunk = 4;
+
+	private volatile int maxPerWorld = 200;
 
 	private PluginDescriptionFile pdf;
 
-	public boolean pendingSpawn = false;
-	public Map<Class<? extends Rule>, String> ruleCommands;
-
+	private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
 	public RuleHandler ruleHandler;
 
+	@ThreadSafe
 	public CreatureHandler getCreatureHandler(World w) {
 		if (creatureHandlers.containsKey(w)) {
 			return creatureHandlers.get(w);
 		} else {
 			CreatureHandler creatureHandler;
 			try {
-				creatureHandler = new CreatureHandler(dbManage, w, this);
-				// Register the despawner
-				getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20);
-				creatureHandlers.put(w, creatureHandler);
-				return creatureHandler;
+				if (cHandlerLock.tryLock()) {
+					creatureHandler = new CreatureHandler(dbManage, w, this);
+					// Register the despawner
+					getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20);
+					creatureHandlers.put(w, creatureHandler);
+					return creatureHandler;
+				}
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				cHandlerLock.unlock();
 			}
 		}
 		return null;
 	}
 
+	@ThreadSafe
 	public Set<CrowdListener> getListeners() {
 		return this.listeners.clone();
 	}
 
+	@ThreadSafe
 	public int getMaxPerChunk() {
 		return this.maxPerChunk;
 	}
 
+	@ThreadSafe
 	public int getMaxPerWorld() {
 		return this.maxPerWorld;
+	}
+
+	@ThreadSafe
+	public Map<Class<? extends Rule>, String> getRules() {
+		return ruleCommands;
 	}
 
 	public void onDisable() {
@@ -98,7 +113,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		pdf = this.getDescription();
 		System.out.println(pdf.getFullName() + " is enabled!");
 
-		ruleCommands = new HashMap<Class<? extends Rule>, String>();
+		ruleCommands = new ConcurrentHashMap<Class<? extends Rule>, String>();
 		ruleCommands.put(MaxRule.class, "[max number]");
 		ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
 		ruleCommands.put(SpawnHeightRule.class, "[max,min]");
@@ -200,6 +215,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		}
 	}
 
+	@ThreadSafe
 	public void registerListener(CrowdListener listener) {
 		this.listeners.add(listener);
 	}

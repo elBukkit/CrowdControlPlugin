@@ -47,12 +47,12 @@ public class CrowdCommand implements CommandExecutor {
 
 		if (args[0].equalsIgnoreCase("add")) {
 			if (!(args.length < 2)) {
-				for (Class<? extends Rule> c : plugin.ruleCommands.keySet()) {
+				for (Class<? extends Rule> c : plugin.getRules().keySet()) {
 					if (args[1].equals(c.getSimpleName())) {
 						pendingCommands.add(c);
 						sender.sendMessage("Add added to pending with id: " + String.valueOf(pendingCommands.indexOf(c)));
 						sender.sendMessage("Args needed: ");
-						sender.sendMessage("Use crowd finish " + pendingCommands.indexOf(c) + " [worldname] [creaturetype] " + plugin.ruleCommands.get(c) + " to complete");
+						sender.sendMessage("Use crowd finish " + pendingCommands.indexOf(c) + " [worldname] [creaturetype] " + plugin.getRules().get(c) + " to complete");
 					}
 				}
 			} else {
@@ -61,7 +61,7 @@ public class CrowdCommand implements CommandExecutor {
 		} else if (args[0].equalsIgnoreCase("listPending")) {
 			for (Class<? extends Rule> c : pendingCommands) {
 				sender.sendMessage(c.getSimpleName() + ", ID: " + String.valueOf(pendingCommands.indexOf(c)));
-				sender.sendMessage("[data] = " + plugin.ruleCommands.get(c));
+				sender.sendMessage("[data] = " + plugin.getRules().get(c));
 			}
 			return true;
 		} else if (args[0].equalsIgnoreCase("finish")) {
@@ -106,9 +106,9 @@ public class CrowdCommand implements CommandExecutor {
 				sender.sendMessage("usage: crowd finish [pending id] [worldname] [creaturetype] [data] ");
 			}
 		} else if (args[0].equalsIgnoreCase("listRules")) {
-			if (plugin.ruleCommands.size() > 0) {
+			if (plugin.getRules().size() > 0) {
 				String ruleList = "";
-				for (Class<? extends Rule> r : plugin.ruleCommands.keySet()) {
+				for (Class<? extends Rule> r : plugin.getRules().keySet()) {
 					if (ruleList.length() > 0) {
 						ruleList += ", ";
 					}

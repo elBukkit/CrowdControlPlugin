@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
@@ -37,6 +36,7 @@ import org.bukkit.entity.Zombie;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
 import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
+import com.elBukkit.bukkit.plugins.crowd.ThreadSafe;
 
 /*
  * Handles retrieving custom creature info from a standard CreatureType
@@ -87,6 +87,7 @@ public class CreatureHandler implements Runnable {
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, movementHandler, 0, 1);
 	}
 
+	@ThreadSafe
 	public void addAttacked(CrowdCreature c, Player p) {
 		if (this.attacked.containsKey(c)) {
 			Set<Player> pList = this.attacked.get(c);
@@ -102,24 +103,25 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public boolean canSeeSky(Location loc) {
+	@ThreadSafe
+	public boolean canSeeSky(Location locI) {
+		Location loc = locI.clone();
 		for (int i = 128; i >= 0; i++) {
-			if (isTransparentBlock(loc.getWorld().getBlockAt(loc.getBlockX(), i, loc.getBlockZ()))) {
-				if (loc.getBlockY() == i) {
-					return true;
-				}
-			} else {
-				break;
+			if (!isTransparentBlock(loc.getWorld().getBlockTypeIdAt(loc.getBlockX(), i, loc.getBlockZ()))) {
+				return false;
 			}
 		}
-		return false;
+
+		return true;
 	}
 
+	@ThreadSafe
 	public void clearArrays() {
 		crowdCreatureSet.clear();
 		attacked.clear();
 	}
 
+	@ThreadSafe
 	public void clearArrays(CreatureType type) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
@@ -132,6 +134,7 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
+	@ThreadSafe
 	public void damageCreature(CrowdCreature c, int damage) {
 		int health = c.getHealth();
 		health -= damage;
@@ -152,18 +155,22 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
+	@ThreadSafe
 	public Set<Player> getAttackingPlayers(LivingEntity entity) {
 		return this.attacked.get(entity);
 	}
 
+	@ThreadSafe
 	public CrowdCreature getBaseInfo(CreatureType type) {
 		return enabledCreatures.get(type);
 	}
 
+	@ThreadSafe
 	public int getCreatureCount() {
 		return crowdCreatureSet.size();
 	}
 
+	@ThreadSafe
 	public int getCreatureCount(CreatureType type) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
@@ -178,6 +185,7 @@ public class CreatureHandler implements Runnable {
 		return count;
 	}
 
+	@ThreadSafe
 	public CreatureType getCreatureType(LivingEntity entity) {
 		if (entity instanceof Creature) {
 			// Animals
@@ -230,6 +238,7 @@ public class CreatureHandler implements Runnable {
 		return CreatureType.MONSTER;
 	}
 
+	@ThreadSafe
 	public CrowdCreature getCrowdCreature(LivingEntity entity) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
@@ -252,10 +261,12 @@ public class CreatureHandler implements Runnable {
 		return null;
 	}
 
+	@ThreadSafe
 	public ConcurrentSkipListSet<CrowdCreature> getCrowdCreatures() {
-		return crowdCreatureSet;
+		return crowdCreatureSet.clone();
 	}
 
+	@ThreadSafe
 	public Set<CreatureType> getEnabledCreatureTypes() {
 		return enabledCreatures.keySet();
 	}
@@ -264,20 +275,23 @@ public class CreatureHandler implements Runnable {
 		return world.getTime() < 12000 || world.getTime() == 24000;
 	}
 
-	public boolean isTransparentBlock(Block block) {
-		if (block.getType() != Material.AIR || block.getType() != Material.LEAVES) {
+	@ThreadSafe
+	public boolean isTransparentBlock(int i) {
+		if (i != Material.AIR.getId() || i != Material.LEAVES.getId()) {
 			return false;
 		} else {
 			return true;
 		}
 	}
 
+	@ThreadSafe
 	public void kill(CrowdCreature c) {
 		crowdCreatureSet.remove(c);
 		attacked.remove(c);
 		c.getEntity().remove();
 	}
 
+	@ThreadSafe
 	public void killAll() {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
@@ -289,6 +303,7 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
+	@ThreadSafe
 	public void killAll(CreatureType type) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
@@ -302,10 +317,12 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
+	@ThreadSafe
 	public void removeAllAttacked(CrowdCreature c) {
 		this.attacked.remove(c);
 	}
 
+	@ThreadSafe
 	public void removeAttacked(CrowdCreature c, Player p) {
 		if (this.attacked.containsKey(c)) {
 			Set<Player> pList = this.attacked.get(c);
@@ -314,6 +331,7 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
+	@ThreadSafe
 	public void removePlayer(Player p) {
 		Iterator<CrowdCreature> i = attacked.keySet().iterator();
 		while (i.hasNext()) {
