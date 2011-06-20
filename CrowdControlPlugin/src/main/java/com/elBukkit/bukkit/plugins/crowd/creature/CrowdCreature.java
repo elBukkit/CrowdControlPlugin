@@ -1,6 +1,7 @@
 package com.elBukkit.bukkit.plugins.crowd.creature;
 
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.LivingEntity;
 
 /*
  * Info about a creature
@@ -8,7 +9,7 @@ import org.bukkit.entity.CreatureType;
  * @author Andrew Querol(WinSock)
  */
 
-public class CreatureInfo {
+public class CrowdCreature {
 
 	private boolean burnDay = false;
 	private int collisionDamage, miscDamage; // Misc damage is for like ghast
@@ -19,8 +20,9 @@ public class CreatureInfo {
 	private float spawnChance = 0.7f;
 	private int targetDistance = 24;
 	private CreatureType type;
+	private LivingEntity entity = null;
 
-	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, CreatureType type) {
+	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, CreatureType type) {
 		this.creatureNatureDay = creatureNatureDay;
 		this.creatureNatureNight = creatureNatureNight;
 		this.collisionDamage = collisionDamage;
@@ -28,8 +30,8 @@ public class CreatureInfo {
 		this.health = health;
 		this.type = type;
 	}
-
-	public CreatureInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type, boolean enabled) {
+	
+	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type, boolean enabled) {
 		this.creatureNatureDay = creatureNatureDay;
 		this.creatureNatureNight = creatureNatureNight;
 		this.collisionDamage = collisionDamage;
@@ -41,9 +43,39 @@ public class CreatureInfo {
 		this.type = type;
 		this.enabled = enabled;
 	}
+	
+	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type, boolean enabled, LivingEntity entity) {
+		this.creatureNatureDay = creatureNatureDay;
+		this.creatureNatureNight = creatureNatureNight;
+		this.collisionDamage = collisionDamage;
+		this.miscDamage = miscDamage;
+		this.health = health;
+		this.targetDistance = targetDistance;
+		this.burnDay = burnDay;
+		this.spawnChance = spawnChance;
+		this.type = type;
+		this.enabled = enabled;
+		this.entity = entity;
+	}
 
-	public CreatureInfo copy() {
-		return new CreatureInfo(creatureNatureDay, creatureNatureNight, collisionDamage, miscDamage, health, targetDistance, burnDay, spawnChance, type, enabled);
+	public CrowdCreature create(LivingEntity entity) {
+		return new CrowdCreature(creatureNatureDay, creatureNatureNight, collisionDamage, miscDamage, health, targetDistance, burnDay, spawnChance, type, enabled, entity);
+	}
+	
+	public void updateBaseInfo(CrowdCreature c) {
+		this.burnDay = c.burnDay;
+		this.collisionDamage = c.collisionDamage;
+		this.creatureNatureDay = c.creatureNatureDay;
+		this.creatureNatureNight = c.creatureNatureNight;
+		this.enabled = c.enabled;
+		this.health = c.health;
+		this.miscDamage = c.miscDamage;
+		this.spawnChance = c.spawnChance;
+		this.targetDistance = c.targetDistance;
+	}
+	
+	public void damage(int amount) {
+		this.health -= amount;
 	}
 
 	public int getCollisionDamage() {
@@ -124,6 +156,10 @@ public class CreatureInfo {
 
 	public void setType(CreatureType type) {
 		this.type = type;
+	}
+
+	public LivingEntity getEntity() {
+		return entity;
 	}
 
 }

@@ -172,7 +172,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 																// handlers
 
 			for (LivingEntity e : w.getLivingEntities()) {
-				cHandler.addLivingEntity(e); // Add existing
+				cHandler.getCrowdCreature(e); // Add existing
 			}
 		}
 	}

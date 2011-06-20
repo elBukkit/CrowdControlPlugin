@@ -15,7 +15,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.CreatureType;
 
-import com.elBukkit.bukkit.plugins.crowd.creature.CreatureInfo;
+import com.elBukkit.bukkit.plugins.crowd.creature.CrowdCreature;
 import com.elBukkit.bukkit.plugins.crowd.creature.Nature;
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 
@@ -176,7 +176,7 @@ public class CrowdCommand implements CommandExecutor {
 		} else if (args[0].equalsIgnoreCase("set")) {
 			if (args.length >= 6) {
 
-				CreatureInfo info = plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[2])).getInfo(CreatureType.valueOf(args[1]));
+				CrowdCreature info = plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[2])).getBaseInfo(CreatureType.valueOf(args[1]));
 
 				if (info != null) {
 					if (args[4].equalsIgnoreCase("NatureDay")) {

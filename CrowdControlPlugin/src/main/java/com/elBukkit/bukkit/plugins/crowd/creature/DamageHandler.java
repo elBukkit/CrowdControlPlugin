@@ -28,9 +28,9 @@ public class DamageHandler implements Runnable {
 				double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
 				double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
-				CreatureInfo cInfo = plugin.getCreatureHandler(p.getWorld()).getInfo(plugin.getCreatureHandler(p.getWorld()).getCreatureType(e));
+				CrowdCreature crowdCreature = plugin.getCreatureHandler(p.getWorld()).getCrowdCreature(e);
 
-				if (cInfo != null) {
+				if (crowdCreature != null) {
 					LivingEntity entity = e;
 
 					if (entity instanceof Creature) { // Living entities
@@ -38,9 +38,9 @@ public class DamageHandler implements Runnable {
 														// targets?
 						Creature c = (Creature) entity;
 						// Targeting System
-						if (distance < cInfo.getTargetDistance()) {
+						if (distance < crowdCreature.getTargetDistance()) {
 							if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
-								switch (cInfo.getCreatureNatureDay()) {
+								switch (crowdCreature.getCreatureNatureDay()) {
 								case Aggressive:
 									c.setTarget(p);
 									break;
@@ -54,7 +54,7 @@ public class DamageHandler implements Runnable {
 									break;
 								}
 							} else {
-								switch (cInfo.getCreatureNatureNight()) {
+								switch (crowdCreature.getCreatureNatureNight()) {
 								case Aggressive:
 									c.setTarget(p);
 									break;
@@ -75,29 +75,29 @@ public class DamageHandler implements Runnable {
 					if (distance <= 1.8) {
 
 						if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
-							switch (cInfo.getCreatureNatureDay()) {
+							switch (crowdCreature.getCreatureNatureDay()) {
 							case Aggressive:
-								p.damage(cInfo.getCollisionDamage());
+								p.damage(crowdCreature.getCollisionDamage());
 								break;
 							case Neutral:
 								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
 								if (attackingPlayers != null && attackingPlayers.size() > 0) {
 									if (attackingPlayers.contains(p)) {
-										p.damage(cInfo.getCollisionDamage(), entity);
+										p.damage(crowdCreature.getCollisionDamage(), entity);
 									}
 								}
 								break;
 							}
 						} else {
-							switch (cInfo.getCreatureNatureNight()) {
+							switch (crowdCreature.getCreatureNatureNight()) {
 							case Aggressive:
-								p.damage(cInfo.getCollisionDamage());
+								p.damage(crowdCreature.getCollisionDamage());
 								break;
 							case Neutral:
 								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
 								if (attackingPlayers != null && attackingPlayers.size() > 0) {
 									if (attackingPlayers.contains(p)) {
-										p.damage(cInfo.getCollisionDamage(), entity);
+										p.damage(crowdCreature.getCollisionDamage(), entity);
 									}
 								}
 								break;
@@ -112,8 +112,8 @@ public class DamageHandler implements Runnable {
 		for (World w : Bukkit.getServer().getWorlds()) {
 			for (Entity e : w.getEntities()) {
 				if (e instanceof LivingEntity) {
-					CreatureInfo cInfo = plugin.getCreatureHandler(e.getWorld()).getInfo(plugin.getCreatureHandler(e.getWorld()).getCreatureType((LivingEntity) e));
-					if (plugin.getCreatureHandler(e.getWorld()).shouldBurn(e.getLocation()) && cInfo.isBurnDay()) {
+					CrowdCreature crowdCreature = plugin.getCreatureHandler(e.getWorld()).getCrowdCreature((LivingEntity)e);
+					if (plugin.getCreatureHandler(e.getWorld()).shouldBurn(e.getLocation()) && crowdCreature.isBurnDay()) {
 						e.setFireTicks(15);
 					} else {
 						e.setFireTicks(0);

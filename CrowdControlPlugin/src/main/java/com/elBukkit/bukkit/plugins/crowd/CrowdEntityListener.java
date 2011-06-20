@@ -15,7 +15,8 @@ import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
-import com.elBukkit.bukkit.plugins.crowd.creature.CreatureInfo;
+import com.elBukkit.bukkit.plugins.crowd.creature.CreatureHandler;
+import com.elBukkit.bukkit.plugins.crowd.creature.CrowdCreature;
 import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 /*
@@ -46,11 +47,14 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.isCancelled()) {
 			return;
 		}
+		
+		CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
+		
 		if (event.getEntity() instanceof LivingEntity) {
-			CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(plugin.getCreatureHandler(event.getEntity().getWorld()).getCreatureType((LivingEntity) event.getEntity()));
+			CrowdCreature cInfo = cHandler.getCrowdCreature((LivingEntity)event.getEntity());
 
 			if (cInfo != null) {
-				if (plugin.getCreatureHandler(event.getEntity().getWorld()).isDay() && !cInfo.isBurnDay()) {
+				if (cHandler.isDay() && !cInfo.isBurnDay()) {
 					event.setCancelled(true);
 				}
 			}
@@ -62,75 +66,72 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.isCancelled()) {
 			return;
 		}
+		CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
+		
 		if (event.getCause() == DamageCause.ENTITY_ATTACK) {
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent entityDmgEvent = (EntityDamageByEntityEvent) event;
-
-				if (entityDmgEvent.getDamager() instanceof Fireball) {
-					CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(CreatureType.GHAST);
-
-					if (cInfo != null) {
-						if (event.getEntity() instanceof LivingEntity) {
-							LivingEntity c = (LivingEntity) event.getEntity();
-							plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity(c, cInfo.getMiscDamage());
-						} else {
-							event.setDamage(cInfo.getMiscDamage());
+				
+				if (entityDmgEvent instanceof EntityDamageByProjectileEvent) {
+					EntityDamageByProjectileEvent entityProjectileEvent = (EntityDamageByProjectileEvent) event;
+					if (entityProjectileEvent.getProjectile() instanceof Arrow) {
+						CrowdCreature c = cHandler.getBaseInfo(CreatureType.SKELETON);
+						if (c != null) {
+							if (event.getEntity() instanceof LivingEntity) {
+								CrowdCreature cAttacked = cHandler.getCrowdCreature((LivingEntity) event.getEntity());
+								cAttacked.damage(c.getMiscDamage());
+								event.setCancelled(true);
+							} else {
+								entityProjectileEvent.setDamage(c.getMiscDamage());
+							}
+						}
+					} else if (entityProjectileEvent.getProjectile() instanceof Fireball) {
+						CrowdCreature cInfo = cHandler.getBaseInfo(CreatureType.GHAST);
+						if (cInfo != null) {
+							if (event.getEntity() instanceof LivingEntity) {
+								LivingEntity entity = (LivingEntity) event.getEntity();
+								CrowdCreature c = cHandler.getCrowdCreature(entity);
+								c.damage(cInfo.getMiscDamage());
+								event.setCancelled(true);
+							} else {
+								entityProjectileEvent.setDamage(cInfo.getMiscDamage());
+							}
 						}
 					}
-				} else if (entityDmgEvent.getDamager() instanceof Player) {
-					CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(plugin.getCreatureHandler(event.getEntity().getWorld()).getCreatureType((LivingEntity) entityDmgEvent.getEntity()));
+				}
 
-					if (cInfo != null) {
-						plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity((LivingEntity) event.getEntity(), event.getDamage());
+				if (entityDmgEvent.getDamager() instanceof Player) {
+					CrowdCreature c = cHandler.getCrowdCreature((LivingEntity) entityDmgEvent.getEntity());
+
+					if (c != null) {
+						c.damage(event.getDamage());
 					}
 				}
 
 				if (entityDmgEvent.getEntity() instanceof Player) {
 					if (entityDmgEvent.getDamager() instanceof LivingEntity) {
-						plugin.getCreatureHandler(event.getEntity().getWorld()).addAttacked((LivingEntity) entityDmgEvent.getDamager(), (Player) entityDmgEvent.getEntity());
+						CrowdCreature c = cHandler.getCrowdCreature((LivingEntity)entityDmgEvent.getDamager());
+						cHandler.addAttacked(c, (Player) entityDmgEvent.getEntity());
 						event.setCancelled(true);
 						return;
 					}
 				} else if (event.getEntity() instanceof LivingEntity) {
 					LivingEntity entity = (LivingEntity) event.getEntity();
-					CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(plugin.getCreatureHandler(event.getEntity().getWorld()).getCreatureType((LivingEntity) entityDmgEvent.getDamager()));
+					CrowdCreature cAttacked = cHandler.getCrowdCreature(entity);
+					CrowdCreature cInfo = cHandler.getCrowdCreature((LivingEntity) entityDmgEvent.getDamager());
 
 					if (cInfo != null) {
-						plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity(entity, cInfo.getCollisionDamage());
+						cAttacked.damage(cInfo.getCollisionDamage());
 						entity.damage(0);
 						event.setCancelled(true);
-					}
-				}
-			} else if (event instanceof EntityDamageByProjectileEvent) {
-				EntityDamageByProjectileEvent entityProjectileEvent = (EntityDamageByProjectileEvent) event;
-				if (entityProjectileEvent.getProjectile() instanceof Arrow) {
-					CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(CreatureType.SKELETON);
-					if (cInfo != null) {
-						if (event.getEntity() instanceof LivingEntity) {
-							LivingEntity entity = (LivingEntity) event.getEntity();
-							plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity(entity, cInfo.getMiscDamage());
-							event.setCancelled(true);
-						} else {
-							entityProjectileEvent.setDamage(cInfo.getMiscDamage());
-						}
-					}
-				} else if (entityProjectileEvent.getProjectile() instanceof Fireball) {
-					CreatureInfo cInfo = plugin.getCreatureHandler(event.getEntity().getWorld()).getInfo(CreatureType.GHAST);
-					if (cInfo != null) {
-						if (event.getEntity() instanceof LivingEntity) {
-							LivingEntity entity = (LivingEntity) event.getEntity();
-							plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity(entity, cInfo.getMiscDamage());
-							event.setCancelled(true);
-						} else {
-							entityProjectileEvent.setDamage(cInfo.getMiscDamage());
-						}
 					}
 				}
 			}
 		} else {
 			if (!(event.getEntity() instanceof Player)) {
 				LivingEntity entity = (LivingEntity) event.getEntity();
-				plugin.getCreatureHandler(event.getEntity().getWorld()).damageLivingEntity(entity, event.getDamage());
+				CrowdCreature attacker = cHandler.getCrowdCreature(entity);
+				attacker.damage(event.getDamage());
 				entity.damage(0);
 				event.setCancelled(true);
 			}
@@ -139,7 +140,7 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.getEntity() instanceof Player) {
 			Player p = (Player) event.getEntity();
 			if (p.isDead() || (p.getHealth() - event.getDamage()) <= 0) {
-				plugin.getCreatureHandler(event.getEntity().getWorld()).removePlayer(p);
+				cHandler.removePlayer(p);
 			}
 		}
 	}
@@ -149,6 +150,9 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.isCancelled()) {
 			return;
 		}
+		
+		CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
+		
 		if (event.getEntity() instanceof LivingEntity) {
 			Info info = new Info();
 			info.setEntity((LivingEntity) event.getEntity());
@@ -161,12 +165,13 @@ public class CrowdEntityListener extends EntityListener {
 				}
 				return;
 			}
-
+			
 			if (event.getTarget() instanceof Player) {
+				CrowdCreature c = cHandler.getCrowdCreature(info.getEntity());
 				if (event.getReason() == TargetReason.FORGOT_TARGET) {
-					plugin.getCreatureHandler(event.getEntity().getWorld()).removeAttacked(info.getEntity(), (Player) event.getTarget());
+					cHandler.removeAttacked(c, (Player) event.getTarget());
 				} else if (event.getReason() == TargetReason.TARGET_DIED) {
-					plugin.getCreatureHandler(event.getEntity().getWorld()).removeAttacked(info.getEntity(), (Player) event.getTarget());
+					cHandler.removeAttacked(c, (Player) event.getTarget());
 				}
 			}
 

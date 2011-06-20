@@ -2,12 +2,11 @@ package com.elBukkit.bukkit.plugins.crowd.creature;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,19 +46,19 @@ import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 
 public class CreatureHandler implements Runnable {
 
-	private Map<LivingEntity, Set<Player>> attacked;
+	private ConcurrentHashMap<CrowdCreature, Set<Player>> attacked;
 	private sqlCore dbManage;
-	private Map<CreatureType, CreatureInfo> enabledCreatures;
-	private Map<LivingEntity, CreatureInfo> livingEntityInfoMap;
+	private ConcurrentHashMap<CreatureType, CrowdCreature> enabledCreatures;
+	private ConcurrentSkipListSet<CrowdCreature> crowdCreatureSet;
 	private SpawnHandler spawnHandler;
 	private World world;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
 		this.dbManage = dbManage;
 		this.world = w;
-		enabledCreatures = new HashMap<CreatureType, CreatureInfo>();
-		livingEntityInfoMap = new HashMap<LivingEntity, CreatureInfo>();
-		attacked = new HashMap<LivingEntity, Set<Player>>();
+		enabledCreatures = new ConcurrentHashMap<CreatureType, CrowdCreature>();
+		crowdCreatureSet = new ConcurrentSkipListSet<CrowdCreature>();
+		attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
 
 		dbManage.initialize();
 		if (!dbManage.checkTable("creatureInfo")) {
@@ -73,7 +72,7 @@ public class CreatureHandler implements Runnable {
 
 			while (rs.next()) {
 				CreatureType type = CreatureType.valueOf(rs.getString(2));
-				CreatureInfo info = new CreatureInfo(Nature.valueOf(rs.getString(3)), Nature.valueOf(rs.getString(4)), Integer.parseInt(rs.getString(5)), Integer.parseInt(rs.getString(6)), Integer.parseInt(rs.getString(8)), Integer.parseInt(rs.getString(9)), Boolean.parseBoolean(rs.getString(7)), Float.parseFloat(rs.getString(10)), type, Boolean.parseBoolean(rs.getString(11)));
+				CrowdCreature info = new CrowdCreature(Nature.valueOf(rs.getString(3)), Nature.valueOf(rs.getString(4)), Integer.parseInt(rs.getString(5)), Integer.parseInt(rs.getString(6)), Integer.parseInt(rs.getString(8)), Integer.parseInt(rs.getString(9)), Boolean.parseBoolean(rs.getString(7)), Float.parseFloat(rs.getString(10)), type, Boolean.parseBoolean(rs.getString(11)));
 
 				enabledCreatures.put(type, info);
 			}
@@ -84,26 +83,18 @@ public class CreatureHandler implements Runnable {
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, spawnHandler, 0, 20);
 	}
 
-	public void addAttacked(LivingEntity livingEntity, Player p) {
-		if (this.attacked.containsKey(livingEntity)) {
-			Set<Player> pList = this.attacked.get(livingEntity);
+	public void addAttacked(CrowdCreature c, Player p) {
+		if (this.attacked.containsKey(c)) {
+			Set<Player> pList = this.attacked.get(c);
 			if (pList == null) {
 				pList = new HashSet<Player>();
 			}
 			pList.add(p);
-			this.attacked.put(livingEntity, pList);
+			this.attacked.put(c, pList);
 		} else {
 			Set<Player> pList = new HashSet<Player>();
 			pList.add(p);
-			attacked.put(livingEntity, pList);
-		}
-	}
-
-	public void addLivingEntity(LivingEntity entity) {
-		CreatureInfo cInfo = getInfo(getCreatureType(entity));
-
-		if (cInfo != null) {
-			livingEntityInfoMap.put(entity, cInfo.copy());
+			attacked.put(c, pList);
 		}
 	}
 
@@ -121,45 +112,41 @@ public class CreatureHandler implements Runnable {
 	}
 
 	public void clearArrays() {
-		livingEntityInfoMap.clear();
+		crowdCreatureSet.clear();
 		attacked.clear();
+	}
+	
+	public CrowdCreature getBaseInfo(CreatureType type) {
+		return enabledCreatures.get(type);
 	}
 
 	public void clearArrays(CreatureType type) {
-		for (LivingEntity entity : livingEntityInfoMap.keySet()) {
-			if (getCreatureType(entity) == type) {
-				livingEntityInfoMap.remove(entity);
-			}
-		}
-		for (LivingEntity entity : attacked.keySet()) {
-			if (getCreatureType(entity) == type) {
-				attacked.remove(entity);
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		
+		while (i.hasNext()) {
+			CrowdCreature c = i.next();
+			if (c.getType() == type) {
+				i.remove();
+				attacked.remove(c);
 			}
 		}
 	}
 
-	public void damageLivingEntity(LivingEntity entity, int damage) {
-
-		if (!livingEntityInfoMap.containsKey(entity)) {
-			addLivingEntity(entity);
-		}
-
-		CreatureInfo cInfo = livingEntityInfoMap.get(entity);
-		int health = cInfo.getHealth();
+	public void damageCreature(CrowdCreature c, int damage) {
+		int health = c.getHealth();
 		health -= damage;
-		cInfo.setHealth(health);
+		c.setHealth(health);
 
 		if (health <= 0) {
-			removeAllAttacked(entity);
-			entity.damage(9999);
-			livingEntityInfoMap.remove(entity);
+			removeAllAttacked(c);
+			c.getEntity().damage(9999);
+			crowdCreatureSet.remove(c);
 		}
-		livingEntityInfoMap.put(entity, cInfo);
 	}
 
 	public void generateDefaults() throws SQLException {
 		for (CreatureType t : CreatureType.values()) {
-			CreatureInfo info = new CreatureInfo(Nature.Passive, Nature.Passive, 0, 0, 10, t);
+			CrowdCreature info = new CrowdCreature(Nature.Passive, Nature.Passive, 0, 0, 10, t);
 
 			setInfo(t, info);
 		}
@@ -170,13 +157,16 @@ public class CreatureHandler implements Runnable {
 	}
 
 	public int getCreatureCount() {
-		return livingEntityInfoMap.size();
+		return crowdCreatureSet.size();
 	}
 
 	public int getCreatureCount(CreatureType type) {
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		
 		int count = 0;
-		for (LivingEntity entity : livingEntityInfoMap.keySet()) {
-			if (livingEntityInfoMap.get(entity).getType() == type) {
+		while (i.hasNext()) {
+			CrowdCreature c = i.next();
+			if (c.getType() == type) {
 				count++;
 			}
 		}
@@ -236,34 +226,30 @@ public class CreatureHandler implements Runnable {
 		return CreatureType.MONSTER;
 	}
 
-	public List<CreatureType> getEnabledCreatureTypes() {
-		List<CreatureType> enabled = new ArrayList<CreatureType>();
-		for (CreatureType cType : enabledCreatures.keySet()) {
-			if (enabledCreatures.get(cType).isEnabled()) {
-				enabled.add(cType);
+	public Set<CreatureType> getEnabledCreatureTypes() {
+		return enabledCreatures.keySet();
+	}
+
+	public CrowdCreature getCrowdCreature(LivingEntity entity) {
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		
+		while (i.hasNext()) {
+			CrowdCreature c = i.next();
+			
+			if (c.getEntity() == entity) {
+				return c;
 			}
 		}
-
-		return enabled;
-	}
-
-	public Integer getHealth(Creature c) {
-
-		if (!livingEntityInfoMap.containsKey(c)) {
-			addLivingEntity(c);
+		
+		CreatureType cType = getCreatureType(entity);
+		
+		CrowdCreature c = enabledCreatures.get(cType);
+		
+		if (c != null) {
+			crowdCreatureSet.add(c.create(entity));
 		}
-
-		return livingEntityInfoMap.get(c).getHealth();
-	}
-
-	public CreatureInfo getInfo(CreatureType type) {
-		if (enabledCreatures.containsKey(type)) {
-			return enabledCreatures.get(type);
-		} else {
-			CreatureInfo info = new CreatureInfo(Nature.Passive, Nature.Passive, 0, 0, 10, type);
-			enabledCreatures.put(type, info);
-			return info;
-		}
+		
+		return null;
 	}
 
 	public boolean isDay() {
@@ -278,48 +264,54 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public void kill(LivingEntity entity) {
-		livingEntityInfoMap.remove(entity);
-		attacked.remove(entity);
-		entity.remove();
+	public void kill(CrowdCreature c) {
+		crowdCreatureSet.remove(c);
+		attacked.remove(c);
+		c.getEntity().remove();
 	}
 
 	public void killAll() {
-		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
-		for (LivingEntity entity : copy) {
-			livingEntityInfoMap.remove(entity);
-			attacked.remove(entity);
-			entity.remove();
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		
+		while (i.hasNext()) {
+			CrowdCreature c = i.next();
+			i.remove();
+			attacked.remove(c);
+			c.getEntity().remove();
 		}
 	}
 
 	public void killAll(CreatureType type) {
-		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
-		for (LivingEntity entity : copy) {
-			if (livingEntityInfoMap.get(entity).getType() == type) {
-				livingEntityInfoMap.remove(entity);
-				attacked.remove(entity);
-				entity.remove();
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		
+		while (i.hasNext()) {
+			CrowdCreature c = i.next();
+			if (c.getType() == type) {
+				i.remove();
+				attacked.remove(c);
+				c.getEntity().remove();
 			}
 		}
 	}
 
-	public void removeAllAttacked(LivingEntity entity) {
-		this.attacked.remove(entity);
+	public void removeAllAttacked(CrowdCreature c) {
+		this.attacked.remove(c);
 	}
 
-	public void removeAttacked(LivingEntity livingEntity, Player p) {
-		if (this.attacked.containsKey(livingEntity)) {
-			Set<Player> pList = this.attacked.get(livingEntity);
+	public void removeAttacked(CrowdCreature c, Player p) {
+		if (this.attacked.containsKey(c)) {
+			Set<Player> pList = this.attacked.get(c);
 			pList.remove(p);
-			this.attacked.put(livingEntity, pList);
+			this.attacked.put(c, pList);
 		}
 	}
 
 	public void removePlayer(Player p) {
-		for (LivingEntity entity : this.attacked.keySet()) {
-			if (this.attacked.get(entity) != null) {
-				this.attacked.get(entity).remove(p);
+		Iterator<CrowdCreature> i = attacked.keySet().iterator();
+		while(i.hasNext()) {
+			CrowdCreature c = i.next();
+			if (this.attacked.get(c) != null) {
+				this.attacked.get(c).remove(p);
 			}
 		}
 	}
@@ -328,24 +320,28 @@ public class CreatureHandler implements Runnable {
 
 		// Despawning code
 
-		Set<LivingEntity> copy = new HashSet<LivingEntity>(livingEntityInfoMap.keySet());
-		for (LivingEntity e : copy) {
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		
+		while (i.hasNext()) {
 
+			CrowdCreature c = i.next();
+			LivingEntity e = c.getEntity();
+			
 			if (!world.getLivingEntities().contains(e)) {
 				e.remove();
-				livingEntityInfoMap.remove(e);
+				i.remove();
 			} else if (e != null) {
-				if (livingEntityInfoMap.get(e).getHealth() <= 0) {
+				if (c.getHealth() <= 0) {
 					e.damage(9999);
-					livingEntityInfoMap.remove(e);
+					i.remove();
 				}
 
 				if (e.isDead()) {
 					e.remove();
-					livingEntityInfoMap.remove(e);
+					i.remove();
 				}
 			} else {
-				livingEntityInfoMap.remove(e);
+				i.remove();
 			}
 
 			boolean keep = false;
@@ -362,7 +358,7 @@ public class CreatureHandler implements Runnable {
 			}
 
 			if (!keep) {
-				kill(e);
+				kill(c);
 			}
 
 			Set<Player> players = attacked.get(e);
@@ -375,13 +371,13 @@ public class CreatureHandler implements Runnable {
 						double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
 						double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
-						if (distance > livingEntityInfoMap.get(e).getTargetDistance()) {
+						if (distance > c.getTargetDistance()) {
 							players.remove(p);
 
 							if (e instanceof Creature) {
-								Creature c = (Creature) e;
-								if (c.getTarget() != null) {
-									c.setTarget(null);
+								Creature creature = (Creature) e;
+								if (creature.getTarget() != null) {
+									creature.setTarget(null);
 								}
 							}
 						}
@@ -389,7 +385,7 @@ public class CreatureHandler implements Runnable {
 				}
 			}
 
-			attacked.put(e, players);
+			attacked.put(c, players);
 		}
 
 		if (world.getPlayers().size() <= 0) {
@@ -397,8 +393,8 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
-	public void setInfo(CreatureType type, CreatureInfo info) throws SQLException {
-		enabledCreatures.put(type, info);
+	public void setInfo(CreatureType type, CrowdCreature c) throws SQLException {
+		enabledCreatures.put(type, c);
 
 		dbManage.initialize();
 		String selectSQL = "SELECT * FROM creatureInfo WHERE Creature = '" + type.toString() + "';";
@@ -406,15 +402,25 @@ public class CreatureHandler implements Runnable {
 
 		if (rs.next()) {
 			// Creature type is in db
-			String updateSQL = "UPDATE creatureInfo SET NatureDay = '" + info.getCreatureNatureDay().toString() + "', NatureNight = '" + info.getCreatureNatureNight().toString() + "', CollisionDmg = '" + String.valueOf(info.getCollisionDamage()) + "', MiscDmg = '" + String.valueOf(info.getMiscDamage()) + "', BurnDay = '" + String.valueOf(info.isBurnDay()) + "', Health = '" + String.valueOf(info.getHealth()) + "', TargetDistance = '" + String.valueOf(info.getTargetDistance()) + "', SpawnChance = '" + String.valueOf(info.getSpawnChance()) + "', Enabled = '" + String.valueOf(info.isEnabled()) + "' WHERE Creature = '" + type.toString() + "';";
+			String updateSQL = "UPDATE creatureInfo SET NatureDay = '" + c.getCreatureNatureDay().toString() + "', NatureNight = '" + c.getCreatureNatureNight().toString() + "', CollisionDmg = '" + String.valueOf(c.getCollisionDamage()) + "', MiscDmg = '" + String.valueOf(c.getMiscDamage()) + "', BurnDay = '" + String.valueOf(c.isBurnDay()) + "', Health = '" + String.valueOf(c.getHealth()) + "', TargetDistance = '" + String.valueOf(c.getTargetDistance()) + "', SpawnChance = '" + String.valueOf(c.getSpawnChance()) + "', Enabled = '" + String.valueOf(c.isEnabled()) + "' WHERE Creature = '" + type.toString() + "';";
 
 			dbManage.updateQuery(updateSQL);
 		} else {
-			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance, Enabled) VALUES ('" + type.toString() + "', '" + info.getCreatureNatureDay().toString() + "', '" + info.getCreatureNatureNight().toString() + "', '" + String.valueOf(info.getCollisionDamage()) + "', '" + String.valueOf(info.getMiscDamage()) + "', '" + String.valueOf(info.isBurnDay()) + "', '" + String.valueOf(info.getHealth()) + "', '" + String.valueOf(info.getTargetDistance()) + "', '" + String.valueOf(info.getSpawnChance()) + "', '" + String.valueOf(info.isEnabled()) + "');";
+			String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance, Enabled) VALUES ('" + type.toString() + "', '" + c.getCreatureNatureDay().toString() + "', '" + c.getCreatureNatureNight().toString() + "', '" + String.valueOf(c.getCollisionDamage()) + "', '" + String.valueOf(c.getMiscDamage()) + "', '" + String.valueOf(c.isBurnDay()) + "', '" + String.valueOf(c.getHealth()) + "', '" + String.valueOf(c.getTargetDistance()) + "', '" + String.valueOf(c.getSpawnChance()) + "', '" + String.valueOf(c.isEnabled()) + "');";
 
 			dbManage.insertQuery(addSQL);
 		}
 		dbManage.close();
+		
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		
+		while(i.hasNext()) {
+			CrowdCreature creature = i.next();
+			
+			if (creature.getType() == type) {
+				creature.updateBaseInfo(c);
+			}
+		}
 	}
 
 	public boolean shouldBurn(Location loc) {
