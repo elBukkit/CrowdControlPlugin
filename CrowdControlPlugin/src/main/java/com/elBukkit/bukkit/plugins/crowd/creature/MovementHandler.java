@@ -8,6 +8,8 @@ import org.bukkit.Location;
 
 import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
+import com.elBukkit.bukkit.plugins.crowd.events.CreatureMoveEvent;
+import com.elBukkit.bukkit.plugins.crowd.events.CrowdListener;
 import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 public class MovementHandler implements Runnable {
@@ -40,9 +42,20 @@ public class MovementHandler implements Runnable {
 					info.setType(c.getType());
 					
 					if (plugin.ruleHandler.passesRules(info, Type.Movement)) {
-						// TODO Fire movement event
 						
-						lastLocation.put(c, cLoc);
+						CreatureMoveEvent event = new CreatureMoveEvent(this,loc,cLoc,c);
+						for (CrowdListener cListener : plugin.getListeners()) {
+							cListener.onCreatureMove(event);
+						}
+						
+						if (event.isCancelled()) {
+							c.getEntity().teleport(loc);
+						} else {
+							if (event.getNewLocation() != cLoc) {
+								c.getEntity().teleport(event.getNewLocation());
+							}
+							lastLocation.put(c, event.getNewLocation());
+						}
 					} else {
 						c.getEntity().teleport(loc);
 					}

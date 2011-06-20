@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -23,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.alta189.sqlLibrary.SQLite.sqlCore;
 import com.elBukkit.bukkit.plugins.crowd.creature.CreatureHandler;
 import com.elBukkit.bukkit.plugins.crowd.creature.DamageHandler;
+import com.elBukkit.bukkit.plugins.crowd.events.CrowdListener;
 import com.elBukkit.bukkit.plugins.crowd.rules.MaxRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 import com.elBukkit.bukkit.plugins.crowd.rules.SpawnEnvironmentRule;
@@ -49,6 +52,8 @@ public class CrowdControlPlugin extends JavaPlugin {
 	private int maxPerChunk = 4;
 	private int maxPerWorld = 200;
 	private PluginDescriptionFile pdf;
+	
+	private ConcurrentSkipListSet<CrowdListener> listeners = new ConcurrentSkipListSet<CrowdListener>();
 
 	public boolean pendingSpawn = false;
 	public Map<Class<? extends Rule>, String> ruleCommands;
@@ -218,5 +223,13 @@ public class CrowdControlPlugin extends JavaPlugin {
 		globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
 
 		globalConfigWriter.close();
+	}
+	
+	public void registerListener(CrowdListener listener) {
+		this.listeners.add(listener);
+	}
+	
+	public Set<CrowdListener> getListeners() {
+		return this.listeners.clone();
 	}
 }
