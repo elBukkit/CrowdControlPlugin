@@ -47,11 +47,11 @@ import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 public class CreatureHandler implements Runnable {
 
 	private ConcurrentHashMap<CrowdCreature, Set<Player>> attacked;
+	private ConcurrentSkipListSet<CrowdCreature> crowdCreatureSet;
 	private sqlCore dbManage;
 	private ConcurrentHashMap<CreatureType, CrowdCreature> enabledCreatures;
-	private ConcurrentSkipListSet<CrowdCreature> crowdCreatureSet;
-	private SpawnHandler spawnHandler;
 	private MovementHandler movementHandler;
+	private SpawnHandler spawnHandler;
 	private World world;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
@@ -82,7 +82,7 @@ public class CreatureHandler implements Runnable {
 
 		spawnHandler = new SpawnHandler(plugin, world, this);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, spawnHandler, 0, 20);
-		
+
 		movementHandler = new MovementHandler(plugin, this);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, movementHandler, 0, 1);
 	}
@@ -119,18 +119,10 @@ public class CreatureHandler implements Runnable {
 		crowdCreatureSet.clear();
 		attacked.clear();
 	}
-	
-	public CrowdCreature getBaseInfo(CreatureType type) {
-		return enabledCreatures.get(type);
-	}
-	
-	public ConcurrentSkipListSet<CrowdCreature> getCrowdCreatures() {
-		return crowdCreatureSet;
-	}
 
 	public void clearArrays(CreatureType type) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-		
+
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
 			if (c.getType() == type) {
@@ -164,13 +156,17 @@ public class CreatureHandler implements Runnable {
 		return this.attacked.get(entity);
 	}
 
+	public CrowdCreature getBaseInfo(CreatureType type) {
+		return enabledCreatures.get(type);
+	}
+
 	public int getCreatureCount() {
 		return crowdCreatureSet.size();
 	}
 
 	public int getCreatureCount(CreatureType type) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-		
+
 		int count = 0;
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
@@ -234,30 +230,34 @@ public class CreatureHandler implements Runnable {
 		return CreatureType.MONSTER;
 	}
 
-	public Set<CreatureType> getEnabledCreatureTypes() {
-		return enabledCreatures.keySet();
-	}
-
 	public CrowdCreature getCrowdCreature(LivingEntity entity) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-		
+
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
-			
+
 			if (c.getEntity() == entity) {
 				return c;
 			}
 		}
-		
+
 		CreatureType cType = getCreatureType(entity);
-		
+
 		CrowdCreature c = enabledCreatures.get(cType);
-		
+
 		if (c != null) {
 			crowdCreatureSet.add(c.create(entity));
 		}
-		
+
 		return null;
+	}
+
+	public ConcurrentSkipListSet<CrowdCreature> getCrowdCreatures() {
+		return crowdCreatureSet;
+	}
+
+	public Set<CreatureType> getEnabledCreatureTypes() {
+		return enabledCreatures.keySet();
 	}
 
 	public boolean isDay() {
@@ -280,7 +280,7 @@ public class CreatureHandler implements Runnable {
 
 	public void killAll() {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-		
+
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
 			i.remove();
@@ -291,7 +291,7 @@ public class CreatureHandler implements Runnable {
 
 	public void killAll(CreatureType type) {
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-		
+
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
 			if (c.getType() == type) {
@@ -316,7 +316,7 @@ public class CreatureHandler implements Runnable {
 
 	public void removePlayer(Player p) {
 		Iterator<CrowdCreature> i = attacked.keySet().iterator();
-		while(i.hasNext()) {
+		while (i.hasNext()) {
 			CrowdCreature c = i.next();
 			if (this.attacked.get(c) != null) {
 				this.attacked.get(c).remove(p);
@@ -329,12 +329,12 @@ public class CreatureHandler implements Runnable {
 		// Despawning code
 
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-		
+
 		while (i.hasNext()) {
 
 			CrowdCreature c = i.next();
 			LivingEntity e = c.getEntity();
-			
+
 			if (!world.getLivingEntities().contains(e)) {
 				e.remove();
 				i.remove();
@@ -419,12 +419,12 @@ public class CreatureHandler implements Runnable {
 			dbManage.insertQuery(addSQL);
 		}
 		dbManage.close();
-		
+
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-		
-		while(i.hasNext()) {
+
+		while (i.hasNext()) {
 			CrowdCreature creature = i.next();
-			
+
 			if (creature.getType() == type) {
 				creature.updateBaseInfo(c);
 			}

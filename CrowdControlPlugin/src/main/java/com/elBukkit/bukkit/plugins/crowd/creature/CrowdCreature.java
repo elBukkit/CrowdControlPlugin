@@ -16,11 +16,11 @@ public class CrowdCreature {
 												// fireballs, and other damage
 	private Nature creatureNatureDay, creatureNatureNight;
 	private boolean enabled = false;
+	private LivingEntity entity = null;
 	private int health;
 	private float spawnChance = 0.7f;
 	private int targetDistance = 24;
 	private CreatureType type;
-	private LivingEntity entity = null;
 
 	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, CreatureType type) {
 		this.creatureNatureDay = creatureNatureDay;
@@ -30,7 +30,7 @@ public class CrowdCreature {
 		this.health = health;
 		this.type = type;
 	}
-	
+
 	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type, boolean enabled) {
 		this.creatureNatureDay = creatureNatureDay;
 		this.creatureNatureNight = creatureNatureNight;
@@ -43,7 +43,7 @@ public class CrowdCreature {
 		this.type = type;
 		this.enabled = enabled;
 	}
-	
+
 	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type, boolean enabled, LivingEntity entity) {
 		this.creatureNatureDay = creatureNatureDay;
 		this.creatureNatureNight = creatureNatureNight;
@@ -61,19 +61,7 @@ public class CrowdCreature {
 	public CrowdCreature create(LivingEntity entity) {
 		return new CrowdCreature(creatureNatureDay, creatureNatureNight, collisionDamage, miscDamage, health, targetDistance, burnDay, spawnChance, type, enabled, entity);
 	}
-	
-	public void updateBaseInfo(CrowdCreature c) {
-		this.burnDay = c.burnDay;
-		this.collisionDamage = c.collisionDamage;
-		this.creatureNatureDay = c.creatureNatureDay;
-		this.creatureNatureNight = c.creatureNatureNight;
-		this.enabled = c.enabled;
-		this.health = c.health;
-		this.miscDamage = c.miscDamage;
-		this.spawnChance = c.spawnChance;
-		this.targetDistance = c.targetDistance;
-	}
-	
+
 	public void damage(int amount) {
 		this.health -= amount;
 	}
@@ -88,6 +76,10 @@ public class CrowdCreature {
 
 	public Nature getCreatureNatureNight() {
 		return creatureNatureNight;
+	}
+
+	public LivingEntity getEntity() {
+		return entity;
 	}
 
 	public int getHealth() {
@@ -158,8 +150,16 @@ public class CrowdCreature {
 		this.type = type;
 	}
 
-	public LivingEntity getEntity() {
-		return entity;
+	public void updateBaseInfo(CrowdCreature c) {
+		this.burnDay = c.burnDay;
+		this.collisionDamage = c.collisionDamage;
+		this.creatureNatureDay = c.creatureNatureDay;
+		this.creatureNatureNight = c.creatureNatureNight;
+		this.enabled = c.enabled;
+		this.health = c.health;
+		this.miscDamage = c.miscDamage;
+		this.spawnChance = c.spawnChance;
+		this.targetDistance = c.targetDistance;
 	}
 
 }

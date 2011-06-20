@@ -49,11 +49,11 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public sqlCore dbManage; // import SQLite lib
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 
+	private ConcurrentSkipListSet<CrowdListener> listeners = new ConcurrentSkipListSet<CrowdListener>();
 	private int maxPerChunk = 4;
 	private int maxPerWorld = 200;
+
 	private PluginDescriptionFile pdf;
-	
-	private ConcurrentSkipListSet<CrowdListener> listeners = new ConcurrentSkipListSet<CrowdListener>();
 
 	public boolean pendingSpawn = false;
 	public Map<Class<? extends Rule>, String> ruleCommands;
@@ -76,6 +76,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 			}
 		}
 		return null;
+	}
+
+	public Set<CrowdListener> getListeners() {
+		return this.listeners.clone();
 	}
 
 	public int getMaxPerChunk() {
@@ -196,6 +200,10 @@ public class CrowdControlPlugin extends JavaPlugin {
 		}
 	}
 
+	public void registerListener(CrowdListener listener) {
+		this.listeners.add(listener);
+	}
+
 	public void setMaxPerChunk(int max) throws IOException {
 		PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
 
@@ -223,13 +231,5 @@ public class CrowdControlPlugin extends JavaPlugin {
 		globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
 
 		globalConfigWriter.close();
-	}
-	
-	public void registerListener(CrowdListener listener) {
-		this.listeners.add(listener);
-	}
-	
-	public Set<CrowdListener> getListeners() {
-		return this.listeners.clone();
 	}
 }

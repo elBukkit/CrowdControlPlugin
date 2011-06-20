@@ -10,10 +10,10 @@ import com.elBukkit.bukkit.plugins.crowd.creature.CrowdCreature;
 public class CreatureMoveEvent extends EventObject implements Cancellable {
 
 	private static final long serialVersionUID = -3743383825319521868L;
+	private boolean canceled = false;
 	private CrowdCreature creature;
 	private Location newLocation;
 	private Location prevLocation;
-	private boolean canceled = false;
 
 	public CreatureMoveEvent(Object sender, Location prevLocation, Location newLocation, CrowdCreature c) {
 		super(sender);
@@ -35,16 +35,16 @@ public class CreatureMoveEvent extends EventObject implements Cancellable {
 		return prevLocation;
 	}
 
-	public void setNewLocation(Location newLocation) {
-		this.newLocation = newLocation;
-	}
-
 	public boolean isCancelled() {
 		return canceled;
 	}
 
 	public void setCancelled(boolean cancel) {
-		this.canceled = cancel;	
+		this.canceled = cancel;
+	}
+
+	public void setNewLocation(Location newLocation) {
+		this.newLocation = newLocation;
 	}
 
 }

@@ -6,13 +6,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 
-public class CreatureAttackEvent extends EventObject implements Cancellable{
+public class CreatureAttackEvent extends EventObject implements Cancellable {
 
 	private static final long serialVersionUID = 3745243179503069710L;
 	private LivingEntity attacked;
 	private LivingEntity attacker;
-	private Location location;
 	private boolean canceled = false;
+	private Location location;
 
 	public CreatureAttackEvent(Object sender, Location location, LivingEntity attacker, LivingEntity attacked) {
 		super(sender);

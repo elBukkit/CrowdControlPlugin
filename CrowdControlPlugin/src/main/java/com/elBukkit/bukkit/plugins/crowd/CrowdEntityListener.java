@@ -47,11 +47,11 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.isCancelled()) {
 			return;
 		}
-		
+
 		CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
-		
+
 		if (event.getEntity() instanceof LivingEntity) {
-			CrowdCreature cInfo = cHandler.getCrowdCreature((LivingEntity)event.getEntity());
+			CrowdCreature cInfo = cHandler.getCrowdCreature((LivingEntity) event.getEntity());
 
 			if (cInfo != null) {
 				if (cHandler.isDay() && !cInfo.isBurnDay()) {
@@ -67,11 +67,11 @@ public class CrowdEntityListener extends EntityListener {
 			return;
 		}
 		CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
-		
+
 		if (event.getCause() == DamageCause.ENTITY_ATTACK) {
 			if (event instanceof EntityDamageByEntityEvent) {
 				EntityDamageByEntityEvent entityDmgEvent = (EntityDamageByEntityEvent) event;
-				
+
 				if (entityDmgEvent instanceof EntityDamageByProjectileEvent) {
 					EntityDamageByProjectileEvent entityProjectileEvent = (EntityDamageByProjectileEvent) event;
 					if (entityProjectileEvent.getProjectile() instanceof Arrow) {
@@ -110,7 +110,7 @@ public class CrowdEntityListener extends EntityListener {
 
 				if (entityDmgEvent.getEntity() instanceof Player) {
 					if (entityDmgEvent.getDamager() instanceof LivingEntity) {
-						CrowdCreature c = cHandler.getCrowdCreature((LivingEntity)entityDmgEvent.getDamager());
+						CrowdCreature c = cHandler.getCrowdCreature((LivingEntity) entityDmgEvent.getDamager());
 						cHandler.addAttacked(c, (Player) entityDmgEvent.getEntity());
 						event.setCancelled(true);
 						return;
@@ -150,9 +150,9 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.isCancelled()) {
 			return;
 		}
-		
+
 		CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
-		
+
 		if (event.getEntity() instanceof LivingEntity) {
 			Info info = new Info();
 			info.setEntity((LivingEntity) event.getEntity());
@@ -165,7 +165,7 @@ public class CrowdEntityListener extends EntityListener {
 				}
 				return;
 			}
-			
+
 			if (event.getTarget() instanceof Player) {
 				CrowdCreature c = cHandler.getCrowdCreature(info.getEntity());
 				if (event.getReason() == TargetReason.FORGOT_TARGET) {

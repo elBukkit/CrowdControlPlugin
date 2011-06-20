@@ -112,7 +112,7 @@ public class DamageHandler implements Runnable {
 		for (World w : Bukkit.getServer().getWorlds()) {
 			for (Entity e : w.getEntities()) {
 				if (e instanceof LivingEntity) {
-					CrowdCreature crowdCreature = plugin.getCreatureHandler(e.getWorld()).getCrowdCreature((LivingEntity)e);
+					CrowdCreature crowdCreature = plugin.getCreatureHandler(e.getWorld()).getCrowdCreature((LivingEntity) e);
 					if (plugin.getCreatureHandler(e.getWorld()).shouldBurn(e.getLocation()) && crowdCreature.isBurnDay()) {
 						e.setFireTicks(15);
 					} else {

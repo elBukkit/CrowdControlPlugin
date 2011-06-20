@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 
 import com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.bukkit.plugins.crowd.Info;
+import com.elBukkit.bukkit.plugins.crowd.events.CreatureSpawnEvent;
+import com.elBukkit.bukkit.plugins.crowd.events.CrowdListener;
 import com.elBukkit.bukkit.plugins.crowd.rules.Type;
 
 public class SpawnHandler implements Runnable {
@@ -78,8 +80,16 @@ public class SpawnHandler implements Runnable {
 									if (rand.nextFloat() < handler.getBaseInfo(type).getSpawnChance()) {
 
 										if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
-											info.spawn();
-											plugin.getCreatureHandler(spawnBlock.getLocation().getWorld()).getCrowdCreature(info.getEntity());
+											CreatureSpawnEvent event = new CreatureSpawnEvent(this, info.getLocation(), info.getType());
+
+											for (CrowdListener cListener : plugin.getListeners()) {
+												cListener.onCreatureSpawn(event);
+											}
+
+											if (!event.isCancelled()) {
+												info.spawn();
+												plugin.getCreatureHandler(spawnBlock.getLocation().getWorld()).getCrowdCreature(info.getEntity());
+											}
 										}
 
 									}
