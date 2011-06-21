@@ -40,7 +40,7 @@ public class CrowdEntityListener extends EntityListener {
 			return;
 		}
 
-		if (event.getSpawnReason() == SpawnReason.Natural) {
+		if (event.getSpawnReason() == SpawnReason.NATURAL) {
 			event.setCancelled(true);
 		} else {
 			if (event.getEntity() instanceof LivingEntity) {

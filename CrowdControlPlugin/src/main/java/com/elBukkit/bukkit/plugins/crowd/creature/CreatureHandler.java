@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -89,18 +90,13 @@ public class CreatureHandler implements Runnable {
 
 	@ThreadSafe
 	public void addAttacked(CrowdCreature c, Player p) {
+		Set<Player> pList;
 		if (this.attacked.containsKey(c)) {
-			Set<Player> pList = this.attacked.get(c);
-			if (pList == null) {
-				pList = new HashSet<Player>();
-			}
-			pList.add(p);
-			this.attacked.put(c, pList);
+			 pList = this.attacked.get(c);
 		} else {
-			Set<Player> pList = new HashSet<Player>();
-			pList.add(p);
-			attacked.put(c, pList);
+			pList = new HashSet<Player>();
 		}
+		pList.add(p);
 	}
 
 	@ThreadSafe
@@ -333,9 +329,9 @@ public class CreatureHandler implements Runnable {
 
 	@ThreadSafe
 	public void removePlayer(Player p) {
-		Iterator<CrowdCreature> i = attacked.keySet().iterator();
+		Iterator<Entry<CrowdCreature, Set<Player>>> i = attacked.entrySet().iterator();
 		while (i.hasNext()) {
-			CrowdCreature c = i.next();
+			CrowdCreature c = i.next().getKey();
 			if (this.attacked.get(c) != null) {
 				this.attacked.get(c).remove(p);
 			}
