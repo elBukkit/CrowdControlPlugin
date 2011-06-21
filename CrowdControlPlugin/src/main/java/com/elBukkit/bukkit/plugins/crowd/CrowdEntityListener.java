@@ -6,6 +6,7 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
@@ -39,7 +40,13 @@ public class CrowdEntityListener extends EntityListener {
 			return;
 		}
 
-		event.setCancelled(true);
+		if (event.getSpawnReason() == SpawnReason.Natural) {
+			event.setCancelled(true);
+		} else {
+			if (event.getEntity() instanceof LivingEntity) {
+				plugin.getCreatureHandler(event.getLocation().getWorld()).getCrowdCreature((LivingEntity) event.getEntity());
+			}
+		}
 	}
 
 	@Override

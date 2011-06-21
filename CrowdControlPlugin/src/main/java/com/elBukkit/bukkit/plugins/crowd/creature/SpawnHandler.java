@@ -88,7 +88,6 @@ public class SpawnHandler implements Runnable {
 
 											if (!event.isCancelled()) {
 												info.spawn();
-												plugin.getCreatureHandler(spawnBlock.getLocation().getWorld()).getCrowdCreature(info.getEntity());
 											}
 										}
 
