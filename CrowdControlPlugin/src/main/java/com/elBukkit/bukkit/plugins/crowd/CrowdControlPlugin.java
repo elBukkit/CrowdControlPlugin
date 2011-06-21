@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -61,6 +62,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 	private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
 	public RuleHandler ruleHandler;
+	private Logger log;
 
 	@ThreadSafe
 	public CreatureHandler getCreatureHandler(World w) {
@@ -106,12 +108,13 @@ public class CrowdControlPlugin extends JavaPlugin {
 	}
 
 	public void onDisable() {
-		System.out.println(pdf.getFullName() + " is disabled!");
+		log.info(pdf.getFullName() + " is disabled!");
 	}
 
 	public void onEnable() {
 		pdf = this.getDescription();
-		System.out.println(pdf.getFullName() + " is enabled!");
+		log = this.getServer().getLogger();
+		log.info(pdf.getFullName() + " is enabled!");
 
 		ruleCommands = new ConcurrentHashMap<Class<? extends Rule>, String>();
 		ruleCommands.put(MaxRule.class, "[max number]");
@@ -171,7 +174,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 			globalConfigReader.reset();
 
 		} catch (IOException e) {
-			System.out.println("Failed to read config file!");
+			log.info("Failed to read config file!");
 			this.setEnabled(false);
 		}
 
@@ -210,7 +213,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 			returnData[1] = scanner.next();
 			return returnData;
 		} else {
-			System.out.println("Empty or invalid line. Unable to process.");
+			log.info("Empty or invalid line. Unable to process.");
 			return null;
 		}
 	}
