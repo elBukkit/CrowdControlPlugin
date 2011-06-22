@@ -28,6 +28,7 @@ public class CrowdCreature {
 	@ThreadSafe
 	public void damage(int amount) {
 		this.health -= amount;
+		this.entity.damage(0); // Work around to make the entity turn red
 	}
 
 	@ThreadSafe

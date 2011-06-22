@@ -1,16 +1,14 @@
 package com.elBukkit.bukkit.plugins.crowd;
 
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -78,91 +76,78 @@ public class CrowdEntityListener extends EntityListener {
 		if (event.isCancelled()) {
 			return;
 		}
+
 		CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
-
-		if (event.getCause() == DamageCause.ENTITY_ATTACK) {
+		
+		if (event.getEntity() instanceof Player) {
+			Player attacked = (Player) event.getEntity();
+			
 			if (event instanceof EntityDamageByEntityEvent) {
-				EntityDamageByEntityEvent entityDmgEvent = (EntityDamageByEntityEvent) event;
-
-				if (entityDmgEvent instanceof EntityDamageByProjectileEvent) {
-					EntityDamageByProjectileEvent entityProjectileEvent = (EntityDamageByProjectileEvent) event;
-					if (entityProjectileEvent.getProjectile().getShooter() != null) {
-						CrowdCreature crowdCreature = cHandler.getCrowdCreature(entityProjectileEvent.getProjectile().getShooter());
-						if (entityProjectileEvent.getProjectile() instanceof Arrow) {
-							if (crowdCreature != null) {
-								if (event.getEntity() instanceof LivingEntity) {
-									CrowdCreature cAttacked = cHandler.getCrowdCreature((LivingEntity) event.getEntity());
-									cAttacked.damage(crowdCreature.getBaseInfo().getMiscDamage());
-									event.setDamage(0);
-								} else {
-									entityProjectileEvent.setDamage(crowdCreature.getBaseInfo().getMiscDamage());
-								}
-							}
-						} else if (entityProjectileEvent.getProjectile() instanceof Fireball) {
-							if (crowdCreature != null) {
-								if (event.getEntity() instanceof LivingEntity) {
-									LivingEntity entity = (LivingEntity) event.getEntity();
-									CrowdCreature c = cHandler.getCrowdCreature(entity);
-									c.damage(crowdCreature.getBaseInfo().getMiscDamage());
-									event.setDamage(0);
-								} else {
-									entityProjectileEvent.setDamage(crowdCreature.getBaseInfo().getMiscDamage());
-								}
-							}
+				EntityDamageByEntityEvent eventDmg = (EntityDamageByEntityEvent)event;
+				CrowdCreature attacker = null;
+				
+				if (eventDmg instanceof EntityDamageByProjectileEvent) {
+					EntityDamageByProjectileEvent eventP = (EntityDamageByProjectileEvent)eventDmg;
+					Projectile p = eventP.getProjectile();
+					
+					attacker = cHandler.getCrowdCreature(p.getShooter());
+					if (attacker != null) {
+						event.setDamage(attacker.getBaseInfo().getMiscDamage());
+					}
+					
+				} else {
+					if (!(eventDmg.getDamager() instanceof Player)) {
+						LivingEntity e = (LivingEntity)eventDmg.getDamager();
+						attacker = cHandler.getCrowdCreature(e);
+						if (attacker != null) {
+							event.setDamage(attacker.getBaseInfo().getCollisionDamage());
+						}
+					}
+				}
+			}
+			
+			if (attacked.isDead() || (attacked.getHealth() - event.getDamage()) <= 0) {
+				plugin.getCreatureHandler(event.getEntity().getWorld()).removePlayer(attacked);
+			}
+			
+		} else if (event.getEntity() instanceof LivingEntity) {
+			LivingEntity e = (LivingEntity)event.getEntity();
+			CrowdCreature attacked = cHandler.getCrowdCreature(e);
+			
+			if (attacked == null) {
+				return;
+			}
+			
+			if (event instanceof EntityDamageByEntityEvent) {
+				EntityDamageByEntityEvent eventDmg = (EntityDamageByEntityEvent)event;
+				
+				if (eventDmg instanceof EntityDamageByProjectileEvent) {
+					EntityDamageByProjectileEvent eventP = (EntityDamageByProjectileEvent)eventDmg;
+					Projectile p = eventP.getProjectile();
+					
+					CrowdCreature attacker = cHandler.getCrowdCreature(p.getShooter());
+					if (attacker != null) {
+						attacked.damage(attacker.getBaseInfo().getMiscDamage());
+					}
+				} else {
+					if (eventDmg.getDamager() instanceof Player) {
+						Player attacker = (Player)eventDmg.getDamager();
+						attacked.damage(event.getDamage());
+						cHandler.addAttacked(attacked, attacker);
+					} else if (eventDmg.getDamager() instanceof LivingEntity){
+						LivingEntity ea = (LivingEntity)eventDmg.getDamager();
+						CrowdCreature attacker = cHandler.getCrowdCreature(ea);
+						
+						if (attacker != null) {
+							attacked.damage(attacker.getBaseInfo().getCollisionDamage());
 						}
 					} else {
-						if (event.getEntity() instanceof LivingEntity) {
-							LivingEntity entity = (LivingEntity) event.getEntity();
-							CrowdCreature c = cHandler.getCrowdCreature(entity);
-							c.damage(event.getDamage());
-							event.setDamage(0);
-						}
-					}
-				}
-				if (entityDmgEvent.getDamager() instanceof Player) {
-					if (event.getEntity() instanceof LivingEntity) {
-						CrowdCreature c = cHandler.getCrowdCreature((LivingEntity) entityDmgEvent.getEntity());
-						if (c != null) {
-							cHandler.addAttacked(c, (Player) entityDmgEvent.getDamager());
-							c.damage(event.getDamage());
-							event.setDamage(0);
-						}
-					}
-				} else if (entityDmgEvent.getEntity() instanceof Player) {
-					if (entityDmgEvent.getDamager() instanceof LivingEntity) {
-						CrowdCreature c = cHandler.getCrowdCreature((LivingEntity) entityDmgEvent.getDamager());
-						if (c != null) {
-							event.setCancelled(true);
-						}
-					}
-				} else if (event.getEntity() instanceof LivingEntity) {
-					LivingEntity entity = (LivingEntity) event.getEntity();
-					CrowdCreature cAttacked = cHandler.getCrowdCreature(entity);
-					CrowdCreature cInfo = cHandler.getCrowdCreature((LivingEntity) entityDmgEvent.getDamager());
-
-					if (cInfo != null) {
-						cAttacked.damage(cInfo.getBaseInfo().getCollisionDamage());
-						entity.damage(0);
-						event.setDamage(0);
+						attacked.damage(event.getDamage());
 					}
 				}
 			}
-		} else {
-			if (event.getEntity() instanceof LivingEntity) {
-				LivingEntity entity = (LivingEntity) event.getEntity();
-				CrowdCreature attacked = cHandler.getCrowdCreature(entity);
-				if (attacked != null) {
-					attacked.damage(event.getDamage());
-					event.setDamage(0);
-				}
-			}
-		}
-
-		if (event.getEntity() instanceof Player) {
-			Player p = (Player) event.getEntity();
-			if (p.isDead() || (p.getHealth() - event.getDamage()) <= 0) {
-				cHandler.removePlayer(p);
-			}
+			
+			event.setCancelled(true);
 		}
 	}
 
