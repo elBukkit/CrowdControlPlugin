@@ -51,7 +51,7 @@ public class DamageHandler implements Runnable {
 									c.setTarget(p);
 									break;
 								case Neutral:
-									Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(entity);
+									Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
 									if (attackingPlayers != null && attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
 											c.setTarget(p);
@@ -65,7 +65,7 @@ public class DamageHandler implements Runnable {
 									c.setTarget(p);
 									break;
 								case Neutral:
-									Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(entity);
+									Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
 									if (attackingPlayers != null && attackingPlayers.size() > 0) {
 										if (attackingPlayers.contains(p)) {
 											c.setTarget(p);
@@ -86,7 +86,7 @@ public class DamageHandler implements Runnable {
 								p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
 								break;
 							case Neutral:
-								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
+								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
 								if (attackingPlayers != null && attackingPlayers.size() > 0) {
 									if (attackingPlayers.contains(p)) {
 										p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
@@ -100,7 +100,7 @@ public class DamageHandler implements Runnable {
 								p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
 								break;
 							case Neutral:
-								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
+								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
 								if (attackingPlayers != null && attackingPlayers.size() > 0) {
 									if (attackingPlayers.contains(p)) {
 										p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);

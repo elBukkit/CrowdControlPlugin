@@ -167,8 +167,8 @@ public class CreatureHandler implements Runnable {
 	}
 
 	@ThreadSafe
-	public Set<Player> getAttackingPlayers(LivingEntity entity) {
-		return this.attacked.get(entity);
+	public Set<Player> getAttackingPlayers(CrowdCreature c) {
+		return this.attacked.get(c);
 	}
 
 	@ThreadSafe
@@ -248,6 +248,13 @@ public class CreatureHandler implements Runnable {
 		}
 		return CreatureType.MONSTER;
 	}
+	
+	@ThreadSafe
+	public void despawn(CrowdCreature c) {
+		crowdCreatureSet.remove(c);
+		removeAllAttacked(c);
+		c.getEntity().remove();
+	}
 
 	@ThreadSafe
 	public CrowdCreature getCrowdCreature(LivingEntity entity) {
@@ -290,8 +297,8 @@ public class CreatureHandler implements Runnable {
 	@ThreadSafe
 	public void kill(CrowdCreature c) {
 		crowdCreatureSet.remove(c);
-		attacked.remove(c);
-		c.getEntity().remove();
+		removeAllAttacked(c);
+		c.getEntity().damage(9999);
 	}
 
 	@ThreadSafe
@@ -301,7 +308,7 @@ public class CreatureHandler implements Runnable {
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
 			i.remove();
-			attacked.remove(c);
+			removeAllAttacked(c);
 			c.getEntity().remove();
 		}
 	}
@@ -314,7 +321,7 @@ public class CreatureHandler implements Runnable {
 			CrowdCreature c = i.next();
 			if (c.getType() == type) {
 				i.remove();
-				attacked.remove(c);
+				removeAllAttacked(c);
 				c.getEntity().remove();
 			}
 		}
@@ -374,14 +381,12 @@ public class CreatureHandler implements Runnable {
 				}
 
 				if (c.getHealth() <= 0) {
-					e.damage(9999);
 					kill(c);
 					return;
 				}
 
 				if (e.isDead()) {
 					kill(c);
-					e.remove();
 					return;
 				}
 			} else {
@@ -403,7 +408,7 @@ public class CreatureHandler implements Runnable {
 			}
 
 			if (!keep) {
-				kill(c);
+				despawn(c);
 			}
 
 			if (attacked.contains(e)) {
@@ -435,6 +440,7 @@ public class CreatureHandler implements Runnable {
 		}
 	}
 
+	@ThreadSafe
 	public void setEnabled(CreatureType type, boolean enabled) {
 		if (enabled) {
 			this.enabledCreatures.add(type);
