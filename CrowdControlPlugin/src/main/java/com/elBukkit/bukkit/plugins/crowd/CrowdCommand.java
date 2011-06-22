@@ -15,7 +15,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.CreatureType;
 
-import com.elBukkit.bukkit.plugins.crowd.creature.CrowdCreature;
+import com.elBukkit.bukkit.plugins.crowd.creature.BaseInfo;
 import com.elBukkit.bukkit.plugins.crowd.creature.Nature;
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
 
@@ -174,44 +174,45 @@ public class CrowdCommand implements CommandExecutor {
 				sender.sendMessage("Usage: crowd nuke [world] [CreatureType,all]");
 			}
 		} else if (args[0].equalsIgnoreCase("set")) {
-			if (args.length >= 6) {
+			if (args.length >= 5) {
 
-				CrowdCreature info = plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[2])).getBaseInfo(CreatureType.valueOf(args[1]));
+				BaseInfo info = plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).getBaseInfo(CreatureType.valueOf(args[2]));
 
 				if (info != null) {
-					if (args[4].equalsIgnoreCase("NatureDay")) {
-						info.setCreatureNatureDay(Nature.valueOf(args[5]));
-					} else if (args[4].equalsIgnoreCase("NatureNight")) {
-						info.setCreatureNatureNight(Nature.valueOf(args[5]));
-					} else if (args[4].equalsIgnoreCase("CollisionDamage")) {
-						info.setCollisionDamage(Integer.parseInt(args[5]));
-					} else if (args[4].equalsIgnoreCase("MiscDamage")) {
-						info.setMiscDamage(Integer.parseInt(args[5]));
-					} else if (args[4].equalsIgnoreCase("Health")) {
-						info.setHealth(Integer.parseInt(args[5]));
-					} else if (args[4].equalsIgnoreCase("TargetDistance")) {
-						info.setTargetDistance(Integer.parseInt(args[5]));
-					} else if (args[4].equalsIgnoreCase("BurnDay")) {
-						info.setBurnDay(Boolean.parseBoolean(args[5]));
-					} else if (args[4].equalsIgnoreCase("SpawnChance")) {
-						info.setSpawnChance(Float.parseFloat(args[5]));
-					} else if (args[4].equalsIgnoreCase("Enabled")) {
-						info.setEnabled(Boolean.parseBoolean(args[5]));
+					if (args[3].equalsIgnoreCase("NatureDay")) {
+						info.setCreatureNatureDay(Nature.valueOf(args[4]));
+					} else if (args[3].equalsIgnoreCase("NatureNight")) {
+						info.setCreatureNatureNight(Nature.valueOf(args[4]));
+					} else if (args[3].equalsIgnoreCase("CollisionDamage")) {
+						info.setCollisionDamage(Integer.parseInt(args[4]));
+					} else if (args[3].equalsIgnoreCase("MiscDamage")) {
+						info.setMiscDamage(Integer.parseInt(args[4]));
+					} else if (args[3].equalsIgnoreCase("Health")) {
+						info.setHealth(Integer.parseInt(args[4]));
+					} else if (args[3].equalsIgnoreCase("TargetDistance")) {
+						info.setTargetDistance(Integer.parseInt(args[4]));
+					} else if (args[3].equalsIgnoreCase("BurnDay")) {
+						info.setBurnDay(Boolean.parseBoolean(args[4]));
+					} else if (args[3].equalsIgnoreCase("SpawnChance")) {
+						info.setSpawnChance(Float.parseFloat(args[4]));
+					} else if (args[3].equalsIgnoreCase("Enabled")) {
+						plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setEnabled(CreatureType.valueOf(args[2]), Boolean.valueOf(args[4]));
 					} else {
 						sender.sendMessage("Invalid setting!");
+						return true;
 					}
 				} else {
 					sender.sendMessage("That creature type does not exist!");
 				}
 
 				try {
-					plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[2])).setInfo(CreatureType.valueOf(args[1]), info);
+					plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2]));
 					sender.sendMessage("Set creature info!");
 				} catch (SQLException e) {
 					sender.sendMessage("Error saving creature info!");
 				}
 			} else {
-				sender.sendMessage("usage crowd set [CreatureType] [World] [Setting] [Value]");
+				sender.sendMessage("usage crowd set [World] [CreatureType] [Setting] [Value]");
 			}
 		} else if (args[0].equals("maxPerWorld")) {
 			if (args.length >= 2) {

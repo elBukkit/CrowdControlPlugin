@@ -44,9 +44,9 @@ public class DamageHandler implements Runnable {
 														// targets?
 						Creature c = (Creature) entity;
 						// Targeting System
-						if (distance < crowdCreature.getTargetDistance()) {
+						if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
 							if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
-								switch (crowdCreature.getCreatureNatureDay()) {
+								switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
 								case Aggressive:
 									c.setTarget(p);
 									break;
@@ -60,7 +60,7 @@ public class DamageHandler implements Runnable {
 									break;
 								}
 							} else {
-								switch (crowdCreature.getCreatureNatureNight()) {
+								switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
 								case Aggressive:
 									c.setTarget(p);
 									break;
@@ -81,29 +81,29 @@ public class DamageHandler implements Runnable {
 					if (distance <= 1.8) {
 
 						if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
-							switch (crowdCreature.getCreatureNatureDay()) {
+							switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
 							case Aggressive:
-								p.damage(crowdCreature.getCollisionDamage());
+								p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
 								break;
 							case Neutral:
 								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
 								if (attackingPlayers != null && attackingPlayers.size() > 0) {
 									if (attackingPlayers.contains(p)) {
-										p.damage(crowdCreature.getCollisionDamage(), entity);
+										p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
 									}
 								}
 								break;
 							}
 						} else {
-							switch (crowdCreature.getCreatureNatureNight()) {
+							switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
 							case Aggressive:
-								p.damage(crowdCreature.getCollisionDamage());
+								p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
 								break;
 							case Neutral:
 								Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(entity);
 								if (attackingPlayers != null && attackingPlayers.size() > 0) {
 									if (attackingPlayers.contains(p)) {
-										p.damage(crowdCreature.getCollisionDamage(), entity);
+										p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
 									}
 								}
 								break;
@@ -119,7 +119,7 @@ public class DamageHandler implements Runnable {
 			for (Entity e : w.getEntities()) {
 				if (e instanceof LivingEntity) {
 					CrowdCreature crowdCreature = plugin.getCreatureHandler(e.getWorld()).getCrowdCreature((LivingEntity) e);
-					if (plugin.getCreatureHandler(e.getWorld()).shouldBurn(e.getLocation()) && crowdCreature.isBurnDay()) {
+					if (plugin.getCreatureHandler(e.getWorld()).shouldBurn(e.getLocation()) && crowdCreature.getBaseInfo().isBurnDay()) {
 						e.setFireTicks(15);
 					} else {
 						e.setFireTicks(0);

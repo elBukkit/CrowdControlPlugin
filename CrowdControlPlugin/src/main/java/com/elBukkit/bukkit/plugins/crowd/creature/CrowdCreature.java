@@ -13,77 +13,16 @@ import com.elBukkit.bukkit.plugins.crowd.ThreadSafe;
 
 public class CrowdCreature {
 
-	private volatile boolean burnDay = false;
-	private volatile int collisionDamage, miscDamage; // Misc damage is for like
-														// ghast fireballs, and
-														// other damage
-	private volatile Nature creatureNatureDay, creatureNatureNight;
-	private volatile boolean enabled = false;
 	private LivingEntity entity = null;
-	private volatile int health;
-	private volatile float spawnChance = 0.7f;
-	private volatile int targetDistance = 24;
 	private volatile CreatureType type;
+	private BaseInfo baseInfo;
+	private int health;
 
-	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, CreatureType type) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.type = type;
-	}
-
-	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type, boolean enabled) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.targetDistance = targetDistance;
-		this.burnDay = burnDay;
-		this.spawnChance = spawnChance;
-		this.type = type;
-		this.enabled = enabled;
-	}
-
-	public CrowdCreature(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance, CreatureType type, boolean enabled, LivingEntity entity) {
-		this.creatureNatureDay = creatureNatureDay;
-		this.creatureNatureNight = creatureNatureNight;
-		this.collisionDamage = collisionDamage;
-		this.miscDamage = miscDamage;
-		this.health = health;
-		this.targetDistance = targetDistance;
-		this.burnDay = burnDay;
-		this.spawnChance = spawnChance;
-		this.type = type;
-		this.enabled = enabled;
+	public CrowdCreature(LivingEntity entity, CreatureType type, BaseInfo info) {
 		this.entity = entity;
-	}
-
-	@ThreadSafe
-	public CrowdCreature create(LivingEntity entity) {
-		return new CrowdCreature(creatureNatureDay, creatureNatureNight, collisionDamage, miscDamage, health, targetDistance, burnDay, spawnChance, type, enabled, entity);
-	}
-
-	@ThreadSafe
-	public void damage(int amount) {
-		this.health -= amount;
-	}
-
-	@ThreadSafe
-	public int getCollisionDamage() {
-		return collisionDamage;
-	}
-
-	@ThreadSafe
-	public Nature getCreatureNatureDay() {
-		return creatureNatureDay;
-	}
-
-	@ThreadSafe
-	public Nature getCreatureNatureNight() {
-		return creatureNatureNight;
+		this.type = type;
+		this.baseInfo = info;
+		this.setHealth(info.getHealth());
 	}
 
 	@ThreadSafe
@@ -93,63 +32,18 @@ public class CrowdCreature {
 	}
 
 	@ThreadSafe
-	public int getHealth() {
-		return health;
-	}
-
-	@ThreadSafe
-	public int getMiscDamage() {
-		return miscDamage;
-	}
-
-	@ThreadSafe
-	public float getSpawnChance() {
-		return spawnChance;
-	}
-
-	@ThreadSafe
-	public int getTargetDistance() {
-		return targetDistance;
-	}
-
-	@ThreadSafe
 	public CreatureType getType() {
 		return type;
 	}
 
 	@ThreadSafe
-	public boolean isBurnDay() {
-		return burnDay;
+	public void setBaseInfo(BaseInfo baseInfo) {
+		this.baseInfo = baseInfo;
 	}
 
 	@ThreadSafe
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	@ThreadSafe
-	public void setBurnDay(boolean burnDay) {
-		this.burnDay = burnDay;
-	}
-
-	@ThreadSafe
-	public void setCollisionDamage(int collisionDamage) {
-		this.collisionDamage = collisionDamage;
-	}
-
-	@ThreadSafe
-	public void setCreatureNatureDay(Nature creatureNature) {
-		this.creatureNatureDay = creatureNature;
-	}
-
-	@ThreadSafe
-	public void setCreatureNatureNight(Nature creatureNatureNight) {
-		this.creatureNatureNight = creatureNatureNight;
-	}
-
-	@ThreadSafe
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public BaseInfo getBaseInfo() {
+		return baseInfo;
 	}
 
 	@ThreadSafe
@@ -158,36 +52,12 @@ public class CrowdCreature {
 	}
 
 	@ThreadSafe
-	public void setMiscDamage(int miscDamage) {
-		this.miscDamage = miscDamage;
+	public int getHealth() {
+		return health;
 	}
 
 	@ThreadSafe
-	public void setSpawnChance(float spawnChance) {
-		this.spawnChance = spawnChance;
+	public void damage(int amount) {
+		this.health -= amount;
 	}
-
-	@ThreadSafe
-	public void setTargetDistance(int targetDistance) {
-		this.targetDistance = targetDistance;
-	}
-
-	@ThreadSafe
-	public void setType(CreatureType type) {
-		this.type = type;
-	}
-
-	@ThreadSafe
-	public void updateBaseInfo(CrowdCreature c) {
-		this.burnDay = c.burnDay;
-		this.collisionDamage = c.collisionDamage;
-		this.creatureNatureDay = c.creatureNatureDay;
-		this.creatureNatureNight = c.creatureNatureNight;
-		this.enabled = c.enabled;
-		this.health = c.health;
-		this.miscDamage = c.miscDamage;
-		this.spawnChance = c.spawnChance;
-		this.targetDistance = c.targetDistance;
-	}
-
 }

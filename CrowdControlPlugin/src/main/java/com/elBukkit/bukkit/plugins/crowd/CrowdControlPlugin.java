@@ -7,17 +7,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -26,7 +27,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.alta189.sqlLibrary.SQLite.sqlCore;
+import com.elBukkit.bukkit.plugins.crowd.creature.BaseInfo;
 import com.elBukkit.bukkit.plugins.crowd.creature.CreatureHandler;
+import com.elBukkit.bukkit.plugins.crowd.creature.CrowdCreature;
 import com.elBukkit.bukkit.plugins.crowd.creature.DamageHandler;
 import com.elBukkit.bukkit.plugins.crowd.events.CrowdListener;
 import com.elBukkit.bukkit.plugins.crowd.rules.MaxRule;
@@ -53,7 +56,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public sqlCore dbManage; // import SQLite lib
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
-	private ConcurrentSkipListSet<CrowdListener> listeners = new ConcurrentSkipListSet<CrowdListener>();
+	private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener,Boolean>());
 	private volatile int maxPerChunk = 4;
 
 	private volatile int maxPerWorld = 200;
@@ -89,7 +92,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 	@ThreadSafe
 	public Set<CrowdListener> getListeners() {
-		return this.listeners.clone();
+		return this.listeners;
 	}
 
 	@ThreadSafe
@@ -194,12 +197,17 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 		for (World w : Bukkit.getServer().getWorlds()) {
 
-			CreatureHandler cHandler = getCreatureHandler(w); // Create all of
-																// the creature
-																// handlers
+			CreatureHandler cHandler = getCreatureHandler(w); // Create all of the creature handlers
 
 			for (LivingEntity e : w.getLivingEntities()) {
-				cHandler.getCrowdCreature(e); // Add existing
+				
+				CreatureType cType = cHandler.getCreatureType(e);
+				BaseInfo info = cHandler.getBaseInfo(cType);
+				
+				if (info != null) {
+					cHandler.addCrowdCreature(new CrowdCreature(e, cType, info));
+				}
+				
 			}
 		}
 	}
