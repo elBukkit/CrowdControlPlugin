@@ -349,28 +349,44 @@ public class CreatureHandler implements Runnable {
 
 		// Despawning code
 
-		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+		Iterator<LivingEntity> i = world.getLivingEntities().iterator();
 
 		while (i.hasNext()) {
 
-			CrowdCreature c = i.next();
-			LivingEntity e = c.getEntity();
+			LivingEntity e = i.next();
+			CrowdCreature c = getCrowdCreature(e);
 
-			if (!world.getLivingEntities().contains(e)) {
-				e.remove();
-				i.remove();
-			} else if (e != null) {
+			if (c == null) {
+				CreatureType cType = getCreatureType(e);
+				BaseInfo info = getBaseInfo(cType);
+
+				if (info != null) {
+					c = new CrowdCreature(e, cType, info);
+					addCrowdCreature(c);
+				}
+			}
+
+			if (c != null) {
+
+				if (!world.getLivingEntities().contains(c.getEntity())) {
+					kill(c);
+					return;
+				}
+
 				if (c.getHealth() <= 0) {
 					e.damage(9999);
-					i.remove();
+					kill(c);
+					return;
 				}
 
 				if (e.isDead()) {
+					kill(c);
 					e.remove();
-					i.remove();
+					return;
 				}
 			} else {
-				i.remove();
+				crowdCreatureSet.remove(c);
+				return;
 			}
 
 			boolean keep = false;
@@ -434,7 +450,7 @@ public class CreatureHandler implements Runnable {
 
 		if (rs.next()) {
 			// Creature type is in db
-			String updateSQL = "UPDATE creatureInfo SET NatureDay = '" + info.getCreatureNatureDay().toString() + "', NatureNight = '" + info.getCreatureNatureNight().toString() + "', CollisionDmg = '" + String.valueOf(info.getCollisionDamage()) + "', MiscDmg = '" + String.valueOf(info.getMiscDamage()) + "', BurnDay = '" + String.valueOf(info.isBurnDay()) + "', Health = '" + String.valueOf(info.getHealth()) + "', TargetDistance = '" + String.valueOf(info.getTargetDistance()) + "', SpawnChance = '" + String.valueOf(info.getSpawnChance()) + "' WHERE Creature = '" + type.toString() + "';";
+			String updateSQL = "UPDATE creatureInfo SET NatureDay = '" + info.getCreatureNatureDay().toString() + "', NatureNight = '" + info.getCreatureNatureNight().toString() + "', CollisionDmg = '" + String.valueOf(info.getCollisionDamage()) + "', MiscDmg = '" + String.valueOf(info.getMiscDamage()) + "', BurnDay = '" + String.valueOf(info.isBurnDay()) + "', Health = '" + String.valueOf(info.getHealth()) + "', TargetDistance = '" + String.valueOf(info.getTargetDistance()) + "', SpawnChance = '" + String.valueOf(info.getSpawnChance()) + "', Enabled = '" + String.valueOf(enabledCreatures.contains(type)) + "' WHERE Creature = '" + type.toString() + "';";
 
 			dbManage.updateQuery(updateSQL);
 		} else {
