@@ -104,6 +104,7 @@ public class CreatureHandler implements Runnable {
 			 pList = this.attacked.get(c);
 		} else {
 			pList = new HashSet<Player>();
+			attacked.put(c, pList);
 		}
 		pList.add(p);
 	}
