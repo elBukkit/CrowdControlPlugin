@@ -44,8 +44,8 @@ public class CrowdEntityListener extends EntityListener {
 			event.setCancelled(true);
 		} else {
 			if (event.getEntity() instanceof LivingEntity) {
-				LivingEntity entity = (LivingEntity)event.getEntity();
-				CreatureHandler cHandler = plugin.getCreatureHandler(event.getLocation().getWorld()); 
+				LivingEntity entity = (LivingEntity) event.getEntity();
+				CreatureHandler cHandler = plugin.getCreatureHandler(event.getLocation().getWorld());
 				BaseInfo info = cHandler.getBaseInfo(event.getCreatureType());
 				if (info != null) {
 					cHandler.addCrowdCreature(new CrowdCreature(entity, event.getCreatureType(), info));

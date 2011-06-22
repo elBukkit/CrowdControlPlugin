@@ -56,16 +56,16 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public sqlCore dbManage; // import SQLite lib
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
-	private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener,Boolean>());
+	private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
+	private Logger log;
+
 	private volatile int maxPerChunk = 4;
 
 	private volatile int maxPerWorld = 200;
 
 	private PluginDescriptionFile pdf;
-
 	private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
 	public RuleHandler ruleHandler;
-	private Logger log;
 
 	@ThreadSafe
 	public CreatureHandler getCreatureHandler(World w) {
@@ -197,17 +197,19 @@ public class CrowdControlPlugin extends JavaPlugin {
 
 		for (World w : Bukkit.getServer().getWorlds()) {
 
-			CreatureHandler cHandler = getCreatureHandler(w); // Create all of the creature handlers
+			CreatureHandler cHandler = getCreatureHandler(w); // Create all of
+																// the creature
+																// handlers
 
 			for (LivingEntity e : w.getLivingEntities()) {
-				
+
 				CreatureType cType = cHandler.getCreatureType(e);
 				BaseInfo info = cHandler.getBaseInfo(cType);
-				
+
 				if (info != null) {
 					cHandler.addCrowdCreature(new CrowdCreature(e, cType, info));
 				}
-				
+
 			}
 		}
 	}

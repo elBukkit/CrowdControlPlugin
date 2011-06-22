@@ -48,9 +48,9 @@ import com.elBukkit.bukkit.plugins.crowd.ThreadSafe;
 public class CreatureHandler implements Runnable {
 
 	private ConcurrentHashMap<CrowdCreature, Set<Player>> attacked;
+	private ConcurrentHashMap<CreatureType, BaseInfo> baseInfo;
 	private Set<CrowdCreature> crowdCreatureSet;
 	private sqlCore dbManage;
-	private ConcurrentHashMap<CreatureType, BaseInfo> baseInfo;
 	private Set<CreatureType> enabledCreatures;
 	private MovementHandler movementHandler;
 	private SpawnHandler spawnHandler;
@@ -60,8 +60,8 @@ public class CreatureHandler implements Runnable {
 		this.dbManage = dbManage;
 		this.world = w;
 		baseInfo = new ConcurrentHashMap<CreatureType, BaseInfo>();
-		crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature,Boolean>());
-		enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType,Boolean>());
+		crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature, Boolean>());
+		enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
 		attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
 
 		dbManage.initialize();
@@ -76,16 +76,16 @@ public class CreatureHandler implements Runnable {
 
 			while (rs.next()) {
 				boolean enabled = Boolean.parseBoolean(rs.getString(11));
-				
+
 				CreatureType type = CreatureType.valueOf(rs.getString(2));
 				BaseInfo info = new BaseInfo(Nature.valueOf(rs.getString(3)), Nature.valueOf(rs.getString(4)), Integer.parseInt(rs.getString(5)), Integer.parseInt(rs.getString(6)), Integer.parseInt(rs.getString(8)), Integer.parseInt(rs.getString(9)), Boolean.parseBoolean(rs.getString(7)), Float.parseFloat(rs.getString(10)));
 
 				baseInfo.put(type, info);
-				
+
 				if (enabled) {
 					enabledCreatures.add(type);
 				}
-					
+
 			}
 		}
 		dbManage.close();
@@ -101,12 +101,17 @@ public class CreatureHandler implements Runnable {
 	public void addAttacked(CrowdCreature c, Player p) {
 		Set<Player> pList;
 		if (this.attacked.containsKey(c)) {
-			 pList = this.attacked.get(c);
+			pList = this.attacked.get(c);
 		} else {
 			pList = new HashSet<Player>();
 			attacked.put(c, pList);
 		}
 		pList.add(p);
+	}
+
+	@ThreadSafe
+	public void addCrowdCreature(CrowdCreature c) {
+		this.crowdCreatureSet.add(c);
 	}
 
 	@ThreadSafe
@@ -257,11 +262,6 @@ public class CreatureHandler implements Runnable {
 		}
 
 		return null;
-	}
-	
-	@ThreadSafe
-	public void addCrowdCreature(CrowdCreature c) {
-		this.crowdCreatureSet.add(c);
 	}
 
 	@ThreadSafe
@@ -418,7 +418,7 @@ public class CreatureHandler implements Runnable {
 			killAll();
 		}
 	}
-	
+
 	public void setEnabled(CreatureType type, boolean enabled) {
 		if (enabled) {
 			this.enabledCreatures.add(type);

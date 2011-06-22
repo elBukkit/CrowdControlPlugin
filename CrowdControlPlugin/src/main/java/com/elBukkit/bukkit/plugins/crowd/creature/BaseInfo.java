@@ -3,13 +3,13 @@ package com.elBukkit.bukkit.plugins.crowd.creature;
 import com.elBukkit.bukkit.plugins.crowd.ThreadSafe;
 
 public class BaseInfo {
-	private volatile int health;
-	private volatile float spawnChance = 0.7f;
-	private volatile int targetDistance = 24;
 	private volatile boolean burnDay = false;
 	private volatile int collisionDamage, miscDamage;
 	private volatile Nature creatureNatureDay, creatureNatureNight;
-	
+	private volatile int health;
+	private volatile float spawnChance = 0.7f;
+	private volatile int targetDistance = 24;
+
 	public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health) {
 		this.creatureNatureDay = creatureNatureDay;
 		this.creatureNatureNight = creatureNatureNight;
@@ -17,7 +17,7 @@ public class BaseInfo {
 		this.miscDamage = miscDamage;
 		this.health = health;
 	}
-	
+
 	public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance) {
 		this.creatureNatureDay = creatureNatureDay;
 		this.creatureNatureNight = creatureNatureNight;
@@ -28,7 +28,42 @@ public class BaseInfo {
 		this.burnDay = burnDay;
 		this.spawnChance = spawnChance;
 	}
-	
+
+	@ThreadSafe
+	public int getCollisionDamage() {
+		return collisionDamage;
+	}
+
+	@ThreadSafe
+	public Nature getCreatureNatureDay() {
+		return creatureNatureDay;
+	}
+
+	@ThreadSafe
+	public Nature getCreatureNatureNight() {
+		return creatureNatureNight;
+	}
+
+	@ThreadSafe
+	public int getHealth() {
+		return health;
+	}
+
+	@ThreadSafe
+	public int getMiscDamage() {
+		return miscDamage;
+	}
+
+	@ThreadSafe
+	public float getSpawnChance() {
+		return spawnChance;
+	}
+
+	@ThreadSafe
+	public int getTargetDistance() {
+		return targetDistance;
+	}
+
 	@ThreadSafe
 	public boolean isBurnDay() {
 		return burnDay;
@@ -72,40 +107,5 @@ public class BaseInfo {
 	@ThreadSafe
 	public void setTargetDistance(int targetDistance) {
 		this.targetDistance = targetDistance;
-	}
-	
-	@ThreadSafe
-	public int getHealth() {
-		return health;
-	}
-
-	@ThreadSafe
-	public int getMiscDamage() {
-		return miscDamage;
-	}
-
-	@ThreadSafe
-	public float getSpawnChance() {
-		return spawnChance;
-	}
-
-	@ThreadSafe
-	public int getTargetDistance() {
-		return targetDistance;
-	}
-
-	@ThreadSafe
-	public int getCollisionDamage() {
-		return collisionDamage;
-	}
-
-	@ThreadSafe
-	public Nature getCreatureNatureDay() {
-		return creatureNatureDay;
-	}
-
-	@ThreadSafe
-	public Nature getCreatureNatureNight() {
-		return creatureNatureNight;
 	}
 }

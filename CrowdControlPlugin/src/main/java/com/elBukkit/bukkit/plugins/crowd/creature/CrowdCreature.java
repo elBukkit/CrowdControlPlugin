@@ -13,10 +13,10 @@ import com.elBukkit.bukkit.plugins.crowd.ThreadSafe;
 
 public class CrowdCreature {
 
-	private LivingEntity entity = null;
-	private volatile CreatureType type;
 	private BaseInfo baseInfo;
+	private LivingEntity entity = null;
 	private int health;
+	private volatile CreatureType type;
 
 	public CrowdCreature(LivingEntity entity, CreatureType type, BaseInfo info) {
 		this.entity = entity;
@@ -26,9 +26,24 @@ public class CrowdCreature {
 	}
 
 	@ThreadSafe
+	public void damage(int amount) {
+		this.health -= amount;
+	}
+
+	@ThreadSafe
+	public BaseInfo getBaseInfo() {
+		return baseInfo;
+	}
+
+	@ThreadSafe
 	// Thread safe to get but not to use
 	public LivingEntity getEntity() {
 		return entity;
+	}
+
+	@ThreadSafe
+	public int getHealth() {
+		return health;
 	}
 
 	@ThreadSafe
@@ -42,22 +57,7 @@ public class CrowdCreature {
 	}
 
 	@ThreadSafe
-	public BaseInfo getBaseInfo() {
-		return baseInfo;
-	}
-
-	@ThreadSafe
 	public void setHealth(int health) {
 		this.health = health;
-	}
-
-	@ThreadSafe
-	public int getHealth() {
-		return health;
-	}
-
-	@ThreadSafe
-	public void damage(int amount) {
-		this.health -= amount;
 	}
 }
