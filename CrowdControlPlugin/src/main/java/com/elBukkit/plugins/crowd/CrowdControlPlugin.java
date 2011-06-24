@@ -27,6 +27,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.alta189.sqlLibrary.SQLite.sqlCore;
 import com.elBukkit.plugins.crowd.creature.BaseInfo;
 import com.elBukkit.plugins.crowd.creature.CreatureHandler;
 import com.elBukkit.plugins.crowd.creature.CrowdCreature;
@@ -40,7 +41,6 @@ import com.elBukkit.plugins.crowd.rules.SpawnLocationRule;
 import com.elBukkit.plugins.crowd.rules.SpawnMaterialRule;
 import com.elBukkit.plugins.crowd.rules.SpawnReplaceRule;
 import com.elBukkit.plugins.crowd.rules.TargetPlayerRule;
-import com.elBukkit.plugins.crowd.sqlLibrary.SQLite.sqlCore;
 
 /*
  * CrowdControl plugin

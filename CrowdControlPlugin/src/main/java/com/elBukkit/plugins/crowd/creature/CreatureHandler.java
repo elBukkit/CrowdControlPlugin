@@ -35,9 +35,9 @@ import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 
+import com.alta189.sqlLibrary.SQLite.sqlCore;
 import com.elBukkit.plugins.crowd.CrowdControlPlugin;
 import com.elBukkit.plugins.crowd.ThreadSafe;
-import com.elBukkit.plugins.crowd.sqlLibrary.SQLite.sqlCore;
 
 /*
  * Handles retrieving custom creature info from a standard CreatureType
