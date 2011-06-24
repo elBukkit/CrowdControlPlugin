@@ -13,7 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 
-import com.alta189.sqlLibrary.SQLite.sqlCore;
+import com.alta189.sqlLibraryV2.SQLite.sqlCore;
 import com.elBukkit.plugins.crowd.rules.Rule;
 import com.elBukkit.plugins.crowd.rules.Type;
 

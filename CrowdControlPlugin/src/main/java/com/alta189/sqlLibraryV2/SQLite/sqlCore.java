@@ -1,4 +1,4 @@
-package com.alta189.sqlLibrary.SQLite;
+package com.alta189.sqlLibraryV2.SQLite;
 
 import java.io.File;
 import java.sql.Connection;
