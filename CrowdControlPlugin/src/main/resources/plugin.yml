@@ -1,5 +1,5 @@
 name: CrowdControl
-main: com.elBukkit.bukkit.plugins.crowd.CrowdControlPlugin
+main: com.elBukkit.plugins.crowd.CrowdControlPlugin
 version: 0.26.01
 website: https://github.com/elBukkit/CrowdControlPlugin
 author: elBukkit
