@@ -134,7 +134,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		}
 
 		String prefix = "[CrowdControl]";
-		String dbName = pdf.getName() + ".db";
+		String dbName = pdf.getName();
 
 		dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName, this.getDataFolder().getAbsolutePath());
 		try {
