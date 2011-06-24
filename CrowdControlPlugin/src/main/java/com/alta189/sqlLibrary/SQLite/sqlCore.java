@@ -51,7 +51,7 @@ public class sqlCore {
 			dbFolder.mkdir();
 		}
 		
-		File SQLFile = new File(dbFolder.getAbsolutePath() + File.pathSeparator + dbName+ ".db");
+		File SQLFile = new File(dbFolder.getAbsolutePath() + File.separator + dbName+ ".db");
 		
 		this.manageDB = new DatabaseHandler(this, SQLFile);
 		
