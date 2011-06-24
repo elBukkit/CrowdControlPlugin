@@ -25,9 +25,9 @@ public class SpawnHandler implements Runnable {
 	private Random rand = new Random();
 	private World world;
 
-	public SpawnHandler(CrowdControlPlugin plugin, World world, CreatureHandler handler) {
+	public SpawnHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
 		this.plugin = plugin;
-		this.world = world;
+		this.world = handler.getWorld();
 		this.handler = handler;
 	}
 

@@ -201,15 +201,15 @@ public class CrowdCommand implements CommandExecutor {
 						sender.sendMessage("Invalid setting!");
 						return true;
 					}
+
+					try {
+						plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2]));
+						sender.sendMessage("Set creature info!");
+					} catch (Exception e) {
+						sender.sendMessage("Error saving creature info!");
+					}
 				} else {
 					sender.sendMessage("That creature type does not exist!");
-				}
-
-				try {
-					plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2]));
-					sender.sendMessage("Set creature info!");
-				} catch (SQLException e) {
-					sender.sendMessage("Error saving creature info!");
 				}
 			} else {
 				sender.sendMessage("usage crowd set [World] [CreatureType] [Setting] [Value]");

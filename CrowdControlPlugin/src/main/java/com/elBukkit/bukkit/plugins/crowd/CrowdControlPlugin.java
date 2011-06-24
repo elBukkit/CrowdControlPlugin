@@ -20,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -30,7 +31,6 @@ import com.alta189.sqlLibrary.SQLite.sqlCore;
 import com.elBukkit.bukkit.plugins.crowd.creature.BaseInfo;
 import com.elBukkit.bukkit.plugins.crowd.creature.CreatureHandler;
 import com.elBukkit.bukkit.plugins.crowd.creature.CrowdCreature;
-import com.elBukkit.bukkit.plugins.crowd.creature.DamageHandler;
 import com.elBukkit.bukkit.plugins.crowd.events.CrowdListener;
 import com.elBukkit.bukkit.plugins.crowd.rules.MaxRule;
 import com.elBukkit.bukkit.plugins.crowd.rules.Rule;
@@ -77,7 +77,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 				if (cHandlerLock.tryLock()) {
 					creatureHandler = new CreatureHandler(dbManage, w, this);
 					// Register the despawner
-					getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 20);
+					getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 10);
 					creatureHandlers.put(w, creatureHandler);
 					return creatureHandler;
 				}
@@ -192,9 +192,6 @@ public class CrowdControlPlugin extends JavaPlugin {
 		// Register command
 		getCommand("crowd").setExecutor(new CrowdCommand(this));
 
-		// Register the damage handler
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new DamageHandler(this), 0, 20);
-
 		for (World w : Bukkit.getServer().getWorlds()) {
 
 			CreatureHandler cHandler = getCreatureHandler(w); // Create all of
@@ -202,14 +199,14 @@ public class CrowdControlPlugin extends JavaPlugin {
 																// handlers
 
 			for (LivingEntity e : w.getLivingEntities()) {
+				if (!(e instanceof Player)) {
+					CreatureType cType = cHandler.getCreatureType(e);
+					BaseInfo info = cHandler.getBaseInfo(cType);
 
-				CreatureType cType = cHandler.getCreatureType(e);
-				BaseInfo info = cHandler.getBaseInfo(cType);
-
-				if (info != null) {
-					cHandler.addCrowdCreature(new CrowdCreature(e, cType, info));
+					if (info != null) {
+						cHandler.addCrowdCreature(new CrowdCreature(e, cType, info));
+					}
 				}
-
 			}
 		}
 	}

@@ -52,8 +52,6 @@ public class CreatureHandler implements Runnable {
 	private Set<CrowdCreature> crowdCreatureSet;
 	private sqlCore dbManage;
 	private Set<CreatureType> enabledCreatures;
-	private MovementHandler movementHandler;
-	private SpawnHandler spawnHandler;
 	private World world;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
@@ -82,6 +80,15 @@ public class CreatureHandler implements Runnable {
 
 				baseInfo.put(type, info);
 
+				Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+				while (i.hasNext()) {
+					CrowdCreature creature = i.next();
+
+					if (creature.getType() == type) {
+						creature.setBaseInfo(info);
+					}
+				}
+
 				if (enabled) {
 					enabledCreatures.add(type);
 				}
@@ -90,11 +97,11 @@ public class CreatureHandler implements Runnable {
 		}
 		dbManage.close();
 
-		spawnHandler = new SpawnHandler(plugin, world, this);
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, spawnHandler, 0, 20);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new SpawnHandler(plugin, this), 0, 20);
 
-		movementHandler = new MovementHandler(plugin, this);
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, movementHandler, 0, 20);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MovementHandler(plugin, this), 20, 20);
+
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new DamageHandler(plugin, this), 40, 20);
 	}
 
 	@ThreadSafe
@@ -107,6 +114,11 @@ public class CreatureHandler implements Runnable {
 			attacked.put(c, pList);
 		}
 		pList.add(p);
+	}
+
+	@ThreadSafe
+	public World getWorld() {
+		return world;
 	}
 
 	@ThreadSafe
@@ -173,7 +185,12 @@ public class CreatureHandler implements Runnable {
 
 	@ThreadSafe
 	public BaseInfo getBaseInfo(CreatureType type) {
-		return baseInfo.get(type);
+		if (baseInfo.contains(type)) {
+			return baseInfo.get(type);
+		} else {
+			BaseInfo info = new BaseInfo(Nature.Passive, Nature.Passive, 0, 0, 10);
+			return info;
+		}
 	}
 
 	@ThreadSafe
@@ -248,7 +265,7 @@ public class CreatureHandler implements Runnable {
 		}
 		return CreatureType.MONSTER;
 	}
-	
+
 	@ThreadSafe
 	public void despawn(CrowdCreature c) {
 		crowdCreatureSet.remove(c);
@@ -258,6 +275,11 @@ public class CreatureHandler implements Runnable {
 
 	@ThreadSafe
 	public CrowdCreature getCrowdCreature(LivingEntity entity) {
+
+		if (entity instanceof Player) {
+			return null;
+		}
+
 		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
 		while (i.hasNext()) {
@@ -266,6 +288,15 @@ public class CreatureHandler implements Runnable {
 			if (c.getEntity() == entity) {
 				return c;
 			}
+		}
+
+		CreatureType cType = getCreatureType(entity);
+		BaseInfo info = getBaseInfo(cType);
+
+		if (info != null) {
+			CrowdCreature c = new CrowdCreature(entity, cType, info);
+			addCrowdCreature(c);
+			return c;
 		}
 
 		return null;
@@ -356,43 +387,12 @@ public class CreatureHandler implements Runnable {
 
 		// Despawning code
 
-		Iterator<LivingEntity> i = world.getLivingEntities().iterator();
+		Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
 		while (i.hasNext()) {
 
-			LivingEntity e = i.next();
-			CrowdCreature c = getCrowdCreature(e);
-
-			if (c == null) {
-				CreatureType cType = getCreatureType(e);
-				BaseInfo info = getBaseInfo(cType);
-
-				if (info != null) {
-					c = new CrowdCreature(e, cType, info);
-					addCrowdCreature(c);
-				}
-			}
-
-			if (c != null) {
-
-				if (!world.getLivingEntities().contains(c.getEntity())) {
-					kill(c);
-					return;
-				}
-
-				if (c.getHealth() <= 0) {
-					kill(c);
-					return;
-				}
-
-				if (e.isDead()) {
-					kill(c);
-					return;
-				}
-			} else {
-				crowdCreatureSet.remove(c);
-				return;
-			}
+			CrowdCreature c = i.next();
+			LivingEntity e = c.getEntity();
 
 			boolean keep = false;
 
@@ -479,7 +479,7 @@ public class CreatureHandler implements Runnable {
 
 	public boolean shouldBurn(Location loc) {
 		if (isDay()) {
-			if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() > 7) {
+			if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() == 12) {
 				if (canSeeSky(loc)) {
 					return true;
 				}
