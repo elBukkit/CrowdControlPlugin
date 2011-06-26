@@ -1,6 +1,5 @@
 package com.elBukkit.plugins.crowd;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
@@ -214,33 +213,8 @@ public class CrowdCommand implements CommandExecutor {
 			} else {
 				sender.sendMessage("usage crowd set [World] [CreatureType] [Setting] [Value]");
 			}
-		} else if (args[0].equals("maxPerWorld")) {
-			if (args.length >= 2) {
-				try {
-					plugin.setMaxPerWorld(Integer.parseInt(args[1]));
-				} catch (NumberFormatException e) {
-					sender.sendMessage("Error, [Max] must be a whole positive number!");
-				} catch (IOException e) {
-					sender.sendMessage("Error saving max to file!");
-				}
-				sender.sendMessage("Max set");
-			} else {
-				sender.sendMessage("Usage: crowd maxPerWorld [Max]");
-			}
-		} else if (args[0].equals("maxPerChunk")) {
-			if (args.length >= 2) {
-				try {
-					plugin.setMaxPerChunk(Integer.parseInt(args[1]));
-				} catch (NumberFormatException e) {
-					sender.sendMessage("Error, [Max] must be a whole positive number!");
-				} catch (IOException e) {
-					sender.sendMessage("Error saving max to file!");
-				}
-				sender.sendMessage("Max set");
-			} else {
-				sender.sendMessage("Usage: crowd maxPerChunk [Max]");
-				return false;
-			}
+		} else if (args[0].equals("reloadConfig")) {
+				plugin.loadConfigFile();
 		}
 
 		return true;

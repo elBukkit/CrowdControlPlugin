@@ -55,10 +55,12 @@ public class CreatureHandler implements Runnable {
 	private Set<CreatureType> enabledCreatures;
 	private Random rand = new Random();
 	private World world;
+	private CrowdControlPlugin plugin;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
 		this.dbManage = dbManage;
 		this.world = w;
+		this.plugin = plugin;
 		baseInfo = new ConcurrentHashMap<CreatureType, BaseInfo>();
 		crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature, Boolean>());
 		enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
@@ -114,6 +116,16 @@ public class CreatureHandler implements Runnable {
 
 					if (creature.getHealth() <= 0) {
 						kill(creature);
+					}
+					
+					if (creature.getEntity() != null) {
+						if (creature.getEntity().isDead() || creature.getEntity().getHealth() <= 0) {
+							removeAllAttacked(creature);
+							i.remove();
+						}
+					} else {
+						removeAllAttacked(creature);
+						i.remove();
 					}
 				}
 
@@ -425,11 +437,13 @@ public class CreatureHandler implements Runnable {
 				double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
 				double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
-				if (distance < 128) {
-					if (rand.nextFloat() > .01) { // 1% Chance of despawning when idle 
+				if (distance < plugin.getDespawnDistance()) {
+					if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
 						keep = true;
-					} else if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
-						keep = true;
+					} else {
+						if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // 5% Chance of despawning when idle 
+							keep = true;
+						}
 					}
 				}
 			}

@@ -1,15 +1,10 @@
 package com.elBukkit.plugins.crowd;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -26,6 +21,7 @@ import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.config.Configuration;
 
 import com.alta189.sqlLibraryV2.SQLite.sqlCore;
 import com.elBukkit.plugins.crowd.creature.BaseInfo;
@@ -52,16 +48,19 @@ import com.elBukkit.plugins.crowd.rules.TargetPlayerRule;
 public class CrowdControlPlugin extends JavaPlugin {
 
 	private static Lock cHandlerLock = new ReentrantLock();
-	private File configFile;
+	private Configuration config;
 	public ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
 	public sqlCore dbManage; // import SQLite lib
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
 	private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
 	private Logger log;
-	private volatile int maxPerChunk = 4;
-
-	private volatile int maxPerWorld = 200;
+	
+	private volatile int maxPerChunk = 2;
+	private volatile int maxPerWorld = 300;
+	private volatile int despawnDistance = 128;
+	private volatile double idleDespawnChance = 0.05;
+	private volatile int minDistanceFromPlayer = 10;
 
 	private PluginDescriptionFile pdf;
 
@@ -148,41 +147,19 @@ public class CrowdControlPlugin extends JavaPlugin {
 			return;
 		}
 
-		configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.txt");
+		File configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.yml");
 
-		try {
-			if (!configFile.exists()) {
+		if (!configFile.exists()) {
+			try {
 				configFile.createNewFile();
-
-				PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
-
-				globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
-				globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
-
-				globalConfigWriter.close();
+			} catch (IOException e) {
+				log.info("Unable to make config.yml!");
 			}
-
-			Scanner globalConfigReader = new Scanner(new FileInputStream(configFile));
-			globalConfigReader.useDelimiter(System.getProperty("line.separator"));
-
-			while (globalConfigReader.hasNext()) {
-				String[] data = processLine(globalConfigReader.next());
-
-				if (data != null) {
-					if (data[0].equalsIgnoreCase("maxPerWorld")) {
-						this.maxPerWorld = Integer.parseInt(data[1]);
-					} else if (data[0].equalsIgnoreCase("maxPerChunk")) {
-						this.maxPerChunk = Integer.parseInt(data[1]);
-					}
-				}
-			}
-
-			globalConfigReader.reset();
-
-		} catch (IOException e) {
-			log.info("Failed to read config file!");
-			this.setEnabled(false);
 		}
+		
+		config = new Configuration(configFile);
+		
+		loadConfigFile();
 
 		// Register our events
 		PluginManager pm = getServer().getPluginManager();
@@ -215,51 +192,66 @@ public class CrowdControlPlugin extends JavaPlugin {
 		}
 	}
 
-	private String[] processLine(String aLine) {
-		Scanner scanner = new Scanner(aLine);
-		scanner.useDelimiter(":");
-		if (scanner.hasNext()) {
-			String[] returnData = { "", "" };
-			returnData[0] = scanner.next();
-			returnData[1] = scanner.next();
-			return returnData;
-		} else {
-			log.info("Empty or invalid line. Unable to process.");
-			return null;
-		}
-	}
-
 	@ThreadSafe
 	public void registerListener(CrowdListener listener) {
 		this.listeners.add(listener);
 	}
 
-	public void setMaxPerChunk(int max) throws IOException {
-		PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
-
+	public void setMaxPerChunk(int max) {
 		this.maxPerChunk = max;
 
-		this.configFile.delete();
-		this.configFile.createNewFile();
-
-		globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
-		globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
-
-		globalConfigWriter.close();
+		config.setProperty("global.maxPerChunk", max);
 	}
 
-	public void setMaxPerWorld(int max) throws IOException {
-
-		PrintWriter globalConfigWriter = new PrintWriter(new BufferedWriter(new FileWriter(configFile)));
-
+	public void setMaxPerWorld(int max) {
 		this.maxPerWorld = max;
 
-		this.configFile.delete();
-		this.configFile.createNewFile();
+		config.setProperty("global.maxPerWorld", max);
+	}
 
-		globalConfigWriter.println("maxPerWorld:" + String.valueOf(this.maxPerWorld));
-		globalConfigWriter.println("maxPerChunk:" + String.valueOf(this.maxPerChunk));
+	public void setDespawnDistance(int despawnDistance) {
+		this.despawnDistance = despawnDistance;
 
-		globalConfigWriter.close();
+		config.setProperty("global.despawnDistance", despawnDistance);
+	}
+
+	public int getDespawnDistance() {
+		return despawnDistance;
+	}
+
+	public void setIdleDespawnChance(double idleDespawnChance) {
+		this.idleDespawnChance = idleDespawnChance;
+
+		config.setProperty("global.idleDespawnChance", idleDespawnChance);
+	}
+
+	public double getIdleDespawnChance() {
+		return idleDespawnChance;
+	}
+
+	public void setMinDistanceFromPlayer(int minDistanceFromPlayer) {
+		this.minDistanceFromPlayer = minDistanceFromPlayer;
+
+		config.setProperty("global.minDistanceFromPlayer", minDistanceFromPlayer);
+	}
+
+	public int getMinDistanceFromPlayer() {
+		return minDistanceFromPlayer;
+	}
+	
+	public void loadConfigFile() {
+		if (config.getNode("global") != null) {
+			this.despawnDistance = config.getInt("global.despawnDistance", this.despawnDistance);
+			this.idleDespawnChance = config.getDouble("global.idleDespawnChance", this.idleDespawnChance);
+			this.maxPerChunk = config.getInt("global.maxPerChunk", this.maxPerChunk);
+			this.maxPerWorld = config.getInt("global.maxPerWorld", this.maxPerWorld);
+			this.minDistanceFromPlayer = config.getInt("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
+		} else {
+			config.setProperty("global.despawnDistance", this.despawnDistance);
+			config.setProperty("global.idleDespawnChance", this.idleDespawnChance);
+			config.setProperty("global.maxPerChunk", this.maxPerChunk);
+			config.setProperty("global.maxPerWorld", this.maxPerWorld);
+			config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
+		}
 	}
 }
