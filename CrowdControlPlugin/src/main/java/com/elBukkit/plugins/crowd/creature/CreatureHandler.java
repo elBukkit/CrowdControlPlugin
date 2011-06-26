@@ -438,19 +438,21 @@ public class CreatureHandler implements Runnable {
 
 				LivingEntity target = ((Creature) e).getTarget();
 
-				double deltax = Math.abs(e.getLocation().getX() - target.getLocation().getX());
-				double deltay = Math.abs(e.getLocation().getY() - target.getLocation().getY());
-				double deltaz = Math.abs(e.getLocation().getZ() - target.getLocation().getZ());
-				double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+				if (target != null) {
+					double deltax = Math.abs(e.getLocation().getX() - target.getLocation().getX());
+					double deltay = Math.abs(e.getLocation().getY() - target.getLocation().getY());
+					double deltaz = Math.abs(e.getLocation().getZ() - target.getLocation().getZ());
+					double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
-				if (distance > c.getBaseInfo().getTargetDistance()) {
-					((Creature) e).setTarget(null);
+					if (distance > c.getBaseInfo().getTargetDistance()) {
+						((Creature) e).setTarget(null);
 
-					if (target instanceof Player) {
-						removeAttacked(c, (Player) target);
+						if (target instanceof Player) {
+							removeAttacked(c, (Player) target);
+						}
 					}
-				}
 
+				}
 			}
 
 			if (!keep) {
