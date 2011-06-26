@@ -17,9 +17,9 @@ public class CrowdCreature {
 	private BaseInfo baseInfo;
 	private LivingEntity entity = null;
 	private volatile int health;
-	private volatile CreatureType type;
-	private Location lastLocation;
 	private volatile int idleTicks = 0;
+	private Location lastLocation;
+	private volatile CreatureType type;
 
 	public CrowdCreature(LivingEntity entity, CreatureType type, BaseInfo info) {
 		this.entity = entity;
@@ -27,18 +27,6 @@ public class CrowdCreature {
 		this.type = type;
 		this.baseInfo = info;
 		this.setHealth(info.getHealth());
-	}
-	
-	public Location getLastLocation() {
-		return lastLocation;
-	}
-	
-	public Location getCurrentLocation() {
-		return entity.getLocation().clone();
-	}
-	
-	public void setLocation(Location loc) {
-		this.entity.teleport(loc);
 	}
 
 	@ThreadSafe
@@ -52,6 +40,10 @@ public class CrowdCreature {
 		return baseInfo;
 	}
 
+	public Location getCurrentLocation() {
+		return entity.getLocation().clone();
+	}
+
 	@ThreadSafe
 	// Thread safe to get but not to use
 	public LivingEntity getEntity() {
@@ -61,6 +53,15 @@ public class CrowdCreature {
 	@ThreadSafe
 	public int getHealth() {
 		return health;
+	}
+
+	@ThreadSafe
+	public int getIdleTicks() {
+		return idleTicks;
+	}
+
+	public Location getLastLocation() {
+		return lastLocation;
 	}
 
 	@ThreadSafe
@@ -83,8 +84,7 @@ public class CrowdCreature {
 		this.idleTicks = idleTicks;
 	}
 
-	@ThreadSafe
-	public int getIdleTicks() {
-		return idleTicks;
+	public void setLocation(Location loc) {
+		this.entity.teleport(loc);
 	}
 }

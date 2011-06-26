@@ -53,8 +53,8 @@ public class CreatureHandler implements Runnable {
 	private Set<CrowdCreature> crowdCreatureSet;
 	private sqlCore dbManage;
 	private Set<CreatureType> enabledCreatures;
-	private World world;
 	private Random rand = new Random();
+	private World world;
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
 		this.dbManage = dbManage;
@@ -104,7 +104,7 @@ public class CreatureHandler implements Runnable {
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MovementHandler(plugin, this), 20, 20);
 
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new DamageHandler(plugin, this), 40, 20);
-		
+
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 
 			public void run() {
@@ -116,9 +116,9 @@ public class CreatureHandler implements Runnable {
 						kill(creature);
 					}
 				}
-				
+
 			}
-			}, 0, 5);
+		}, 0, 5);
 	}
 
 	@ThreadSafe
@@ -131,11 +131,6 @@ public class CreatureHandler implements Runnable {
 			attacked.put(c, pList);
 		}
 		pList.add(p);
-	}
-
-	@ThreadSafe
-	public World getWorld() {
-		return world;
 	}
 
 	@ThreadSafe
@@ -185,6 +180,13 @@ public class CreatureHandler implements Runnable {
 			c.getEntity().damage(9999);
 			crowdCreatureSet.remove(c);
 		}
+	}
+
+	@ThreadSafe
+	public void despawn(CrowdCreature c) {
+		crowdCreatureSet.remove(c);
+		removeAllAttacked(c);
+		c.getEntity().remove();
 	}
 
 	public void generateDefaults() throws SQLException {
@@ -284,13 +286,6 @@ public class CreatureHandler implements Runnable {
 	}
 
 	@ThreadSafe
-	public void despawn(CrowdCreature c) {
-		crowdCreatureSet.remove(c);
-		removeAllAttacked(c);
-		c.getEntity().remove();
-	}
-
-	@ThreadSafe
 	public CrowdCreature getCrowdCreature(LivingEntity entity) {
 
 		if (entity instanceof Player) {
@@ -327,6 +322,11 @@ public class CreatureHandler implements Runnable {
 	@ThreadSafe
 	public Set<CreatureType> getEnabledCreatureTypes() {
 		return enabledCreatures;
+	}
+
+	@ThreadSafe
+	public World getWorld() {
+		return world;
 	}
 
 	public boolean isDay() {
@@ -401,7 +401,7 @@ public class CreatureHandler implements Runnable {
 	}
 
 	public void run() {
-		
+
 		if (crowdCreatureSet.size() > 1000 || attacked.size() > 1000 || baseInfo.size() > 1000) {
 			System.out.println(crowdCreatureSet.size());
 			System.out.println(attacked.size());
@@ -416,7 +416,7 @@ public class CreatureHandler implements Runnable {
 
 			CrowdCreature c = i.next();
 			LivingEntity e = c.getEntity();
-			
+
 			boolean keep = false;
 
 			for (Player p : world.getPlayers()) {
@@ -427,38 +427,34 @@ public class CreatureHandler implements Runnable {
 
 				if (distance < 128) {
 					if (c.getIdleTicks() >= 5) {
-						if (!(rand.nextFloat() < .05)) {
+						if (!(rand.nextFloat() < .01)) {
 							keep = true;
 						}
 					}
 				}
 			}
 
-			if (!keep) {
-				despawn(c);
-			}
+			if (e instanceof Creature) {
 
-			if (attacked.contains(e)) {
-				Set<Player> players = attacked.get(e);
-				if (players.size() > 0) {
-					for (Player p : players) {
-						double deltax = Math.abs(e.getLocation().getX() - p.getLocation().getX());
-						double deltay = Math.abs(e.getLocation().getY() - p.getLocation().getY());
-						double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
-						double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+				LivingEntity target = ((Creature) e).getTarget();
 
-						if (distance > c.getBaseInfo().getTargetDistance()) {
-							players.remove(p);
+				double deltax = Math.abs(e.getLocation().getX() - target.getLocation().getX());
+				double deltay = Math.abs(e.getLocation().getY() - target.getLocation().getY());
+				double deltaz = Math.abs(e.getLocation().getZ() - target.getLocation().getZ());
+				double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
-							if (e instanceof Creature) {
-								Creature creature = (Creature) e;
-								if (creature.getTarget() != null) {
-									creature.setTarget(null);
-								}
-							}
-						}
+				if (distance > c.getBaseInfo().getTargetDistance()) {
+					((Creature) e).setTarget(null);
+
+					if (target instanceof Player) {
+						removeAttacked(c, (Player) target);
 					}
 				}
+
+			}
+
+			if (!keep) {
+				despawn(c);
 			}
 		}
 

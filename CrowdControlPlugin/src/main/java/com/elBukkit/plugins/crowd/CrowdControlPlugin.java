@@ -57,17 +57,17 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public sqlCore dbManage; // import SQLite lib
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
-	private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 	private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
 	private Logger log;
-
 	private volatile int maxPerChunk = 4;
 
 	private volatile int maxPerWorld = 200;
 
 	private PluginDescriptionFile pdf;
+
 	private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
 	public RuleHandler ruleHandler;
+	private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 
 	@ThreadSafe
 	public CreatureHandler getCreatureHandler(World w) {

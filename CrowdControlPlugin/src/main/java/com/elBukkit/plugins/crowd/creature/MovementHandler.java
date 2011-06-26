@@ -32,38 +32,38 @@ public class MovementHandler implements Runnable {
 
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
-			
-				Location lLoc = c.getLastLocation();
-				Location cLoc = c.getCurrentLocation();
 
-				if (cLoc.getBlockX() != lLoc.getBlockX() || cLoc.getBlockY() != lLoc.getBlockY() || cLoc.getBlockZ() != lLoc.getBlockZ() || cLoc.getWorld() != lLoc.getWorld()) {
-					Info info = new Info();
-					info.setLocation(cLoc);
-					info.setEntity(c.getEntity());
-					info.setEnv(c.getEntity().getWorld().getEnvironment());
-					info.setType(c.getType());
+			Location lLoc = c.getLastLocation();
+			Location cLoc = c.getCurrentLocation();
 
-					if (plugin.ruleHandler.passesRules(info, Type.Movement)) {
+			if (cLoc.getBlockX() != lLoc.getBlockX() || cLoc.getBlockY() != lLoc.getBlockY() || cLoc.getBlockZ() != lLoc.getBlockZ() || cLoc.getWorld() != lLoc.getWorld()) {
+				Info info = new Info();
+				info.setLocation(cLoc);
+				info.setEntity(c.getEntity());
+				info.setEnv(c.getEntity().getWorld().getEnvironment());
+				info.setType(c.getType());
 
-						CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
-						for (CrowdListener cListener : plugin.getListeners()) {
-							cListener.onCreatureMove(event);
-						}
+				if (plugin.ruleHandler.passesRules(info, Type.Movement)) {
 
-						if (event.isCancelled()) {
-							c.getEntity().teleport(lLoc);
-						} else {
-							if (event.getNewLocation() != cLoc) {
-								c.setLocation(event.getNewLocation());
-							}
-							c.setIdleTicks(0);
-						}
-					} else {
+					CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
+					for (CrowdListener cListener : plugin.getListeners()) {
+						cListener.onCreatureMove(event);
+					}
+
+					if (event.isCancelled()) {
 						c.getEntity().teleport(lLoc);
+					} else {
+						if (event.getNewLocation() != cLoc) {
+							c.setLocation(event.getNewLocation());
+						}
+						c.setIdleTicks(0);
 					}
 				} else {
-					c.setIdleTicks(c.getIdleTicks() + 1);
+					c.getEntity().teleport(lLoc);
 				}
+			} else {
+				c.setIdleTicks(c.getIdleTicks() + 1);
+			}
 		}
 
 	}

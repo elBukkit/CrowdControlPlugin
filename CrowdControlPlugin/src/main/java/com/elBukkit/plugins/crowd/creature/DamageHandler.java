@@ -17,8 +17,8 @@ import com.elBukkit.plugins.crowd.CrowdControlPlugin;
 
 public class DamageHandler implements Runnable {
 
-	private CrowdControlPlugin plugin;
 	private CreatureHandler handler;
+	private CrowdControlPlugin plugin;
 
 	public DamageHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
 		this.plugin = plugin;
@@ -112,7 +112,7 @@ public class DamageHandler implements Runnable {
 						}
 					}
 				}
-				
+
 				if (handler.shouldBurn(crowdCreature.getEntity().getLocation()) && crowdCreature.getBaseInfo().isBurnDay()) {
 					crowdCreature.getEntity().setFireTicks(30);
 				} else {
