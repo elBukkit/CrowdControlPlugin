@@ -158,6 +158,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		}
 		
 		config = new Configuration(configFile);
+		config.load();
 		
 		loadConfigFile();
 
@@ -201,18 +202,21 @@ public class CrowdControlPlugin extends JavaPlugin {
 		this.maxPerChunk = max;
 
 		config.setProperty("global.maxPerChunk", max);
+		config.save();
 	}
 
 	public void setMaxPerWorld(int max) {
 		this.maxPerWorld = max;
 
 		config.setProperty("global.maxPerWorld", max);
+		config.save();
 	}
 
 	public void setDespawnDistance(int despawnDistance) {
 		this.despawnDistance = despawnDistance;
 
 		config.setProperty("global.despawnDistance", despawnDistance);
+		config.save();
 	}
 
 	public int getDespawnDistance() {
@@ -223,6 +227,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		this.idleDespawnChance = idleDespawnChance;
 
 		config.setProperty("global.idleDespawnChance", idleDespawnChance);
+		config.save();
 	}
 
 	public double getIdleDespawnChance() {
@@ -233,6 +238,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		this.minDistanceFromPlayer = minDistanceFromPlayer;
 
 		config.setProperty("global.minDistanceFromPlayer", minDistanceFromPlayer);
+		config.save();
 	}
 
 	public int getMinDistanceFromPlayer() {
@@ -253,5 +259,6 @@ public class CrowdControlPlugin extends JavaPlugin {
 			config.setProperty("global.maxPerWorld", this.maxPerWorld);
 			config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
 		}
+		config.save();
 	}
 }
