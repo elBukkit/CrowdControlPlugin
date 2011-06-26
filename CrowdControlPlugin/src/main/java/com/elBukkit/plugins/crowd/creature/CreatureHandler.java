@@ -426,14 +426,19 @@ public class CreatureHandler implements Runnable {
 				double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
 				if (distance < 128) {
-					if (c.getIdleTicks() >= 5) {
-						if (!(rand.nextFloat() < .01)) {
-							keep = true;
-						}
+					if (rand.nextFloat() > .01) { // 1% Chance of despawning when idle 
+						keep = true;
+					} else if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
+						keep = true;
 					}
 				}
 			}
 
+			if (!keep) {
+				despawn(c);
+				return;
+			}
+			
 			if (e instanceof Creature) {
 
 				LivingEntity target = ((Creature) e).getTarget();
@@ -455,9 +460,6 @@ public class CreatureHandler implements Runnable {
 				}
 			}
 
-			if (!keep) {
-				despawn(c);
-			}
 		}
 
 		if (world.getPlayers().size() <= 0) {
@@ -500,6 +502,8 @@ public class CreatureHandler implements Runnable {
 				creature.setBaseInfo(info);
 			}
 		}
+		
+		baseInfo.put(type, info);
 	}
 
 	public boolean shouldBurn(Location loc) {
