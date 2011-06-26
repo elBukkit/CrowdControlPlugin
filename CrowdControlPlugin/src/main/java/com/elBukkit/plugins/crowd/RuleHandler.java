@@ -4,10 +4,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -27,10 +28,10 @@ public class RuleHandler {
 
 	private sqlCore dbManage;
 
-	private Map<Integer, Rule> rules;
+	private ConcurrentHashMap<Integer, Rule> rules;
 
 	public RuleHandler(sqlCore dbManage, CrowdControlPlugin plugin) throws SQLException, ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		rules = new HashMap<Integer, Rule>();
+		rules = new ConcurrentHashMap<Integer, Rule>();
 
 		this.dbManage = dbManage;
 
@@ -91,8 +92,11 @@ public class RuleHandler {
 		return rules;
 	}
 
+	@ThreadSafe
 	public boolean passesRules(Info info, Type type) {
-		for (Rule r : rules.values()) {
+		Iterator<Rule> i = rules.values().iterator();
+		while (i.hasNext()) {
+			Rule r = i.next();
 			if (r.getType().equals(type)) {
 				if (r.checkWorld(info.getLocation().getWorld())) {
 					if (r.checkCreatureType(info.getType())) {

@@ -40,6 +40,7 @@ import com.elBukkit.plugins.crowd.rules.SpawnLightRule;
 import com.elBukkit.plugins.crowd.rules.SpawnLocationRule;
 import com.elBukkit.plugins.crowd.rules.SpawnMaterialRule;
 import com.elBukkit.plugins.crowd.rules.SpawnReplaceRule;
+import com.elBukkit.plugins.crowd.rules.SpawnTimeRule;
 import com.elBukkit.plugins.crowd.rules.TargetPlayerRule;
 
 /*
@@ -56,6 +57,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 	public sqlCore dbManage; // import SQLite lib
 
 	private CrowdEntityListener entityListener = new CrowdEntityListener(this);
+	private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 	private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
 	private Logger log;
 
@@ -128,6 +130,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
 		ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
 		ruleCommands.put(SpawnLocationRule.class, "[x1,y1,z1,x2,y2,z2]");
+		ruleCommands.put(SpawnTimeRule.class, "[Day or Night]");
 
 		if (!this.getDataFolder().exists()) {
 			this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
@@ -188,6 +191,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 		pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Highest, this);
 		pm.registerEvent(Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);
 		pm.registerEvent(Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);
+		pm.registerEvent(Type.CHUNK_UNLOAD, worldListener, Priority.Monitor, this);
 
 		// Register command
 		getCommand("crowd").setExecutor(new CrowdCommand(this));

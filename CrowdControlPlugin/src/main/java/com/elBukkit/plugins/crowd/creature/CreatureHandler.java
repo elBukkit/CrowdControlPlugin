@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,6 +54,7 @@ public class CreatureHandler implements Runnable {
 	private sqlCore dbManage;
 	private Set<CreatureType> enabledCreatures;
 	private World world;
+	private Random rand = new Random();
 
 	public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
 		this.dbManage = dbManage;
@@ -102,6 +104,21 @@ public class CreatureHandler implements Runnable {
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MovementHandler(plugin, this), 20, 20);
 
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new DamageHandler(plugin, this), 40, 20);
+		
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+
+			public void run() {
+				Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+				while (i.hasNext()) {
+					CrowdCreature creature = i.next();
+
+					if (creature.getHealth() <= 0) {
+						kill(creature);
+					}
+				}
+				
+			}
+			}, 0, 5);
 	}
 
 	@ThreadSafe
@@ -329,7 +346,7 @@ public class CreatureHandler implements Runnable {
 	public void kill(CrowdCreature c) {
 		crowdCreatureSet.remove(c);
 		removeAllAttacked(c);
-		c.getEntity().damage(9999);
+		c.getEntity().damage(200);
 	}
 
 	@ThreadSafe
@@ -384,6 +401,12 @@ public class CreatureHandler implements Runnable {
 	}
 
 	public void run() {
+		
+		if (crowdCreatureSet.size() > 1000 || attacked.size() > 1000 || baseInfo.size() > 1000) {
+			System.out.println(crowdCreatureSet.size());
+			System.out.println(attacked.size());
+			System.out.println(baseInfo.size());
+		}
 
 		// Despawning code
 
@@ -393,7 +416,7 @@ public class CreatureHandler implements Runnable {
 
 			CrowdCreature c = i.next();
 			LivingEntity e = c.getEntity();
-
+			
 			boolean keep = false;
 
 			for (Player p : world.getPlayers()) {
@@ -403,7 +426,11 @@ public class CreatureHandler implements Runnable {
 				double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
 				if (distance < 128) {
-					keep = true;
+					if (c.getIdleTicks() >= 5) {
+						if (!(rand.nextFloat() < .05)) {
+							keep = true;
+						}
+					}
 				}
 			}
 

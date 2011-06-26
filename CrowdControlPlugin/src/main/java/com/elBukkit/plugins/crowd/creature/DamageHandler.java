@@ -35,11 +35,6 @@ public class DamageHandler implements Runnable {
 
 				CrowdCreature crowdCreature = i.next();
 				LivingEntity entity = crowdCreature.getEntity();
-				
-				if (crowdCreature.getHealth() <= 0) {
-					handler.kill(crowdCreature);
-					return;
-				}
 
 				double deltax = Math.abs(entity.getLocation().getX() - p.getLocation().getX());
 				double deltay = Math.abs(entity.getLocation().getY() - p.getLocation().getY());

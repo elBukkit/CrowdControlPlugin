@@ -1,6 +1,6 @@
 name: CrowdControl
 main: com.elBukkit.plugins.crowd.CrowdControlPlugin
-version: 0.26.02
+version: 0.26.03
 website: https://github.com/elBukkit/CrowdControlPlugin
 author: elBukkit
 description : Simple console-based creature control

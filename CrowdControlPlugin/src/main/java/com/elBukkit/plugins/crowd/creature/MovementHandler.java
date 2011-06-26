@@ -1,8 +1,6 @@
 package com.elBukkit.plugins.crowd.creature;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.bukkit.Location;
 
@@ -20,8 +18,7 @@ import com.elBukkit.plugins.crowd.rules.Type;
 
 public class MovementHandler implements Runnable {
 
-	CreatureHandler handler;
-	Map<CrowdCreature, Location> lastLocation = new HashMap<CrowdCreature, Location>();
+	private CreatureHandler handler;
 
 	CrowdControlPlugin plugin;
 
@@ -35,12 +32,11 @@ public class MovementHandler implements Runnable {
 
 		while (i.hasNext()) {
 			CrowdCreature c = i.next();
+			
+				Location lLoc = c.getLastLocation();
+				Location cLoc = c.getCurrentLocation();
 
-			if (lastLocation.containsKey(c)) {
-				Location loc = lastLocation.get(c);
-				Location cLoc = c.getEntity().getLocation();
-
-				if (cLoc.getBlockX() != loc.getBlockX() || cLoc.getBlockY() != loc.getBlockY() || cLoc.getBlockZ() != loc.getBlockZ() || cLoc.getWorld() != loc.getWorld()) {
+				if (cLoc.getBlockX() != lLoc.getBlockX() || cLoc.getBlockY() != lLoc.getBlockY() || cLoc.getBlockZ() != lLoc.getBlockZ() || cLoc.getWorld() != lLoc.getWorld()) {
 					Info info = new Info();
 					info.setLocation(cLoc);
 					info.setEntity(c.getEntity());
@@ -49,27 +45,25 @@ public class MovementHandler implements Runnable {
 
 					if (plugin.ruleHandler.passesRules(info, Type.Movement)) {
 
-						CreatureMoveEvent event = new CreatureMoveEvent(this, loc, cLoc, c);
+						CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
 						for (CrowdListener cListener : plugin.getListeners()) {
 							cListener.onCreatureMove(event);
 						}
 
 						if (event.isCancelled()) {
-							c.getEntity().teleport(loc);
+							c.getEntity().teleport(lLoc);
 						} else {
 							if (event.getNewLocation() != cLoc) {
-								c.getEntity().teleport(event.getNewLocation());
+								c.setLocation(event.getNewLocation());
 							}
-							lastLocation.put(c, event.getNewLocation());
+							c.setIdleTicks(0);
 						}
 					} else {
-						c.getEntity().teleport(loc);
+						c.getEntity().teleport(lLoc);
 					}
+				} else {
+					c.setIdleTicks(c.getIdleTicks() + 1);
 				}
-
-			} else {
-				lastLocation.put(c, c.getEntity().getLocation().clone());
-			}
 		}
 
 	}
