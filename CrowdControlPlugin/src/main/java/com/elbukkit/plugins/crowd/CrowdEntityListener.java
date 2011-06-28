@@ -18,12 +18,12 @@ import com.elbukkit.plugins.crowd.creature.CreatureHandler;
 import com.elbukkit.plugins.crowd.creature.CrowdCreature;
 import com.elbukkit.plugins.crowd.rules.Type;
 
-/*
+/**
  * Entity listener, calls necessary rule checks 
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class CrowdEntityListener extends EntityListener {
 
     private CrowdControlPlugin plugin;

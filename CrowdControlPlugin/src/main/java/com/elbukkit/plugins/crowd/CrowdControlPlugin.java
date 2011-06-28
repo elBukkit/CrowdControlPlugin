@@ -39,12 +39,13 @@ import com.elbukkit.plugins.crowd.rules.SpawnReplaceRule;
 import com.elbukkit.plugins.crowd.rules.SpawnTimeRule;
 import com.elbukkit.plugins.crowd.rules.TargetPlayerRule;
 
-/*
+// ESCA-JAVA0137:
+/**
  * CrowdControl plugin
  * 
  * @author Andrew Querol(WinSock)
+ * @version 0.26.05
  */
-
 public class CrowdControlPlugin extends JavaPlugin {
 
     private static Lock cHandlerLock = new ReentrantLock();

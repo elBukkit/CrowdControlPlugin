@@ -6,12 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/*
+/**
  * A simple annotation denoting if the method is thread safe.
  * 
  * @author Andrew Querol(winsock)
+ * @version 1.0
  */
-
 @Documented
 @Target(value = ElementType.METHOD)
 @Retention(value = RetentionPolicy.RUNTIME)

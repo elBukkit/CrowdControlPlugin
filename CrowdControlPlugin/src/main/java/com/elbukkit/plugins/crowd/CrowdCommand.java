@@ -18,12 +18,12 @@ import com.elbukkit.plugins.crowd.creature.BaseInfo;
 import com.elbukkit.plugins.crowd.creature.Nature;
 import com.elbukkit.plugins.crowd.rules.Rule;
 
-/*
+/**
  * Handles all of the commands
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class CrowdCommand implements CommandExecutor {
 
     private List<Class<? extends Rule>> pendingCommands = new ArrayList<Class<? extends Rule>>();

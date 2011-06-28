@@ -7,12 +7,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
-/*
+/**
  * Info about creature spawning
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class Info {
 
     private LivingEntity entity;

@@ -18,12 +18,12 @@ import com.alta189.sqlLibraryV2.SQLite.sqlCore;
 import com.elbukkit.plugins.crowd.rules.Rule;
 import com.elbukkit.plugins.crowd.rules.Type;
 
-/*
+/**
  * Handles all of the rules and checks if the triggering creatures passes
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class RuleHandler {
 
     private sqlCore dbManage;
