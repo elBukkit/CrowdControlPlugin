@@ -15,42 +15,42 @@ import com.elBukkit.plugins.crowd.creature.CrowdCreature;
 
 public class CreatureMoveEvent extends EventObject implements Cancellable {
 
-	private static final long serialVersionUID = -3743383825319521868L;
-	private boolean canceled = false;
-	private CrowdCreature creature;
-	private Location newLocation;
-	private Location prevLocation;
+    private static final long serialVersionUID = -3743383825319521868L;
+    private boolean canceled = false;
+    private CrowdCreature creature;
+    private Location newLocation;
+    private Location prevLocation;
 
-	public CreatureMoveEvent(Object sender, Location prevLocation, Location newLocation, CrowdCreature c) {
-		super(sender);
+    public CreatureMoveEvent(Object sender, Location prevLocation, Location newLocation, CrowdCreature c) {
+        super(sender);
 
-		this.prevLocation = prevLocation;
-		this.setNewLocation(newLocation);
-		this.creature = c;
-	}
+        this.prevLocation = prevLocation;
+        this.setNewLocation(newLocation);
+        this.creature = c;
+    }
 
-	public CrowdCreature getCreature() {
-		return creature;
-	}
+    public CrowdCreature getCreature() {
+        return creature;
+    }
 
-	public Location getNewLocation() {
-		return newLocation;
-	}
+    public Location getNewLocation() {
+        return newLocation;
+    }
 
-	public Location getPrevLocation() {
-		return prevLocation;
-	}
+    public Location getPrevLocation() {
+        return prevLocation;
+    }
 
-	public boolean isCancelled() {
-		return canceled;
-	}
+    public boolean isCancelled() {
+        return canceled;
+    }
 
-	public void setCancelled(boolean cancel) {
-		this.canceled = cancel;
-	}
+    public void setCancelled(boolean cancel) {
+        this.canceled = cancel;
+    }
 
-	public void setNewLocation(Location newLocation) {
-		this.newLocation = newLocation;
-	}
+    public void setNewLocation(Location newLocation) {
+        this.newLocation = newLocation;
+    }
 
 }

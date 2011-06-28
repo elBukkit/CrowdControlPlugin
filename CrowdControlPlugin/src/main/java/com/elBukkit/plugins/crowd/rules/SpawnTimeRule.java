@@ -14,43 +14,43 @@ import com.elBukkit.plugins.crowd.Info;
 
 public class SpawnTimeRule extends Rule {
 
-	private Time spawnTime;
+    private Time spawnTime;
 
-	public SpawnTimeRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-		super(world, type, plugin);
-		this.ruleType = Type.Spawn;
-	}
+    public SpawnTimeRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(world, type, plugin);
+        this.ruleType = Type.Spawn;
+    }
 
-	@Override
-	public boolean check(Info info) {
+    @Override
+    public boolean check(Info info) {
 
-		if (plugin.getCreatureHandler(info.getLocation().getWorld()).isDay()) {
-			switch (spawnTime) {
-			case Day:
-				return true;
-			case Night:
-				return false;
-			}
-		} else {
-			switch (spawnTime) {
-			case Day:
-				return false;
-			case Night:
-				return true;
-			}
-		}
+        if (plugin.getCreatureHandler(info.getLocation().getWorld()).isDay()) {
+            switch (spawnTime) {
+            case Day:
+                return true;
+            case Night:
+                return false;
+            }
+        } else {
+            switch (spawnTime) {
+            case Day:
+                return false;
+            case Night:
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public String getData() {
-		return spawnTime.toString();
-	}
+    @Override
+    public String getData() {
+        return spawnTime.toString();
+    }
 
-	@Override
-	public void init(String data) {
-		this.spawnTime = Time.valueOf(data);
-	}
+    @Override
+    public void init(String data) {
+        this.spawnTime = Time.valueOf(data);
+    }
 
 }

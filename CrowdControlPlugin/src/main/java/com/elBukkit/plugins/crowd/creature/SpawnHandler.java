@@ -20,97 +20,97 @@ import com.elBukkit.plugins.crowd.rules.Type;
 
 public class SpawnHandler implements Runnable {
 
-	private CreatureHandler handler;
-	private CrowdControlPlugin plugin;
-	private Random rand = new Random();
-	private World world;
+    private CreatureHandler handler;
+    private CrowdControlPlugin plugin;
+    private Random rand = new Random();
+    private World world;
 
-	public SpawnHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
-		this.plugin = plugin;
-		this.world = handler.getWorld();
-		this.handler = handler;
-	}
+    public SpawnHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
+        this.plugin = plugin;
+        this.world = handler.getWorld();
+        this.handler = handler;
+    }
 
-	private Block getRandomSpawningPointInChunk(Chunk c) {
-		int x = c.getX() + rand.nextInt(16);
-		int y = rand.nextInt(128);
-		int z = c.getZ() + rand.nextInt(16);
-		return c.getBlock(x, y, z);
-	}
+    private Block getRandomSpawningPointInChunk(Chunk c) {
+        int x = c.getX() + rand.nextInt(16);
+        int y = rand.nextInt(128);
+        int z = c.getZ() + rand.nextInt(16);
+        return c.getBlock(x, y, z);
+    }
 
-	public void run() {
+    public void run() {
 
-		if (handler.getEnabledCreatureTypes().size() > 0) {
+        if (handler.getEnabledCreatureTypes().size() > 0) {
 
-			List<Chunk> spawningChunks = new ArrayList<Chunk>();
+            List<Chunk> spawningChunks = new ArrayList<Chunk>();
 
-			for (Player p : world.getPlayers()) {
+            for (Player p : world.getPlayers()) {
 
-				int pChunkX = (int) Math.floor(p.getLocation().getX() / 16.0D);
-				int pChunkZ = (int) Math.floor(p.getLocation().getZ() / 16.0D);
+                int pChunkX = (int) Math.floor(p.getLocation().getX() / 16.0D);
+                int pChunkZ = (int) Math.floor(p.getLocation().getZ() / 16.0D);
 
-				for (int x = -8; x <= 8; x++) {
-					for (int z = -8; z <= 8; z++) {
-						spawningChunks.add(world.getChunkAt(x + pChunkX, z + pChunkZ));
-					}
-				}
-			}
+                for (int x = -8; x <= 8; x++) {
+                    for (int z = -8; z <= 8; z++) {
+                        spawningChunks.add(world.getChunkAt(x + pChunkX, z + pChunkZ));
+                    }
+                }
+            }
 
-			Collections.shuffle(spawningChunks, rand); // Randomize the list
+            Collections.shuffle(spawningChunks, rand); // Randomize the list
 
-			for (int i = 0; i <= 3; i++) { // 4 chances to spawn
+            for (int i = 0; i <= 3; i++) { // 4 chances to spawn
 
-				for (Chunk c : spawningChunks) {
-					if (handler.getCreatureCount() < plugin.getMaxPerWorld()) {
-						if (c.getEntities().length < plugin.getMaxPerChunk()) {
+                for (Chunk c : spawningChunks) {
+                    if (handler.getCreatureCount() < plugin.getMaxPerWorld()) {
+                        if (c.getEntities().length < plugin.getMaxPerChunk()) {
 
-							List<CreatureType> enabledTypes = new ArrayList<CreatureType>(handler.getEnabledCreatureTypes());
-							CreatureType type = enabledTypes.get(rand.nextInt(enabledTypes.size()));
+                            List<CreatureType> enabledTypes = new ArrayList<CreatureType>(handler.getEnabledCreatureTypes());
+                            CreatureType type = enabledTypes.get(rand.nextInt(enabledTypes.size()));
 
-							Block spawnBlock = getRandomSpawningPointInChunk(c);
+                            Block spawnBlock = getRandomSpawningPointInChunk(c);
 
-							if (spawnBlock.getType() == Material.AIR || spawnBlock.getType() == Material.WATER || spawnBlock.getType() == Material.STATIONARY_WATER) {
-								if (world.getBlockAt(spawnBlock.getX(), spawnBlock.getY() - 1, spawnBlock.getZ()).getType() != Material.AIR) {
-									Info info = new Info();
+                            if (spawnBlock.getType() == Material.AIR || spawnBlock.getType() == Material.WATER || spawnBlock.getType() == Material.STATIONARY_WATER) {
+                                if (world.getBlockAt(spawnBlock.getX(), spawnBlock.getY() - 1, spawnBlock.getZ()).getType() != Material.AIR) {
+                                    Info info = new Info();
 
-									info.setLocation(spawnBlock.getLocation());
-									info.setEnv(world.getEnvironment());
-									info.setType(type);
+                                    info.setLocation(spawnBlock.getLocation());
+                                    info.setEnv(world.getEnvironment());
+                                    info.setType(type);
 
-									if (rand.nextFloat() < handler.getBaseInfo(type).getSpawnChance()) {
-										
-										for (Player p : world.getPlayers()) {
-											double deltax = Math.abs(spawnBlock.getLocation().getX() - p.getLocation().getX());
-											double deltay = Math.abs(spawnBlock.getLocation().getY() - p.getLocation().getY());
-											double deltaz = Math.abs(spawnBlock.getLocation().getZ() - p.getLocation().getZ());
-											double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
-											
-											if (distance < plugin.getMinDistanceFromPlayer()) {
-												continue;
-											}
-										}
+                                    if (rand.nextFloat() < handler.getBaseInfo(type).getSpawnChance()) {
+                                        
+                                        for (Player p : world.getPlayers()) {
+                                            double deltax = Math.abs(spawnBlock.getLocation().getX() - p.getLocation().getX());
+                                            double deltay = Math.abs(spawnBlock.getLocation().getY() - p.getLocation().getY());
+                                            double deltaz = Math.abs(spawnBlock.getLocation().getZ() - p.getLocation().getZ());
+                                            double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+                                            
+                                            if (distance < plugin.getMinDistanceFromPlayer()) {
+                                                continue;
+                                            }
+                                        }
 
-										if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
-											CreatureSpawnEvent event = new CreatureSpawnEvent(this, info.getLocation(), info.getType());
+                                        if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
+                                            CreatureSpawnEvent event = new CreatureSpawnEvent(this, info.getLocation(), info.getType());
 
-											for (CrowdListener cListener : plugin.getListeners()) {
-												cListener.onCreatureSpawn(event);
-											}
+                                            for (CrowdListener cListener : plugin.getListeners()) {
+                                                cListener.onCreatureSpawn(event);
+                                            }
 
-											if (!event.isCancelled()) {
-												info.spawn();
-											}
-										}
+                                            if (!event.isCancelled()) {
+                                                info.spawn();
+                                            }
+                                        }
 
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-	}
+    }
 
 }

@@ -18,54 +18,54 @@ import com.elBukkit.plugins.crowd.rules.Type;
 
 public class MovementHandler implements Runnable {
 
-	private CreatureHandler handler;
+    private CreatureHandler handler;
 
-	CrowdControlPlugin plugin;
+    CrowdControlPlugin plugin;
 
-	public MovementHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
-		this.plugin = plugin;
-		this.handler = handler;
-	}
+    public MovementHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
+        this.plugin = plugin;
+        this.handler = handler;
+    }
 
-	public void run() {
-		Iterator<CrowdCreature> i = handler.getCrowdCreatures().iterator();
+    public void run() {
+        Iterator<CrowdCreature> i = handler.getCrowdCreatures().iterator();
 
-		while (i.hasNext()) {
-			CrowdCreature c = i.next();
+        while (i.hasNext()) {
+            CrowdCreature c = i.next();
 
-			Location lLoc = c.getLastLocation();
-			Location cLoc = c.getCurrentLocation();
+            Location lLoc = c.getLastLocation();
+            Location cLoc = c.getCurrentLocation();
 
-			if (cLoc.getBlockX() != lLoc.getBlockX() || cLoc.getBlockY() != lLoc.getBlockY() || cLoc.getBlockZ() != lLoc.getBlockZ() || cLoc.getWorld() != lLoc.getWorld()) {
-				Info info = new Info();
-				info.setLocation(cLoc);
-				info.setEntity(c.getEntity());
-				info.setEnv(c.getEntity().getWorld().getEnvironment());
-				info.setType(c.getType());
+            if (cLoc.getBlockX() != lLoc.getBlockX() || cLoc.getBlockY() != lLoc.getBlockY() || cLoc.getBlockZ() != lLoc.getBlockZ() || cLoc.getWorld() != lLoc.getWorld()) {
+                Info info = new Info();
+                info.setLocation(cLoc);
+                info.setEntity(c.getEntity());
+                info.setEnv(c.getEntity().getWorld().getEnvironment());
+                info.setType(c.getType());
 
-				if (plugin.ruleHandler.passesRules(info, Type.Movement)) {
+                if (plugin.ruleHandler.passesRules(info, Type.Movement)) {
 
-					CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
-					for (CrowdListener cListener : plugin.getListeners()) {
-						cListener.onCreatureMove(event);
-					}
+                    CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
+                    for (CrowdListener cListener : plugin.getListeners()) {
+                        cListener.onCreatureMove(event);
+                    }
 
-					if (event.isCancelled()) {
-						c.getEntity().teleport(lLoc);
-					} else {
-						if (event.getNewLocation() != cLoc) {
-							c.setLocation(event.getNewLocation());
-						}
-						c.setIdleTicks(0);
-					}
-				} else {
-					c.getEntity().teleport(lLoc);
-				}
-			} else {
-				c.setIdleTicks(c.getIdleTicks() + 1);
-			}
-		}
+                    if (event.isCancelled()) {
+                        c.getEntity().teleport(lLoc);
+                    } else {
+                        if (event.getNewLocation() != cLoc) {
+                            c.setLocation(event.getNewLocation());
+                        }
+                        c.setIdleTicks(0);
+                    }
+                } else {
+                    c.getEntity().teleport(lLoc);
+                }
+            } else {
+                c.setIdleTicks(c.getIdleTicks() + 1);
+            }
+        }
 
-	}
+    }
 
 }

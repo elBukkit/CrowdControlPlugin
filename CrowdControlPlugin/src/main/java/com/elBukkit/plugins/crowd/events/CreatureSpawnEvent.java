@@ -13,31 +13,31 @@ import org.bukkit.event.Cancellable;
  */
 
 public class CreatureSpawnEvent extends EventObject implements Cancellable {
-	private static final long serialVersionUID = -5031301408889128018L;
-	private boolean canceled = false;
-	private Location location;
-	private CreatureType type;
+    private static final long serialVersionUID = -5031301408889128018L;
+    private boolean canceled = false;
+    private Location location;
+    private CreatureType type;
 
-	public CreatureSpawnEvent(Object sender, Location location, CreatureType type) {
-		super(sender);
+    public CreatureSpawnEvent(Object sender, Location location, CreatureType type) {
+        super(sender);
 
-		this.location = location;
-		this.type = type;
-	}
+        this.location = location;
+        this.type = type;
+    }
 
-	public Location getLocation() {
-		return location;
-	}
+    public Location getLocation() {
+        return location;
+    }
 
-	public CreatureType getType() {
-		return type;
-	}
+    public CreatureType getType() {
+        return type;
+    }
 
-	public boolean isCancelled() {
-		return canceled;
-	}
+    public boolean isCancelled() {
+        return canceled;
+    }
 
-	public void setCancelled(boolean cancel) {
-		this.canceled = cancel;
-	}
+    public void setCancelled(boolean cancel) {
+        this.canceled = cancel;
+    }
 }

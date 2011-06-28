@@ -15,38 +15,38 @@ import com.elBukkit.plugins.crowd.Info;
 
 public class TargetPlayerRule extends Rule {
 
-	private String player;
-	private boolean targetable;
+    private String player;
+    private boolean targetable;
 
-	public TargetPlayerRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-		super(world, type, plugin);
-		this.ruleType = Type.Target;
-		// TODO Auto-generated constructor stub
-	}
+    public TargetPlayerRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(world, type, plugin);
+        this.ruleType = Type.Target;
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
-	public boolean check(Info info) {
-		if (!targetable) {
-			if (info.getTarget() instanceof Player) {
-				Player pTarget = (Player) info.getTarget();
-				if (player.equalsIgnoreCase(pTarget.getName())) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean check(Info info) {
+        if (!targetable) {
+            if (info.getTarget() instanceof Player) {
+                Player pTarget = (Player) info.getTarget();
+                if (player.equalsIgnoreCase(pTarget.getName())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public String getData() {
-		return player + "," + String.valueOf(targetable);
-	}
+    @Override
+    public String getData() {
+        return player + "," + String.valueOf(targetable);
+    }
 
-	@Override
-	public void init(String data) {
-		String[] split = data.split(",");
-		this.player = split[0];
-		this.targetable = Boolean.valueOf(split[1]);
-	}
+    @Override
+    public void init(String data) {
+        String[] split = data.split(",");
+        this.player = split[0];
+        this.targetable = Boolean.valueOf(split[1]);
+    }
 
 }

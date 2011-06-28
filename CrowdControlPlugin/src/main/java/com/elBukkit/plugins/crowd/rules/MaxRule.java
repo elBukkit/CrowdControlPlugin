@@ -16,32 +16,32 @@ import com.elBukkit.plugins.crowd.Info;
 
 public class MaxRule extends Rule {
 
-	private int maxMobs;
+    private int maxMobs;
 
-	public MaxRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-		super(world, type, plugin);
-		this.ruleType = Type.Spawn;
-		// TODO Auto-generated constructor stub
-	}
+    public MaxRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(world, type, plugin);
+        this.ruleType = Type.Spawn;
+        // TODO Auto-generated constructor stub
+    }
 
-	@Override
-	public boolean check(Info info) {
+    @Override
+    public boolean check(Info info) {
 
-		if (plugin.getCreatureHandler(info.getLocation().getWorld()).getCreatureCount(type) < maxMobs) {
-			return true;
-		}
+        if (plugin.getCreatureHandler(info.getLocation().getWorld()).getCreatureCount(type) < maxMobs) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public String getData() {
-		return String.valueOf(maxMobs);
-	}
+    @Override
+    public String getData() {
+        return String.valueOf(maxMobs);
+    }
 
-	@Override
-	public void init(String data) {
-		this.maxMobs = Integer.parseInt(data);
-	}
+    @Override
+    public void init(String data) {
+        this.maxMobs = Integer.parseInt(data);
+    }
 
 }
