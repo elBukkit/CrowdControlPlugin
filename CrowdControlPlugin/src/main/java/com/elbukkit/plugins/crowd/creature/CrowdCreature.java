@@ -6,12 +6,13 @@ import org.bukkit.entity.LivingEntity;
 
 import com.elbukkit.plugins.crowd.ThreadSafe;
 
-/*
- * This class represents a creature, when entity equals null its just base info for making crowd creatures
+/**
+ * This class represents a creature, when entity equals null its just base info
+ * for making crowd creatures
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class CrowdCreature {
 
     private BaseInfo baseInfo;

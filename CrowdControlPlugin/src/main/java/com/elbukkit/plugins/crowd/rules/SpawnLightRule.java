@@ -6,12 +6,12 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
+/**
  * A rule that controls spawning based on light levels.
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class SpawnLightRule extends Rule {
 
     private int min, max;

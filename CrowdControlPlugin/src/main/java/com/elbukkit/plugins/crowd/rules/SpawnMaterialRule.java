@@ -7,12 +7,12 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
+/**
  * A rule that controls spawning based on the material it spawns on.
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class SpawnMaterialRule extends Rule {
 
     private Material material;
@@ -20,7 +20,6 @@ public class SpawnMaterialRule extends Rule {
     public SpawnMaterialRule(World world, CreatureType type, CrowdControlPlugin plugin) {
         super(world, type, plugin);
         this.ruleType = Type.Spawn;
-        // TODO Auto-generated constructor stub
     }
 
     @Override

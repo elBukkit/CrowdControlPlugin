@@ -7,12 +7,12 @@ import org.bukkit.entity.Player;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
+/**
  * A rule that prevents creatures from targeting certain players.
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class TargetPlayerRule extends Rule {
 
     private String player;

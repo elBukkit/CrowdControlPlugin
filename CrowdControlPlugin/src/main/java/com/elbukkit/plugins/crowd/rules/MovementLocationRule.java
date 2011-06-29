@@ -8,21 +8,21 @@ import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
 /**
- * A rule that prevents creatures from spawning in certain 3D cubes.
+ * Control where entities can be, i.e. entity zones.
  * 
  * @author Andrew Querol(WinSock)
  * @version 1.0
  */
-public class SpawnLocationRule extends Rule {
+public class MovementLocationRule extends Rule {
 
     private Vector point1, point2;
     private long[] xyzA = { 0, 0, 0 };
 
     private long[] xyzB = { 0, 0, 0 };
 
-    public SpawnLocationRule(World world, CreatureType type, CrowdControlPlugin plugin) {
+    public MovementLocationRule(World world, CreatureType type, CrowdControlPlugin plugin) {
         super(world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.Movement;
     }
 
     @Override

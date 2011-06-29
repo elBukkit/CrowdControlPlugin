@@ -7,12 +7,12 @@ import org.bukkit.event.Cancellable;
 
 import com.elbukkit.plugins.crowd.creature.CrowdCreature;
 
-/*
+/**
  * A simple event event that fires when a creature moves a whole block.
  * 
  * @author Andrew Querol(winsock)
+ * @version 1.0
  */
-
 public class CreatureMoveEvent extends EventObject implements Cancellable {
 
     private static final long serialVersionUID = -3743383825319521868L;

@@ -7,12 +7,13 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
- * A rule that allows or disallows creatures based on the environment, Normal, Nether, (Soon) Ather
+/**
+ * A rule that allows or disallows creatures based on the environment, Normal,
+ * Nether, (Soon) Ather
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class SpawnEnvironmentRule extends Rule {
 
     private Environment spawnableEnvironment;
@@ -20,7 +21,6 @@ public class SpawnEnvironmentRule extends Rule {
     public SpawnEnvironmentRule(World world, CreatureType type, CrowdControlPlugin plugin) {
         super(world, type, plugin);
         this.ruleType = Type.Spawn;
-        // TODO Auto-generated constructor stub
     }
 
     @Override

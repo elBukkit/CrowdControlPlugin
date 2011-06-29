@@ -27,15 +27,15 @@ import org.bukkit.entity.Zombie;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
- * Rule class, basic methods required for checking
+/**
+ * Base rule class, basic methods required for checking
  * 
  * @author Andrew Querol(WinSock)
- * 
+ * @version 1.0
  */
-
 public class Rule {
 
+    // ESCA-JAVA0098:
     protected CrowdControlPlugin plugin;
     protected Type ruleType;
     protected CreatureType type;
@@ -47,20 +47,21 @@ public class Rule {
         this.plugin = plugin;
     }
 
+    // ESCA-JAVA0173:
     public boolean check(Info info) {
         return true;
     } // Check if creature passes
 
-    public boolean checkCreatureType(CreatureType type) { // Check if the
-                                                            // creature is
-                                                            // effected by the
-                                                            // rule
-        return this.type.equals(type);
+    public boolean checkCreatureType(CreatureType cType) { // Check if the
+                                                           // creature is
+                                                           // effected by the
+                                                           // rule
+        return this.type.equals(cType);
     }
 
-    public boolean checkWorld(World world) { // Check if the world is effected
-                                                // by this rule
-        return this.world.equals(world);
+    public boolean checkWorld(World cWorld) { // Check if the world is effected
+                                              // by this rule
+        return this.world.equals(cWorld);
     }
 
     // Classes used for saving data

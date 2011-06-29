@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+// ESCA-JAVA0118:
 public class DatabaseHandler {
     /*
      * @author: alta189
@@ -23,6 +24,7 @@ public class DatabaseHandler {
     }
 
     public Boolean checkTable(String table) {
+        // ESCA-JAVA0177:
         DatabaseMetaData dbm;
         try {
             dbm = this.getConnection().getMetaData();
@@ -68,6 +70,7 @@ public class DatabaseHandler {
 
     public void deleteQuery(String query) {
         try {
+            // ESCA-JAVA0179:
             Connection connection = getConnection();
             Statement statement = connection.createStatement();
 
@@ -106,6 +109,7 @@ public class DatabaseHandler {
 
     public void insertQuery(String query) {
         try {
+            // ESCA-JAVA0179:
             Connection connection = getConnection();
             Statement statement = connection.createStatement();
 
@@ -129,11 +133,13 @@ public class DatabaseHandler {
 
         while (!passed) {
             try {
+                // ESCA-JAVA0179:
                 Connection connection = getConnection();
                 Statement statement = connection.createStatement();
 
                 statement.executeQuery(query);
 
+                // ESCA-JAVA0174:
                 passed = true;
 
                 return;
@@ -155,11 +161,13 @@ public class DatabaseHandler {
 
         while (!passed) {
             try {
+                // ESCA-JAVA0179:
                 Connection connection = getConnection();
                 Statement statement = connection.createStatement();
 
                 ResultSet result = statement.executeQuery(query);
 
+                // ESCA-JAVA0174:
                 passed = true;
 
                 return result;
@@ -178,6 +186,7 @@ public class DatabaseHandler {
 
     public ResultSet sqlQuery(String query) {
         try {
+            // ESCA-JAVA0179:
             Connection connection = getConnection();
             Statement statement = connection.createStatement();
 
@@ -197,6 +206,7 @@ public class DatabaseHandler {
 
     public void updateQuery(String query) {
         try {
+            // ESCA-JAVA0179:
             Connection connection = getConnection();
             Statement statement = connection.createStatement();
 
@@ -219,6 +229,7 @@ public class DatabaseHandler {
                 core.writeError("Error at Wipe Table: table, " + table + ", does not exist", true);
                 return false;
             }
+            // ESCA-JAVA0179:
             Connection connection = getConnection();
             Statement statement = connection.createStatement();
             String query = "DELETE FROM " + table + ";";

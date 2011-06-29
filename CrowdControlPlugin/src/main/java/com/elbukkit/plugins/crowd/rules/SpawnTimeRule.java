@@ -6,12 +6,12 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/* 
+/**
  * A rule to control the time of creature spawning
  * 
  * @author Andrew Querol(winsock)
+ * @version 1.0
  */
-
 public class SpawnTimeRule extends Rule {
 
     private Time spawnTime;
@@ -25,6 +25,7 @@ public class SpawnTimeRule extends Rule {
     public boolean check(Info info) {
 
         if (plugin.getCreatureHandler(info.getLocation().getWorld()).isDay()) {
+            // ESCA-JAVA0032:
             switch (spawnTime) {
             case Day:
                 return true;
@@ -32,6 +33,7 @@ public class SpawnTimeRule extends Rule {
                 return false;
             }
         } else {
+            // ESCA-JAVA0032:
             switch (spawnTime) {
             case Day:
                 return false;

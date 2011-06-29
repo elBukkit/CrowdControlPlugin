@@ -10,12 +10,12 @@ import com.elbukkit.plugins.crowd.events.CreatureMoveEvent;
 import com.elbukkit.plugins.crowd.events.CrowdListener;
 import com.elbukkit.plugins.crowd.rules.Type;
 
-/*
+/**
  * This handler is what detects creature movements
  * 
  * @author Andrew Querol(winsock)
+ * @version 1.0
  */
-
 public class MovementHandler implements Runnable {
 
     private CreatureHandler handler;
@@ -43,7 +43,7 @@ public class MovementHandler implements Runnable {
                 info.setEnv(c.getEntity().getWorld().getEnvironment());
                 info.setType(c.getType());
 
-                if (plugin.ruleHandler.passesRules(info, Type.Movement)) {
+                if (plugin.getRuleHandler().passesRules(info, Type.Movement)) {
 
                     CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
                     for (CrowdListener cListener : plugin.getListeners()) {

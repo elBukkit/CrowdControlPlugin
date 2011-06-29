@@ -6,20 +6,19 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
+/**
  * A rule that controls spawning based on height.
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class SpawnHeightRule extends Rule {
 
-    int min, max;
+    private int min, max;
 
     public SpawnHeightRule(World world, CreatureType type, CrowdControlPlugin plugin) {
         super(world, type, plugin);
         this.ruleType = Type.Spawn;
-        // TODO Auto-generated constructor stub
     }
 
     @Override

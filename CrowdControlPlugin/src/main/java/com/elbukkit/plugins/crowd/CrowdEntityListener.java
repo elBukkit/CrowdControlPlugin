@@ -19,7 +19,7 @@ import com.elbukkit.plugins.crowd.creature.CrowdCreature;
 import com.elbukkit.plugins.crowd.rules.Type;
 
 /**
- * Entity listener, calls necessary rule checks 
+ * Entity listener, calls necessary rule checks
  * 
  * @author Andrew Querol(WinSock)
  * @version 1.0
@@ -170,7 +170,7 @@ public class CrowdEntityListener extends EntityListener {
             info.setReason(event.getReason());
 
             if (event.getReason() == TargetReason.CUSTOM) {
-                if (!plugin.ruleHandler.passesRules(info, Type.Target)) {
+                if (!plugin.getRuleHandler().passesRules(info, Type.Target)) {
                     event.setCancelled(true);
                 }
                 return;

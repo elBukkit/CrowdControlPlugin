@@ -6,12 +6,12 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
+/**
  * A rule that replaces a creature type with another
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class SpawnReplaceRule extends Rule {
 
     private CreatureType replaceType;
@@ -19,7 +19,6 @@ public class SpawnReplaceRule extends Rule {
     public SpawnReplaceRule(World world, CreatureType type, CrowdControlPlugin plugin) {
         super(world, type, plugin);
         this.ruleType = Type.Spawn;
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -33,8 +32,8 @@ public class SpawnReplaceRule extends Rule {
         return replaceType.toString();
     }
 
-    public void init(CreatureType type) {
-        replaceType = type;
+    public void init(CreatureType cType) {
+        replaceType = cType;
     }
 
     @Override

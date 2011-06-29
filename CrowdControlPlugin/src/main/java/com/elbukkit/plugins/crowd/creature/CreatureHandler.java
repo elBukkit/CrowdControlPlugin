@@ -40,12 +40,12 @@ import com.alta189.sqlLibraryV2.SQLite.sqlCore;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.ThreadSafe;
 
-/*
- * Handles retrieving custom creature info from a standard CreatureType
+/**
+ * Handles everything to do with a crowd creature.
  * 
  * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class CreatureHandler implements Runnable {
 
     private ConcurrentHashMap<CrowdCreature, Set<Player>> attacked;
@@ -53,16 +53,18 @@ public class CreatureHandler implements Runnable {
     private Set<CrowdCreature> crowdCreatureSet;
     private sqlCore dbManage;
     private Set<CreatureType> enabledCreatures;
+    private CrowdControlPlugin plugin;
     private Random rand = new Random();
     private World world;
-    private CrowdControlPlugin plugin;
 
     public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
         this.dbManage = dbManage;
         this.world = w;
         this.plugin = plugin;
+        // ESCA-JAVA0261:
         baseInfo = new ConcurrentHashMap<CreatureType, BaseInfo>();
         crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature, Boolean>());
+        // ESCA-JAVA0261:
         enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
         attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
 
@@ -117,7 +119,7 @@ public class CreatureHandler implements Runnable {
                     if (creature.getHealth() <= 0) {
                         kill(creature);
                     }
-                    
+
                     if (creature.getEntity() != null) {
                         if (creature.getEntity().isDead() || creature.getEntity().getHealth() <= 0) {
                             removeAllAttacked(creature);
@@ -135,7 +137,7 @@ public class CreatureHandler implements Runnable {
 
     @ThreadSafe
     public void addAttacked(CrowdCreature c, Player p) {
-        Set<Player> pList;
+        Set<Player> pList = null;
         if (this.attacked.containsKey(c)) {
             pList = this.attacked.get(c);
         } else {
@@ -328,12 +330,12 @@ public class CreatureHandler implements Runnable {
 
     @ThreadSafe
     public Set<CrowdCreature> getCrowdCreatures() {
-        return crowdCreatureSet;
+        return Collections.unmodifiableSet(crowdCreatureSet);
     }
 
     @ThreadSafe
     public Set<CreatureType> getEnabledCreatureTypes() {
-        return enabledCreatures;
+        return Collections.unmodifiableSet(enabledCreatures);
     }
 
     @ThreadSafe
@@ -414,12 +416,6 @@ public class CreatureHandler implements Runnable {
 
     public void run() {
 
-        if (crowdCreatureSet.size() > 1000 || attacked.size() > 1000 || baseInfo.size() > 1000) {
-            System.out.println(crowdCreatureSet.size());
-            System.out.println(attacked.size());
-            System.out.println(baseInfo.size());
-        }
-
         // Despawning code
 
         Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
@@ -438,10 +434,16 @@ public class CreatureHandler implements Runnable {
                 double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
                 if (distance < plugin.getDespawnDistance()) {
-                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
+                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with
+                                                // 1% chance to despawn
                         keep = true;
                     } else {
-                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // 5% Chance of despawning when idle 
+                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // 5%
+                                                                                // Chance
+                                                                                // of
+                                                                                // despawning
+                                                                                // when
+                                                                                // idle
                             keep = true;
                         }
                     }
@@ -452,7 +454,7 @@ public class CreatureHandler implements Runnable {
                 despawn(c);
                 return;
             }
-            
+
             if (e instanceof Creature) {
 
                 LivingEntity target = ((Creature) e).getTarget();
@@ -516,7 +518,7 @@ public class CreatureHandler implements Runnable {
                 creature.setBaseInfo(info);
             }
         }
-        
+
         baseInfo.put(type, info);
     }
 

@@ -30,7 +30,7 @@ public class RuleHandler {
 
     private ConcurrentHashMap<Integer, Rule> rules;
 
-    public RuleHandler(sqlCore dbManage, CrowdControlPlugin plugin) throws SQLException, ClassNotFoundException, IllegalArgumentException, SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public RuleHandler(sqlCore dbManage, CrowdControlPlugin plugin) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         rules = new ConcurrentHashMap<Integer, Rule>();
 
         this.dbManage = dbManage;
@@ -44,7 +44,7 @@ public class RuleHandler {
             ResultSet rs = dbManage.sqlQuery(selectSQL);
 
             while (rs.next()) {
-                String ruleClass, world, creatures, data;
+                String ruleClass = null, world = null, creatures = null, data = null;
                 int id = rs.getInt(1);
                 ruleClass = rs.getString(2);
                 world = rs.getString(3);
@@ -59,7 +59,7 @@ public class RuleHandler {
                     ((Rule) classObj).init(data);
                     AddRule((Rule) classObj, id);
                 } else {
-                    System.out.println("Invalid Class: " + rule.getSimpleName() + " in Database!");
+                    plugin.getLog().info("Invalid Class: " + rule.getSimpleName() + " in Database!");
                     String removeSQL = "DELETE * FROM spawnRules WHERE " + "Id = '" + String.valueOf(id) + "';";
                     dbManage.deleteQuery(removeSQL);
                 }
@@ -79,7 +79,7 @@ public class RuleHandler {
         if (rs.next()) {
             rules.put(rs.getInt(1), rule);
         } else {
-            System.out.println("Error adding rule!");
+            Bukkit.getServer().getLogger().info("Error adding rule!");
         }
         dbManage.close();
     }

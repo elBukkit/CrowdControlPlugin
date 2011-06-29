@@ -6,14 +6,12 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
-/*
- * TODO Finish the rule
- * 
+/**
  * Set maximum number of a creature type
  * 
- *  @author Andrew Querol(WinSock)
+ * @author Andrew Querol(WinSock)
+ * @version 1.0
  */
-
 public class MaxRule extends Rule {
 
     private int maxMobs;
@@ -21,7 +19,6 @@ public class MaxRule extends Rule {
     public MaxRule(World world, CreatureType type, CrowdControlPlugin plugin) {
         super(world, type, plugin);
         this.ruleType = Type.Spawn;
-        // TODO Auto-generated constructor stub
     }
 
     @Override

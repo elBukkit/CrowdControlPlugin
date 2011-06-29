@@ -10,7 +10,8 @@ import com.elbukkit.plugins.crowd.creature.CreatureHandler;
 import com.elbukkit.plugins.crowd.creature.CrowdCreature;
 
 /**
- * A basic listener to check for chunk unloading and despawn any {@link CrowdCreature}
+ * A basic listener to check for chunk unloading and despawn any
+ * {@link CrowdCreature}
  * 
  * @author Andrew Querol(WinSock)
  * @version 1.0

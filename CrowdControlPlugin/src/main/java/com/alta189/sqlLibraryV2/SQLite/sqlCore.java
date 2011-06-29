@@ -5,13 +5,19 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.logging.Logger;
 
+// ESCA-JAVA0118:
 public class sqlCore {
 
     /*
      * @author: alta189
      */
 
+    // ESCA-JAVA0007:
+    // ESCA-JAVA0098:
+    // ESCA-JAVA0116:
     public String dbLocation;
+    // ESCA-JAVA0007:
+    // ESCA-JAVA0116:
     public String dbName;
     private Logger log;
     private String logPrefix;

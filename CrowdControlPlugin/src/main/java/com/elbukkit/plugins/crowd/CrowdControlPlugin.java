@@ -2,6 +2,7 @@ package com.elbukkit.plugins.crowd;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
@@ -29,6 +30,7 @@ import com.elbukkit.plugins.crowd.creature.CreatureHandler;
 import com.elbukkit.plugins.crowd.creature.CrowdCreature;
 import com.elbukkit.plugins.crowd.events.CrowdListener;
 import com.elbukkit.plugins.crowd.rules.MaxRule;
+import com.elbukkit.plugins.crowd.rules.MovementLocationRule;
 import com.elbukkit.plugins.crowd.rules.Rule;
 import com.elbukkit.plugins.crowd.rules.SpawnEnvironmentRule;
 import com.elbukkit.plugins.crowd.rules.SpawnHeightRule;
@@ -50,23 +52,24 @@ public class CrowdControlPlugin extends JavaPlugin {
 
     private static Lock cHandlerLock = new ReentrantLock();
     private Configuration config;
-    public ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
-    public sqlCore dbManage; // import SQLite lib
+    private ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
+    private sqlCore dbManage = null; // import SQLite lib
 
+    private volatile int despawnDistance = 128;
     private CrowdEntityListener entityListener = new CrowdEntityListener(this);
+    private volatile double idleDespawnChance = 0.05;
+
     private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
+
     private Logger log;
-    
     private volatile int maxPerChunk = 2;
     private volatile int maxPerWorld = 300;
-    private volatile int despawnDistance = 128;
-    private volatile double idleDespawnChance = 0.05;
     private volatile int minDistanceFromPlayer = 10;
-
     private PluginDescriptionFile pdf;
 
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
-    public RuleHandler ruleHandler;
+
+    private RuleHandler ruleHandler;
     private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 
     @ThreadSafe
@@ -74,7 +77,7 @@ public class CrowdControlPlugin extends JavaPlugin {
         if (creatureHandlers.containsKey(w)) {
             return creatureHandlers.get(w);
         } else {
-            CreatureHandler creatureHandler;
+            CreatureHandler creatureHandler = null;
             try {
                 if (cHandlerLock.tryLock()) {
                     creatureHandler = new CreatureHandler(dbManage, w, this);
@@ -84,7 +87,7 @@ public class CrowdControlPlugin extends JavaPlugin {
                     return creatureHandler;
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                log.info("Error creating creature handler for world: " + w.getName());
             } finally {
                 cHandlerLock.unlock();
             }
@@ -92,9 +95,21 @@ public class CrowdControlPlugin extends JavaPlugin {
         return null;
     }
 
+    public int getDespawnDistance() {
+        return despawnDistance;
+    }
+
+    public double getIdleDespawnChance() {
+        return idleDespawnChance;
+    }
+
     @ThreadSafe
     public Set<CrowdListener> getListeners() {
-        return this.listeners;
+        return Collections.unmodifiableSet(this.listeners);
+    }
+
+    public Logger getLog() {
+        return log;
     }
 
     @ThreadSafe
@@ -107,9 +122,34 @@ public class CrowdControlPlugin extends JavaPlugin {
         return this.maxPerWorld;
     }
 
+    public int getMinDistanceFromPlayer() {
+        return minDistanceFromPlayer;
+    }
+
+    public RuleHandler getRuleHandler() {
+        return ruleHandler;
+    }
+
     @ThreadSafe
     public Map<Class<? extends Rule>, String> getRules() {
         return ruleCommands;
+    }
+
+    public void loadConfigFile() {
+        if (config.getNode("global") != null) {
+            this.despawnDistance = config.getInt("global.despawnDistance", this.despawnDistance);
+            this.idleDespawnChance = config.getDouble("global.idleDespawnChance", this.idleDespawnChance);
+            this.maxPerChunk = config.getInt("global.maxPerChunk", this.maxPerChunk);
+            this.maxPerWorld = config.getInt("global.maxPerWorld", this.maxPerWorld);
+            this.minDistanceFromPlayer = config.getInt("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
+        } else {
+            config.setProperty("global.despawnDistance", this.despawnDistance);
+            config.setProperty("global.idleDespawnChance", this.idleDespawnChance);
+            config.setProperty("global.maxPerChunk", this.maxPerChunk);
+            config.setProperty("global.maxPerWorld", this.maxPerWorld);
+            config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
+        }
+        config.save();
     }
 
     public void onDisable() {
@@ -130,6 +170,7 @@ public class CrowdControlPlugin extends JavaPlugin {
         ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
         ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
         ruleCommands.put(SpawnLocationRule.class, "[x1,y1,z1,x2,y2,z2]");
+        ruleCommands.put(MovementLocationRule.class, "[x1,y1,z1,x2,y2,z2]");
         ruleCommands.put(SpawnTimeRule.class, "[Day or Night]");
 
         if (!this.getDataFolder().exists()) {
@@ -142,12 +183,31 @@ public class CrowdControlPlugin extends JavaPlugin {
         dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName, this.getDataFolder().getAbsolutePath());
         try {
             ruleHandler = new RuleHandler(dbManage, this);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e1) {
+            log.info("Error creating rule handler, is the DB readable?");
+            this.setEnabled(false);
+            return;
+        } catch (ClassNotFoundException e1) {
+            log.info("Invalid rule in DB!");
+            this.setEnabled(false);
+            return;
+        } catch (InstantiationException e1) {
+            log.info("Error making rule, is the jar file intact?");
+            this.setEnabled(false);
+            return;
+        } catch (IllegalAccessException e1) {
+            log.info("Error making rule, is the jar file intact?");
+            this.setEnabled(false);
+            return;
+        } catch (InvocationTargetException e1) {
+            log.info("Error making rule, is the jar file intact?");
+            this.setEnabled(false);
+            return;
+        } catch (NoSuchMethodException e1) {
+            log.info("Error making rule, is the jar file intact?");
             this.setEnabled(false);
             return;
         }
-
         File configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.yml");
 
         if (!configFile.exists()) {
@@ -157,10 +217,10 @@ public class CrowdControlPlugin extends JavaPlugin {
                 log.info("Unable to make config.yml!");
             }
         }
-        
+
         config = new Configuration(configFile);
         config.load();
-        
+
         loadConfigFile();
 
         // Register our events
@@ -178,8 +238,8 @@ public class CrowdControlPlugin extends JavaPlugin {
         for (World w : Bukkit.getServer().getWorlds()) {
 
             CreatureHandler cHandler = getCreatureHandler(w); // Create all of
-                                                                // the creature
-                                                                // handlers
+                                                              // the creature
+                                                              // handlers
 
             for (LivingEntity e : w.getLivingEntities()) {
                 if (!(e instanceof Player)) {
@@ -199,6 +259,20 @@ public class CrowdControlPlugin extends JavaPlugin {
         this.listeners.add(listener);
     }
 
+    public void setDespawnDistance(int despawnDistance) {
+        this.despawnDistance = despawnDistance;
+
+        config.setProperty("global.despawnDistance", despawnDistance);
+        config.save();
+    }
+
+    public void setIdleDespawnChance(double idleDespawnChance) {
+        this.idleDespawnChance = idleDespawnChance;
+
+        config.setProperty("global.idleDespawnChance", idleDespawnChance);
+        config.save();
+    }
+
     public void setMaxPerChunk(int max) {
         this.maxPerChunk = max;
 
@@ -213,53 +287,10 @@ public class CrowdControlPlugin extends JavaPlugin {
         config.save();
     }
 
-    public void setDespawnDistance(int despawnDistance) {
-        this.despawnDistance = despawnDistance;
-
-        config.setProperty("global.despawnDistance", despawnDistance);
-        config.save();
-    }
-
-    public int getDespawnDistance() {
-        return despawnDistance;
-    }
-
-    public void setIdleDespawnChance(double idleDespawnChance) {
-        this.idleDespawnChance = idleDespawnChance;
-
-        config.setProperty("global.idleDespawnChance", idleDespawnChance);
-        config.save();
-    }
-
-    public double getIdleDespawnChance() {
-        return idleDespawnChance;
-    }
-
     public void setMinDistanceFromPlayer(int minDistanceFromPlayer) {
         this.minDistanceFromPlayer = minDistanceFromPlayer;
 
         config.setProperty("global.minDistanceFromPlayer", minDistanceFromPlayer);
-        config.save();
-    }
-
-    public int getMinDistanceFromPlayer() {
-        return minDistanceFromPlayer;
-    }
-    
-    public void loadConfigFile() {
-        if (config.getNode("global") != null) {
-            this.despawnDistance = config.getInt("global.despawnDistance", this.despawnDistance);
-            this.idleDespawnChance = config.getDouble("global.idleDespawnChance", this.idleDespawnChance);
-            this.maxPerChunk = config.getInt("global.maxPerChunk", this.maxPerChunk);
-            this.maxPerWorld = config.getInt("global.maxPerWorld", this.maxPerWorld);
-            this.minDistanceFromPlayer = config.getInt("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
-        } else {
-            config.setProperty("global.despawnDistance", this.despawnDistance);
-            config.setProperty("global.idleDespawnChance", this.idleDespawnChance);
-            config.setProperty("global.maxPerChunk", this.maxPerChunk);
-            config.setProperty("global.maxPerWorld", this.maxPerWorld);
-            config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
-        }
         config.save();
     }
 }

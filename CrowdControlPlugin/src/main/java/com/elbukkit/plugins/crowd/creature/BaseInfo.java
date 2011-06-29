@@ -2,6 +2,12 @@ package com.elbukkit.plugins.crowd.creature;
 
 import com.elbukkit.plugins.crowd.ThreadSafe;
 
+/**
+ * A simple class to store the base info used to create crowd creatures
+ * 
+ * @author WinSock
+ * @version 1.0
+ */
 public class BaseInfo {
     private volatile boolean burnDay = false;
     private volatile int collisionDamage, miscDamage;
@@ -18,6 +24,7 @@ public class BaseInfo {
         this.health = health;
     }
 
+    // ESCA-JAVA0138:
     public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;

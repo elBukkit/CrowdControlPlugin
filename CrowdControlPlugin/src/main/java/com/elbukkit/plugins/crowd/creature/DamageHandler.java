@@ -9,12 +9,12 @@ import org.bukkit.entity.Player;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 
-/*
+/**
  * This handles all of the damage stuff for my plugin
  * 
  * @author Andrew Querol(winsock)
+ * @version 1.0
  */
-
 public class DamageHandler implements Runnable {
 
     private CreatureHandler handler;
@@ -42,12 +42,14 @@ public class DamageHandler implements Runnable {
                 double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
                 if (entity instanceof Creature) { // Living entities
-                                                    // cannot have
-                                                    // targets?
+                                                  // cannot have
+                                                  // targets?
                     Creature c = (Creature) entity;
                     // Targeting System
                     if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
                         if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
+                            // ESCA-JAVA0032:
+                            // ESCA-JAVA0253:
                             switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                             case Aggressive:
                                 c.setTarget(p);
@@ -62,6 +64,8 @@ public class DamageHandler implements Runnable {
                                 break;
                             }
                         } else {
+                            // ESCA-JAVA0032:
+                            // ESCA-JAVA0253:
                             switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
                             case Aggressive:
                                 c.setTarget(p);
@@ -83,6 +87,8 @@ public class DamageHandler implements Runnable {
                 if (distance <= 1.8) {
 
                     if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
+                        // ESCA-JAVA0032:
+                        // ESCA-JAVA0253:
                         switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                         case Aggressive:
                             p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
@@ -97,6 +103,7 @@ public class DamageHandler implements Runnable {
                             break;
                         }
                     } else {
+                        // ESCA-JAVA0253:
                         switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
                         case Aggressive:
                             p.damage(crowdCreature.getBaseInfo().getCollisionDamage());

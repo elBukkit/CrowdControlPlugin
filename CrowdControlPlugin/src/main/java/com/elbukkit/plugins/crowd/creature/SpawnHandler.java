@@ -18,6 +18,13 @@ import com.elbukkit.plugins.crowd.events.CreatureSpawnEvent;
 import com.elbukkit.plugins.crowd.events.CrowdListener;
 import com.elbukkit.plugins.crowd.rules.Type;
 
+/**
+ * This is the main spawner, thanks to the obfuscated minecraft code for helping
+ * me
+ * 
+ * @author WinSock
+ * @version 1.0
+ */
 public class SpawnHandler implements Runnable {
 
     private CreatureHandler handler;
@@ -78,19 +85,19 @@ public class SpawnHandler implements Runnable {
                                     info.setType(type);
 
                                     if (rand.nextFloat() < handler.getBaseInfo(type).getSpawnChance()) {
-                                        
+
                                         for (Player p : world.getPlayers()) {
                                             double deltax = Math.abs(spawnBlock.getLocation().getX() - p.getLocation().getX());
                                             double deltay = Math.abs(spawnBlock.getLocation().getY() - p.getLocation().getY());
                                             double deltaz = Math.abs(spawnBlock.getLocation().getZ() - p.getLocation().getZ());
                                             double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
-                                            
+
                                             if (distance < plugin.getMinDistanceFromPlayer()) {
                                                 continue;
                                             }
                                         }
 
-                                        if (plugin.ruleHandler.passesRules(info, Type.Spawn)) {
+                                        if (plugin.getRuleHandler().passesRules(info, Type.Spawn)) {
                                             CreatureSpawnEvent event = new CreatureSpawnEvent(this, info.getLocation(), info.getType());
 
                                             for (CrowdListener cListener : plugin.getListeners()) {

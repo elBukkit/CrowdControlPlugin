@@ -6,12 +6,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 
-/*
+/**
  * A simple event for creature attacking
  * 
  * @author Andrew Querol(winsock)
+ * @version 1.0
  */
-
 public class CreatureAttackEvent extends EventObject implements Cancellable {
 
     private static final long serialVersionUID = 3745243179503069710L;
