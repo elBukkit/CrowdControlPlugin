@@ -72,6 +72,12 @@ public class CrowdControlPlugin extends JavaPlugin {
     private RuleHandler ruleHandler;
     private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 
+    /**
+     * Gets a creature handler for a {@link World}
+     * 
+     * @param w {@link World}
+     * @return {@link CreatureHandler}
+     */
     @ThreadSafe
     public CreatureHandler getCreatureHandler(World w) {
         if (creatureHandlers.containsKey(w)) {
@@ -95,46 +101,96 @@ public class CrowdControlPlugin extends JavaPlugin {
         return null;
     }
 
+    /**
+     * Gets the despawn distance
+     * 
+     * @return An {@link Integer} representing the despawn distance
+     */
+    @ThreadSafe
     public int getDespawnDistance() {
         return despawnDistance;
     }
 
+    /**
+     * Returns the despawn chance when idle
+     * 
+     * @return A {@link Double} representing the chance
+     */
+    @ThreadSafe
     public double getIdleDespawnChance() {
         return idleDespawnChance;
     }
 
+    /**
+     * Gets the registered listeners.
+     * 
+     * @return A {@link Set}<{@link CrowdListener}> 
+     */
     @ThreadSafe
     public Set<CrowdListener> getListeners() {
         return Collections.unmodifiableSet(this.listeners);
     }
-
+    
+    /**
+     * Gets the logger
+     * 
+     * @return {@link Logger}
+     */
     public Logger getLog() {
         return log;
     }
 
+    /**
+     * Gets the max crowd creatures per chunk
+     * 
+     * @return An {@link Integer} representing the max creatures per chunk
+     */
     @ThreadSafe
     public int getMaxPerChunk() {
         return this.maxPerChunk;
     }
 
+    /**
+     * Gets the max crowd creatures per world
+     * 
+     * @return An {@link Integer} representing the max creatures per world
+     */
     @ThreadSafe
     public int getMaxPerWorld() {
         return this.maxPerWorld;
     }
 
+    /**
+     * Gets how close crowd creatures can spawn to a player
+     * 
+     * @return A {@link Integer}
+     */
+    @ThreadSafe
     public int getMinDistanceFromPlayer() {
         return minDistanceFromPlayer;
     }
 
+    /**
+     * Gets the rule handler
+     * @return {@link RuleHandler}
+     */
+    @ThreadSafe
     public RuleHandler getRuleHandler() {
         return ruleHandler;
     }
 
+    /**
+     * Gets the enabled rules
+     * @return {@link Map}<{@link Class}<? extends {@link Rule}>, {@link String}>
+     */
     @ThreadSafe
     public Map<Class<? extends Rule>, String> getRules() {
         return ruleCommands;
     }
 
+    /**
+     * Loads or reloads the config file
+     */
     public void loadConfigFile() {
         if (config.getNode("global") != null) {
             this.despawnDistance = config.getInt("global.despawnDistance", this.despawnDistance);
@@ -254,11 +310,21 @@ public class CrowdControlPlugin extends JavaPlugin {
         }
     }
 
+    /**
+     * Registers a listener
+     * 
+     * @param listener {@link CrowdListener}
+     */
     @ThreadSafe
     public void registerListener(CrowdListener listener) {
         this.listeners.add(listener);
     }
 
+    /**
+     * Sets the despawn distance
+     * 
+     * @param despawnDistance {@link Integer}
+     */
     public void setDespawnDistance(int despawnDistance) {
         this.despawnDistance = despawnDistance;
 
@@ -266,6 +332,11 @@ public class CrowdControlPlugin extends JavaPlugin {
         config.save();
     }
 
+    /**
+     * Sets the idle despawn chance
+     * 
+     * @param idleDespawnChance {@link Double}
+     */
     public void setIdleDespawnChance(double idleDespawnChance) {
         this.idleDespawnChance = idleDespawnChance;
 
@@ -273,6 +344,11 @@ public class CrowdControlPlugin extends JavaPlugin {
         config.save();
     }
 
+    /**
+     * Sets the max per chunk
+     * 
+     * @param max {@link Integer}
+     */
     public void setMaxPerChunk(int max) {
         this.maxPerChunk = max;
 
@@ -280,6 +356,11 @@ public class CrowdControlPlugin extends JavaPlugin {
         config.save();
     }
 
+    /**
+     * Sets the max per world
+     * 
+     * @param max {@link Integer}
+     */
     public void setMaxPerWorld(int max) {
         this.maxPerWorld = max;
 
@@ -287,6 +368,11 @@ public class CrowdControlPlugin extends JavaPlugin {
         config.save();
     }
 
+    /**
+     * Sets how close a crowd creature can spawn to a player
+     * 
+     * @param minDistanceFromPlayer {@link Integer}
+     */
     public void setMinDistanceFromPlayer(int minDistanceFromPlayer) {
         this.minDistanceFromPlayer = minDistanceFromPlayer;
 

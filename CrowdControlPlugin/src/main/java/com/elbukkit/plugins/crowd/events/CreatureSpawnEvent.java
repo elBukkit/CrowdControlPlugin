@@ -25,18 +25,38 @@ public class CreatureSpawnEvent extends EventObject implements Cancellable {
         this.type = type;
     }
 
+    /**
+     * Gets the location of the spawning
+     * 
+     * @return {@link Location}
+     */
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the type of creature that wants to spawn
+     * 
+     * @return {@link CreatureType}
+     */
     public CreatureType getType() {
         return type;
     }
 
+    /**
+     * Gets if the event was canceled
+     * 
+     * @return {@link Boolean}
+     */
     public boolean isCancelled() {
         return canceled;
     }
 
+    /**
+     * Sets if the event is canceled
+     * 
+     * @param cancel {@link Boolean}
+     */
     public void setCancelled(boolean cancel) {
         this.canceled = cancel;
     }

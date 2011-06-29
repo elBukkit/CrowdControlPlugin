@@ -28,22 +28,46 @@ public class CreatureAttackEvent extends EventObject implements Cancellable {
         this.attacked = attacked;
     }
 
+    /**
+     * Gets the entity that was attacked
+     * 
+     * @return {@link CrowdCreature}
+     */
     public LivingEntity getAttacked() {
         return attacked;
     }
 
+    /**
+     * Gets the entity that did the attacking
+     * @return {@link LivingEntity}
+     */
     public LivingEntity getAttacker() {
         return attacker;
     }
 
+    /**
+     * Returns the location of the attacked
+     * 
+     * @return {@link Location}
+     */
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets if the event was canceled
+     * 
+     * @return {@link Boolean}
+     */
     public boolean isCancelled() {
         return canceled;
     }
 
+    /**
+     * Sets if the event is canceled
+     * 
+     * @param cancel {@link Boolean}
+     */
     public void setCancelled(boolean cancel) {
         this.canceled = cancel;
     }
