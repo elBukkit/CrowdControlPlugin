@@ -25,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 import com.alta189.sqlLibraryV2.SQLite.sqlCore;
+import com.elbukkit.api.elregions.elRegionsPlugin;
 import com.elbukkit.plugins.crowd.creature.BaseInfo;
 import com.elbukkit.plugins.crowd.creature.CreatureHandler;
 import com.elbukkit.plugins.crowd.creature.CrowdCreature;
@@ -53,7 +54,7 @@ public class CrowdControlPlugin extends JavaPlugin {
     private static Lock cHandlerLock = new ReentrantLock();
     private Configuration config;
     private ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
-    private sqlCore dbManage = null; // import SQLite lib
+    private sqlCore dbManage = null;
 
     private volatile int despawnDistance = 128;
     private CrowdEntityListener entityListener = new CrowdEntityListener(this);
@@ -71,6 +72,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
     private RuleHandler ruleHandler;
     private CrowdWorldListener worldListener = new CrowdWorldListener(this);
+    private elRegionsPlugin elRegions;
 
     /**
      * Gets a creature handler for a {@link World}
@@ -215,8 +217,15 @@ public class CrowdControlPlugin extends JavaPlugin {
     public void onEnable() {
         pdf = this.getDescription();
         log = this.getServer().getLogger();
-        log.info(pdf.getFullName() + " is enabled!");
-
+        
+        elRegions = (elRegionsPlugin)this.getServer().getPluginManager().getPlugin("elRegions");
+        
+        if(elRegions == null) {
+            log.info("ERROR: Could not load elRegions!");
+            this.setEnabled(false);
+            return;
+        }
+        
         ruleCommands = new ConcurrentHashMap<Class<? extends Rule>, String>();
         ruleCommands.put(MaxRule.class, "[max number]");
         ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
@@ -225,8 +234,8 @@ public class CrowdControlPlugin extends JavaPlugin {
         ruleCommands.put(SpawnMaterialRule.class, "[material name]");
         ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
         ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
-        ruleCommands.put(SpawnLocationRule.class, "[x1,y1,z1,x2,y2,z2]");
-        ruleCommands.put(MovementLocationRule.class, "[x1,y1,z1,x2,y2,z2]");
+        ruleCommands.put(SpawnLocationRule.class, "[elRegion name]");
+        ruleCommands.put(MovementLocationRule.class, "[elRegion name]");
         ruleCommands.put(SpawnTimeRule.class, "[Day or Night]");
 
         if (!this.getDataFolder().exists()) {
@@ -308,6 +317,8 @@ public class CrowdControlPlugin extends JavaPlugin {
                 }
             }
         }
+        
+        log.info(pdf.getFullName() + " is enabled!");
     }
 
     /**
@@ -318,6 +329,14 @@ public class CrowdControlPlugin extends JavaPlugin {
     @ThreadSafe
     public void registerListener(CrowdListener listener) {
         this.listeners.add(listener);
+    }
+    
+    /**
+     * Gets the elRegions plugin
+     * @return The elRegionsPlugin
+     */
+    public elRegionsPlugin getRegionsPlugin(){
+        return this.elRegions;
     }
 
     /**

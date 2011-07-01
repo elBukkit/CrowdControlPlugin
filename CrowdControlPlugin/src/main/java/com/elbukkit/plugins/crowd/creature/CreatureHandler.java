@@ -434,16 +434,10 @@ public class CreatureHandler implements Runnable {
                 double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
                 if (distance < plugin.getDespawnDistance()) {
-                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with
-                                                // 1% chance to despawn
+                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
                         keep = true;
                     } else {
-                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // 5%
-                                                                                // Chance
-                                                                                // of
-                                                                                // despawning
-                                                                                // when
-                                                                                // idle
+                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // 5%  Chance of despawning when idle
                             keep = true;
                         }
                     }
