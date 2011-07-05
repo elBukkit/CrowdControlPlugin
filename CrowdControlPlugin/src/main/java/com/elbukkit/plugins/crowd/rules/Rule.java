@@ -26,6 +26,7 @@ import org.bukkit.entity.Zombie;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
+import com.elbukkit.plugins.crowd.utils.Saveable;
 
 /**
  * Base rule class, basic methods required for checking
@@ -33,34 +34,29 @@ import com.elbukkit.plugins.crowd.Info;
  * @author Andrew Querol(WinSock)
  * @version 1.0
  */
-public class Rule {
+public abstract class Rule implements Saveable {
 
     // ESCA-JAVA0098:
     protected CrowdControlPlugin plugin;
     protected Type ruleType;
     protected CreatureType type;
     protected World world;
+    protected String name;
 
-    public Rule(World world, CreatureType type, CrowdControlPlugin plugin) {
+    protected Rule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+        this.name = name;
         this.world = world;
         this.type = type;
         this.plugin = plugin;
     }
 
-    // ESCA-JAVA0173:
-    public boolean check(Info info) {
-        return true;
-    } // Check if creature passes
+    public abstract boolean check(Info info);
 
-    public boolean checkCreatureType(CreatureType cType) { // Check if the
-                                                           // creature is
-                                                           // effected by the
-                                                           // rule
+    public boolean checkCreatureType(CreatureType cType) { // Check if the creature is effected by the rule
         return this.type.equals(cType);
     }
 
-    public boolean checkWorld(World cWorld) { // Check if the world is effected
-                                              // by this rule
+    public boolean checkWorld(World cWorld) { // Check if the world is effected by this rule
         return this.world.equals(cWorld);
     }
 
@@ -125,10 +121,6 @@ public class Rule {
         return null;
     }
 
-    public String getData() {
-        return "";
-    }
-
     public Type getType() {
         return ruleType;
     }
@@ -137,7 +129,6 @@ public class Rule {
         return world;
     }
 
-    public void init(String data) {
-    }
+    public abstract void loadFromString(String data);
 
 }

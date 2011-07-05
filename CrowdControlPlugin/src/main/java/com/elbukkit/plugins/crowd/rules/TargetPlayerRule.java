@@ -3,6 +3,7 @@ package com.elbukkit.plugins.crowd.rules;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
@@ -18,10 +19,9 @@ public class TargetPlayerRule extends Rule {
     private String player;
     private boolean targetable;
 
-    public TargetPlayerRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(world, type, plugin);
+    public TargetPlayerRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, world, type, plugin);
         this.ruleType = Type.Target;
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -38,15 +38,20 @@ public class TargetPlayerRule extends Rule {
     }
 
     @Override
-    public String getData() {
-        return player + "," + String.valueOf(targetable);
-    }
-
-    @Override
-    public void init(String data) {
+    public void loadFromString(String data) {
         String[] split = data.split(",");
         this.player = split[0];
         this.targetable = Boolean.valueOf(split[1]);
+    }
+
+    public void save(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void load(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

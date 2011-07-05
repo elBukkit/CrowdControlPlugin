@@ -36,9 +36,8 @@ import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 
-import com.alta189.sqlLibraryV2.SQLite.sqlCore;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
-import com.elbukkit.plugins.crowd.ThreadSafe;
+import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
 /**
  * Handles everything to do with a crowd creature.
@@ -51,14 +50,12 @@ public class CreatureHandler implements Runnable {
     private ConcurrentHashMap<CrowdCreature, Set<Player>> attacked;
     private ConcurrentHashMap<CreatureType, BaseInfo> baseInfo;
     private Set<CrowdCreature> crowdCreatureSet;
-    private sqlCore dbManage;
     private Set<CreatureType> enabledCreatures;
     private CrowdControlPlugin plugin;
     private Random rand = new Random();
     private World world;
 
-    public CreatureHandler(sqlCore dbManage, World w, CrowdControlPlugin plugin) throws SQLException {
-        this.dbManage = dbManage;
+    public CreatureHandler(World w, CrowdControlPlugin plugin) {
         this.world = w;
         this.plugin = plugin;
         // ESCA-JAVA0261:
@@ -68,40 +65,7 @@ public class CreatureHandler implements Runnable {
         enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
         attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
 
-        dbManage.initialize();
-        if (!dbManage.checkTable("creatureInfo")) {
-            String createDB = "CREATE TABLE creatureInfo" + "(" + "Id INTEGER PRIMARY KEY AUTOINCREMENT, " + "Creature VARCHAR(255), " + "NatureDay VARCHAR(255), " + "NatureNight VARCHAR(255), " + "CollisionDmg INT(10), " + "MiscDmg INT(10)," + "BurnDay VARCHAR(5)," + "Health INT(10), " + "TargetDistance INT(10), " + "SpawnChance FLOAT(1,2), " + "Enabled VARCHAR(5)" + ");";
-            dbManage.createTable(createDB);
-            generateDefaults();
-        } else {
-            String selectSQL = "SELECT * FROM creatureInfo";
-
-            ResultSet rs = dbManage.sqlQuery(selectSQL);
-
-            while (rs.next()) {
-                boolean enabled = Boolean.parseBoolean(rs.getString(11));
-
-                CreatureType type = CreatureType.valueOf(rs.getString(2));
-                BaseInfo info = new BaseInfo(Nature.valueOf(rs.getString(3)), Nature.valueOf(rs.getString(4)), Integer.parseInt(rs.getString(5)), Integer.parseInt(rs.getString(6)), Integer.parseInt(rs.getString(8)), Integer.parseInt(rs.getString(9)), Boolean.parseBoolean(rs.getString(7)), Float.parseFloat(rs.getString(10)));
-
-                baseInfo.put(type, info);
-
-                Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-                while (i.hasNext()) {
-                    CrowdCreature creature = i.next();
-
-                    if (creature.getType() == type) {
-                        creature.setBaseInfo(info);
-                    }
-                }
-
-                if (enabled) {
-                    enabledCreatures.add(type);
-                }
-
-            }
-        }
-        dbManage.close();
+        
 
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new SpawnHandler(plugin, this), 0, 20);
 
@@ -486,23 +450,7 @@ public class CreatureHandler implements Runnable {
         }
     }
 
-    public void setInfo(BaseInfo info, CreatureType type) throws SQLException {
-        dbManage.initialize();
-        String selectSQL = "SELECT * FROM creatureInfo WHERE Creature = '" + type.toString() + "';";
-        ResultSet rs = dbManage.sqlQuery(selectSQL);
-
-        if (rs.next()) {
-            // Creature type is in db
-            String updateSQL = "UPDATE creatureInfo SET NatureDay = '" + info.getCreatureNatureDay().toString() + "', NatureNight = '" + info.getCreatureNatureNight().toString() + "', CollisionDmg = '" + String.valueOf(info.getCollisionDamage()) + "', MiscDmg = '" + String.valueOf(info.getMiscDamage()) + "', BurnDay = '" + String.valueOf(info.isBurnDay()) + "', Health = '" + String.valueOf(info.getHealth()) + "', TargetDistance = '" + String.valueOf(info.getTargetDistance()) + "', SpawnChance = '" + String.valueOf(info.getSpawnChance()) + "', Enabled = '" + String.valueOf(enabledCreatures.contains(type)) + "' WHERE Creature = '" + type.toString() + "';";
-
-            dbManage.updateQuery(updateSQL);
-        } else {
-            String addSQL = "INSERT INTO creatureInfo (Creature, NatureDay, NatureNight, CollisionDmg, MiscDmg, BurnDay, Health, TargetDistance, SpawnChance, Enabled) VALUES ('" + type.toString() + "', '" + info.getCreatureNatureDay().toString() + "', '" + info.getCreatureNatureNight().toString() + "', '" + String.valueOf(info.getCollisionDamage()) + "', '" + String.valueOf(info.getMiscDamage()) + "', '" + String.valueOf(info.isBurnDay()) + "', '" + String.valueOf(info.getHealth()) + "', '" + String.valueOf(info.getTargetDistance()) + "', '" + String.valueOf(info.getSpawnChance()) + "', '" + String.valueOf(enabledCreatures.contains(type)) + "');";
-
-            dbManage.insertQuery(addSQL);
-        }
-        dbManage.close();
-
+    public void setInfo(BaseInfo info, CreatureType type) {
         Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
         while (i.hasNext()) {

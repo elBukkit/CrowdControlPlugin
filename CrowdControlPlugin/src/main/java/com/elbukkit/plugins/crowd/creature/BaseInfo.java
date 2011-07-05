@@ -1,6 +1,6 @@
 package com.elbukkit.plugins.crowd.creature;
 
-import com.elbukkit.plugins.crowd.ThreadSafe;
+import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
 /**
  * A simple class to store the base info used to create crowd creatures

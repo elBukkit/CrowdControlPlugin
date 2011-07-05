@@ -2,6 +2,7 @@ package com.elbukkit.plugins.crowd.rules;
 
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
@@ -16,8 +17,8 @@ public class SpawnReplaceRule extends Rule {
 
     private CreatureType replaceType;
 
-    public SpawnReplaceRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(world, type, plugin);
+    public SpawnReplaceRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, world, type, plugin);
         this.ruleType = Type.Spawn;
     }
 
@@ -27,18 +28,23 @@ public class SpawnReplaceRule extends Rule {
         return true;
     }
 
-    @Override
-    public String getData() {
-        return replaceType.toString();
-    }
-
     public void init(CreatureType cType) {
         replaceType = cType;
     }
 
     @Override
-    public void init(String data) {
+    public void loadFromString(String data) {
         replaceType = CreatureType.valueOf(data);
+    }
+
+    public void save(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void load(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

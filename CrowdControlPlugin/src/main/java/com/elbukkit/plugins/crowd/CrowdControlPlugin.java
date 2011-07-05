@@ -24,7 +24,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
-import com.alta189.sqlLibraryV2.SQLite.sqlCore;
 import com.elbukkit.api.elregions.elRegionsPlugin;
 import com.elbukkit.plugins.crowd.creature.BaseInfo;
 import com.elbukkit.plugins.crowd.creature.CreatureHandler;
@@ -41,6 +40,7 @@ import com.elbukkit.plugins.crowd.rules.SpawnMaterialRule;
 import com.elbukkit.plugins.crowd.rules.SpawnReplaceRule;
 import com.elbukkit.plugins.crowd.rules.SpawnTimeRule;
 import com.elbukkit.plugins.crowd.rules.TargetPlayerRule;
+import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
 // ESCA-JAVA0137:
 /**
@@ -54,7 +54,6 @@ public class CrowdControlPlugin extends JavaPlugin {
     private static Lock cHandlerLock = new ReentrantLock();
     private Configuration config;
     private ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
-    private sqlCore dbManage = null;
 
     private volatile int despawnDistance = 128;
     private CrowdEntityListener entityListener = new CrowdEntityListener(this);
@@ -88,14 +87,12 @@ public class CrowdControlPlugin extends JavaPlugin {
             CreatureHandler creatureHandler = null;
             try {
                 if (cHandlerLock.tryLock()) {
-                    creatureHandler = new CreatureHandler(dbManage, w, this);
+                    creatureHandler = new CreatureHandler(w, this);
                     // Register the despawner
                     getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 10);
                     creatureHandlers.put(w, creatureHandler);
                     return creatureHandler;
                 }
-            } catch (SQLException e) {
-                log.info("Error creating creature handler for world: " + w.getName());
             } finally {
                 cHandlerLock.unlock();
             }
@@ -242,37 +239,6 @@ public class CrowdControlPlugin extends JavaPlugin {
             this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
         }
 
-        String prefix = "[CrowdControl]";
-        String dbName = pdf.getName();
-
-        dbManage = new sqlCore(this.getServer().getLogger(), prefix, dbName, this.getDataFolder().getAbsolutePath());
-        try {
-            ruleHandler = new RuleHandler(dbManage, this);
-        } catch (SQLException e1) {
-            log.info("Error creating rule handler, is the DB readable?");
-            this.setEnabled(false);
-            return;
-        } catch (ClassNotFoundException e1) {
-            log.info("Invalid rule in DB!");
-            this.setEnabled(false);
-            return;
-        } catch (InstantiationException e1) {
-            log.info("Error making rule, is the jar file intact?");
-            this.setEnabled(false);
-            return;
-        } catch (IllegalAccessException e1) {
-            log.info("Error making rule, is the jar file intact?");
-            this.setEnabled(false);
-            return;
-        } catch (InvocationTargetException e1) {
-            log.info("Error making rule, is the jar file intact?");
-            this.setEnabled(false);
-            return;
-        } catch (NoSuchMethodException e1) {
-            log.info("Error making rule, is the jar file intact?");
-            this.setEnabled(false);
-            return;
-        }
         File configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.yml");
 
         if (!configFile.exists()) {

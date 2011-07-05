@@ -4,8 +4,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -71,11 +73,11 @@ public class CrowdCommand implements CommandExecutor {
                         Class<? extends Rule> ruleClass = pendingCommands.get(Integer.valueOf(args[1]));
                         Constructor<? extends Rule> c = null;
                         try {
-                            c = ruleClass.getDeclaredConstructor(World.class, CreatureType.class, CrowdControlPlugin.class);
-                            Object classObj = c.newInstance(Bukkit.getServer().getWorld(args[2]), CreatureType.valueOf(args[3]), plugin);
+                            c = ruleClass.getDeclaredConstructor(String.class, World.class, CreatureType.class, CrowdControlPlugin.class);
+                            Object classObj = c.newInstance(args[2], Bukkit.getServer().getWorld(args[3]), CreatureType.valueOf(args[4]), plugin);
                             if (classObj instanceof Rule) {
                                 Rule r = (Rule) classObj;
-                                r.init(args[4]);
+                                r.loadFromString(args[5]);
                                 plugin.getRuleHandler().AddRule(r);
                                 sender.sendMessage("Rule added!");
                                 pendingCommands.remove(ruleClass);
@@ -92,8 +94,6 @@ public class CrowdCommand implements CommandExecutor {
                             sender.sendMessage("Error: Illegal Access!");
                         } catch (InvocationTargetException e) {
                             sender.sendMessage("Error: Invocation Exception");
-                        } catch (SQLException e) {
-                            sender.sendMessage("Error: failed to save rule to disk, rule is still in memory. Call \"crowd rebuildDB\" to try to fix");
                         }
                     } else {
                         sender.sendMessage("Invalid pending command ID, use /crowd listPending to get a list of pending commands");
@@ -102,7 +102,7 @@ public class CrowdCommand implements CommandExecutor {
                     sender.sendMessage("No pending commands to add!");
                 }
             } else {
-                sender.sendMessage("usage: crowd finish [pending id] [worldname] [creaturetype] [data] ");
+                sender.sendMessage("usage: crowd finish [pending id] [name] [worldname] [creaturetype] [data] ");
             }
         } else if (args[0].equalsIgnoreCase("listRules")) {
             if (plugin.getRules().size() > 0) {
@@ -118,35 +118,17 @@ public class CrowdCommand implements CommandExecutor {
             } else {
                 sender.sendMessage("No rules!"); // should never happen :)
             }
-        } else if (args[0].equalsIgnoreCase("rebuildDB")) {
-            try {
-                plugin.getRuleHandler().rebuildDB();
-                sender.sendMessage("Database is rebuilt! All rules were re-added!");
-            } catch (SQLException e) {
-                sender.sendMessage("Error rebuilding database!");
-            }
         } else if (args[0].equalsIgnoreCase("listEnabledRules")) {
-            Map<Integer, Rule> rules = plugin.getRuleHandler().getRules();
-            for (int i : rules.keySet()) {
-                sender.sendMessage((rules.get(i)).getClass().getSimpleName() + ", ID: " + i);
-            }
-        } else if (args[0].equalsIgnoreCase("getDetailedInfo")) {
-            if (args.length >= 2) {
-                Rule r = plugin.getRuleHandler().getRules().get(Integer.valueOf(args[1]));
-                sender.sendMessage("Creature Type: " + r.getCreatureType().toString());
-                sender.sendMessage("World: " + r.getWorld().getName());
-                sender.sendMessage("Data: " + r.getData());
-            } else {
-                sender.sendMessage("Usage: crowd getDetailedInfo [enabled id]");
+            List<Rule> rules = plugin.getRuleHandler().getRules();
+            Iterator<Rule> i = rules.iterator();
+            
+            while(i.hasNext()) {
+                Rule r = i.next();
+                sender.sendMessage(r.getClass().getSimpleName() + ", ID: " + rules.indexOf(r));
             }
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args.length >= 2) {
                 plugin.getRuleHandler().RemoveRule(Integer.valueOf(args[1]));
-                try {
-                    plugin.getRuleHandler().rebuildDB();
-                } catch (SQLException e) {
-                    sender.sendMessage("Error rebuilding database!");
-                }
                 sender.sendMessage("Removed rule with id: " + args[1] + "!");
             } else {
                 sender.sendMessage("Usage: crowd remove [enabled id]");
@@ -200,13 +182,10 @@ public class CrowdCommand implements CommandExecutor {
                         sender.sendMessage("Invalid setting!");
                         return true;
                     }
-
-                    try {
-                        plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2]));
-                        sender.sendMessage("Set creature info!");
-                    } catch (SQLException e1) {
-                        plugin.getLog().info("Error saving rule, is the DB readable?");
-                    }
+                    
+                    plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2]));
+                    sender.sendMessage("Set creature info!");
+                    
                 } else {
                     sender.sendMessage("That creature type does not exist!");
                 }

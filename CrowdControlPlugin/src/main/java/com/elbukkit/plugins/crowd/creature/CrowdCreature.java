@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 
-import com.elbukkit.plugins.crowd.ThreadSafe;
+import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
 /**
  * This class represents a creature, when entity equals null its just base info

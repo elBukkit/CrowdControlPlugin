@@ -2,6 +2,7 @@ package com.elbukkit.plugins.crowd.rules;
 
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
@@ -16,8 +17,8 @@ public class MovementLocationRule extends Rule {
 
     String elRegionName = "";
 
-    public MovementLocationRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(world, type, plugin);
+    public MovementLocationRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, world, type, plugin);
         this.ruleType = Type.Movement;
     }
 
@@ -29,14 +30,19 @@ public class MovementLocationRule extends Rule {
         
         return false;
     }
-
+    
     @Override
-    public String getData() {
-        return elRegionName;
+    public void loadFromString(String data) {
+        this.elRegionName = data;
     }
 
-    @Override
-    public void init(String data) {
-        this.elRegionName = data;
+    public void save(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void load(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
     }
 }

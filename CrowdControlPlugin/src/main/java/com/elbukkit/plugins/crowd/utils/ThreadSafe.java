@@ -1,4 +1,4 @@
-package com.elbukkit.plugins.crowd;
+package com.elbukkit.plugins.crowd.utils;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

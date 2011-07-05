@@ -2,6 +2,7 @@ package com.elbukkit.plugins.crowd.rules;
 
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
@@ -16,8 +17,8 @@ public class SpawnLocationRule extends Rule {
 
     String elRegionName = "";
 
-    public SpawnLocationRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(world, type, plugin);
+    public SpawnLocationRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, world, type, plugin);
         this.ruleType = Type.Spawn;
     }
 
@@ -31,13 +32,17 @@ public class SpawnLocationRule extends Rule {
     }
 
     @Override
-    public String getData() {
-
-        return elRegionName;
+    public void loadFromString(String data) {
+        elRegionName = data;
     }
 
-    @Override
-    public void init(String data) {
-        elRegionName = data;
+    public void save(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void load(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
     }
 }

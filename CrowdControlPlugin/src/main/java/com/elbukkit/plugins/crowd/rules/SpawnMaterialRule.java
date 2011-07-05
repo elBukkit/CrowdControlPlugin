@@ -3,6 +3,7 @@ package com.elbukkit.plugins.crowd.rules;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
@@ -17,8 +18,8 @@ public class SpawnMaterialRule extends Rule {
 
     private Material material;
 
-    public SpawnMaterialRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(world, type, plugin);
+    public SpawnMaterialRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, world, type, plugin);
         this.ruleType = Type.Spawn;
     }
 
@@ -33,14 +34,19 @@ public class SpawnMaterialRule extends Rule {
     }
 
     @Override
-    public String getData() {
-        return material.toString();
-    }
-
-    @Override
-    public void init(String data) {
+    public void loadFromString(String data) {
         String[] split = data.split(",");
         material = Material.valueOf(split[0]);
+    }
+
+    public void save(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void load(Configuration config, String node) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

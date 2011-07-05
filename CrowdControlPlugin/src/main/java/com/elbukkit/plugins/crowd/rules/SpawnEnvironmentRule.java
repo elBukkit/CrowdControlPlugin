@@ -3,6 +3,7 @@ package com.elbukkit.plugins.crowd.rules;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
@@ -18,8 +19,8 @@ public class SpawnEnvironmentRule extends Rule {
 
     private Environment spawnableEnvironment;
 
-    public SpawnEnvironmentRule(World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(world, type, plugin);
+    public SpawnEnvironmentRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, world, type, plugin);
         this.ruleType = Type.Spawn;
     }
 
@@ -32,12 +33,15 @@ public class SpawnEnvironmentRule extends Rule {
     }
 
     @Override
-    public String getData() {
-        return spawnableEnvironment.toString();
+    public void loadFromString(String data) {
+        this.spawnableEnvironment = Environment.valueOf(data);
     }
 
-    @Override
-    public void init(String data) {
-        this.spawnableEnvironment = Environment.valueOf(data);
+    public void save(Configuration config, String node) {
+        config.setProperty(node + "." + name + ".SpawnableEnvironment", spawnableEnvironment.toString());
+    }
+
+    public void load(Configuration config, String node) {
+        this.spawnableEnvironment = Environment.valueOf(config.getString(node + "." + name + ".SpawnableEnvironment", "NORMAL"));
     }
 }
