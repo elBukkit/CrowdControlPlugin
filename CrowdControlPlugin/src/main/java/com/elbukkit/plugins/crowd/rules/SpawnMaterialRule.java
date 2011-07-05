@@ -20,7 +20,7 @@ public class SpawnMaterialRule extends Rule {
 
     public SpawnMaterialRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
     }
 
     @Override
@@ -36,17 +36,15 @@ public class SpawnMaterialRule extends Rule {
     @Override
     public void loadFromString(String data) {
         String[] split = data.split(",");
-        material = Material.valueOf(split[0]);
+        material = Material.valueOf(split[0].toUpperCase());
     }
 
     public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        config.setProperty(node + ".material", material.toString());
     }
 
     public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        this.material = Material.valueOf(config.getString(node + ".material", "AIR").toUpperCase());
     }
 
 }

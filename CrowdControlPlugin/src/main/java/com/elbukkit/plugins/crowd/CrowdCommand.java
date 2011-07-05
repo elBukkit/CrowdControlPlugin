@@ -147,7 +147,7 @@ public class CrowdCommand implements CommandExecutor {
                     sender.sendMessage("Killing: " + String.valueOf(plugin.getCreatureHandler(w).getCreatureCount()));
                     plugin.getCreatureHandler(w).killAll();
                 } else {
-                    sender.sendMessage("Killing: " + String.valueOf(plugin.getCreatureHandler(w).getCreatureCount(CreatureType.valueOf(args[2]))));
+                    sender.sendMessage("Killing: " + String.valueOf(plugin.getCreatureHandler(w).getCreatureCount(CreatureType.valueOf(args[2].toUpperCase()))));
                     plugin.getCreatureHandler(w).killAll(CreatureType.valueOf(args[2]));
                 }
                 sender.sendMessage("Nuked!");
@@ -157,7 +157,7 @@ public class CrowdCommand implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length >= 5) {
 
-                BaseInfo info = plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).getBaseInfo(CreatureType.valueOf(args[2]));
+                BaseInfo info = plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).getBaseInfo(CreatureType.valueOf(args[2].toUpperCase()));
 
                 if (info != null) {
                     if (args[3].equalsIgnoreCase("NatureDay")) {
@@ -177,13 +177,13 @@ public class CrowdCommand implements CommandExecutor {
                     } else if (args[3].equalsIgnoreCase("SpawnChance")) {
                         info.setSpawnChance(Float.parseFloat(args[4]));
                     } else if (args[3].equalsIgnoreCase("Enabled")) {
-                        plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setEnabled(CreatureType.valueOf(args[2]), Boolean.valueOf(args[4]));
+                        plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setEnabled(CreatureType.valueOf(args[2].toUpperCase()), Boolean.valueOf(args[4]));
                     } else {
                         sender.sendMessage("Invalid setting!");
                         return true;
                     }
                     
-                    plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2]));
+                    plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2].toUpperCase()));
                     sender.sendMessage("Set creature info!");
                     
                 } else {

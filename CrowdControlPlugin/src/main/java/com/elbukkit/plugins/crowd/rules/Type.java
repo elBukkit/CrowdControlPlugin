@@ -7,5 +7,5 @@ package com.elbukkit.plugins.crowd.rules;
  */
 
 public enum Type {
-    Movement, Spawn, Target
+    MOVEMENT, SPAWN, TARGET
 }

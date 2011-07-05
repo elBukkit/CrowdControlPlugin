@@ -21,7 +21,7 @@ public class TargetPlayerRule extends Rule {
 
     public TargetPlayerRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Target;
+        this.ruleType = Type.TARGET;
     }
 
     @Override
@@ -45,13 +45,13 @@ public class TargetPlayerRule extends Rule {
     }
 
     public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        config.setProperty(node + ".player", this.player);
+        config.setProperty(node + ".targetable", targetable);
     }
 
     public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        this.targetable = config.getBoolean(node + ".targetable", true);
+        this.player = config.getString(node + ".player", "Player");
     }
 
 }

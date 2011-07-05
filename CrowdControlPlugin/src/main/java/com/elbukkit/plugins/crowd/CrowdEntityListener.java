@@ -170,7 +170,7 @@ public class CrowdEntityListener extends EntityListener {
             info.setReason(event.getReason());
 
             if (event.getReason() == TargetReason.CUSTOM) {
-                if (!plugin.getRuleHandler().passesRules(info, Type.Target)) {
+                if (!plugin.getRuleHandler().passesRules(info, Type.TARGET)) {
                     event.setCancelled(true);
                 }
                 return;

@@ -21,7 +21,7 @@ public class SpawnEnvironmentRule extends Rule {
 
     public SpawnEnvironmentRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
     }
 
     @Override
@@ -34,14 +34,14 @@ public class SpawnEnvironmentRule extends Rule {
 
     @Override
     public void loadFromString(String data) {
-        this.spawnableEnvironment = Environment.valueOf(data);
+        this.spawnableEnvironment = Environment.valueOf(data.toUpperCase());
     }
 
     public void save(Configuration config, String node) {
-        config.setProperty(node + "." + name + ".SpawnableEnvironment", spawnableEnvironment.toString());
+        config.setProperty(node + ".SpawnableEnvironment", spawnableEnvironment.toString());
     }
 
     public void load(Configuration config, String node) {
-        this.spawnableEnvironment = Environment.valueOf(config.getString(node + "." + name + ".SpawnableEnvironment", "NORMAL"));
+        this.spawnableEnvironment = Environment.valueOf(config.getString(node + ".SpawnableEnvironment", "NORMAL").toUpperCase());
     }
 }

@@ -19,7 +19,7 @@ public class SpawnReplaceRule extends Rule {
 
     public SpawnReplaceRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
     }
 
     @Override
@@ -34,16 +34,15 @@ public class SpawnReplaceRule extends Rule {
 
     @Override
     public void loadFromString(String data) {
-        replaceType = CreatureType.valueOf(data);
+        replaceType = CreatureType.valueOf(data.toUpperCase());
     }
 
     public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        config.setProperty(node + ".replaceType", replaceType.toString());
     }
 
     public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
+        this.replaceType = CreatureType.valueOf(config.getString(node + ".replaceType", "MONSTER").toUpperCase());
         
     }
 

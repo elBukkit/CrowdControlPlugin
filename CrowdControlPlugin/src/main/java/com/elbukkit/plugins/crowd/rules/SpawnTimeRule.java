@@ -19,7 +19,7 @@ public class SpawnTimeRule extends Rule {
 
     public SpawnTimeRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
     }
 
     @Override
@@ -28,18 +28,18 @@ public class SpawnTimeRule extends Rule {
         if (plugin.getCreatureHandler(info.getLocation().getWorld()).isDay()) {
             // ESCA-JAVA0032:
             switch (spawnTime) {
-            case Day:
+            case DAY:
                 return true;
-            case Night:
+            case NIGHT:
                 return false;
             }
         } else {
             // ESCA-JAVA0032:
             switch (spawnTime) {
-            case Day:
-                return false;
-            case Night:
+            case DAY:
                 return true;
+            case NIGHT:
+                return false;
             }
         }
 
@@ -52,13 +52,11 @@ public class SpawnTimeRule extends Rule {
     }
 
     public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        config.setProperty(node + ".time", spawnTime.toString());
     }
 
     public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        this.spawnTime = Time.valueOf(config.getString(node + ".time", "DAY").toUpperCase());
     }
 
 }

@@ -19,7 +19,7 @@ public class SpawnLightRule extends Rule {
 
     public SpawnLightRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
         // TODO Auto-generated constructor stub
     }
 
@@ -41,13 +41,14 @@ public class SpawnLightRule extends Rule {
     }
 
     public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
+        config.setProperty(node + ".min", this.min);
+        config.setProperty(node + ".max", this.max);
         
     }
 
     public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        this.max = config.getInt(node + ".max", 15);
+        this.min = config.getInt(node + ".min", 0);
     }
 
 }

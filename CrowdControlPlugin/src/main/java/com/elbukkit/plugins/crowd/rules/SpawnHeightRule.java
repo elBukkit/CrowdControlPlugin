@@ -19,7 +19,7 @@ public class SpawnHeightRule extends Rule {
 
     public SpawnHeightRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
     }
 
     @Override
@@ -29,28 +29,23 @@ public class SpawnHeightRule extends Rule {
         this.min = Integer.parseInt(split[1]);
     }
 
-    public boolean spawn(Info info) {
+    public void save(Configuration config, String node) {
+        config.setProperty(node + ".min", this.min);
+        config.setProperty(node + ".max", this.max);
+    }
+
+    public void load(Configuration config, String node) {
+        this.max = config.getInt(node + ".max", 128);
+        this.min = config.getInt(node + ".min", 0);
+    }
+
+    @Override
+    public boolean check(Info info) {
         if (info.getLocation().getBlockY() >= min) {
             if (info.getLocation().getBlockY() <= max) {
                 return true;
             }
         }
-        return false;
-    }
-
-    public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public boolean check(Info info) {
-        // TODO Auto-generated method stub
         return false;
     }
 

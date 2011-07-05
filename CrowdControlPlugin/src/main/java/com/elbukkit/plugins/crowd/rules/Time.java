@@ -7,5 +7,5 @@ package com.elbukkit.plugins.crowd.rules;
  */
 
 public enum Time {
-    Day, Night
+    DAY, NIGHT
 }

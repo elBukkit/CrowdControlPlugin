@@ -19,7 +19,7 @@ public class SpawnLocationRule extends Rule {
 
     public SpawnLocationRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
     }
 
     @Override
@@ -37,12 +37,10 @@ public class SpawnLocationRule extends Rule {
     }
 
     public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        config.setProperty(node + ".elRegion", this.elRegionName);
     }
 
     public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        this.elRegionName = config.getString(node + ".elRegion", "");
     }
 }

@@ -43,7 +43,7 @@ public class MovementHandler implements Runnable {
                 info.setEnv(c.getEntity().getWorld().getEnvironment());
                 info.setType(c.getType());
 
-                if (plugin.getRuleHandler().passesRules(info, Type.Movement)) {
+                if (plugin.getRuleHandler().passesRules(info, Type.MOVEMENT)) {
 
                     CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
                     for (CrowdListener cListener : plugin.getListeners()) {

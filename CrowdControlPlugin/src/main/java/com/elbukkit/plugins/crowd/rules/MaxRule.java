@@ -19,7 +19,7 @@ public class MaxRule extends Rule {
 
     public MaxRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
         super(name, world, type, plugin);
-        this.ruleType = Type.Spawn;
+        this.ruleType = Type.SPAWN;
     }
 
     @Override
@@ -38,13 +38,12 @@ public class MaxRule extends Rule {
     }
 
     public void save(Configuration config, String node) {
-        // TODO Auto-generated method stub
+        config.setProperty(node + ".max", maxMobs);
         
     }
 
     public void load(Configuration config, String node) {
-        // TODO Auto-generated method stub
-        
+        this.maxMobs = config.getInt(node + ".max", 0);
     }
 
 }
