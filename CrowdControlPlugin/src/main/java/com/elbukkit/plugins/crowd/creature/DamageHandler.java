@@ -41,15 +41,12 @@ public class DamageHandler implements Runnable {
                 double deltaz = Math.abs(entity.getLocation().getZ() - p.getLocation().getZ());
                 double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
-                if (entity instanceof Creature) { // Living entities
-                                                  // cannot have
-                                                  // targets?
+                // Living entities cannot have targets?
+                if (entity instanceof Creature) { 
                     Creature c = (Creature) entity;
                     // Targeting System
                     if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
                         if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
-                            // ESCA-JAVA0032:
-                            // ESCA-JAVA0253:
                             switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                             case AGGRESSIVE:
                                 c.setTarget(p);
@@ -64,8 +61,6 @@ public class DamageHandler implements Runnable {
                                 break;
                             }
                         } else {
-                            // ESCA-JAVA0032:
-                            // ESCA-JAVA0253:
                             switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
                             case AGGRESSIVE:
                                 c.setTarget(p);
@@ -87,8 +82,6 @@ public class DamageHandler implements Runnable {
                 if (distance <= 1.8) {
 
                     if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
-                        // ESCA-JAVA0032:
-                        // ESCA-JAVA0253:
                         switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                         case AGGRESSIVE:
                             p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
@@ -103,7 +96,6 @@ public class DamageHandler implements Runnable {
                             break;
                         }
                     } else {
-                        // ESCA-JAVA0253:
                         switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
                         case AGGRESSIVE:
                             p.damage(crowdCreature.getBaseInfo().getCollisionDamage());

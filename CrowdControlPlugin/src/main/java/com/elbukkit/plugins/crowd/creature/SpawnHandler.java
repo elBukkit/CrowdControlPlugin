@@ -47,7 +47,7 @@ public class SpawnHandler implements Runnable {
     public void run() {
 
         List<CreatureType> enabledTypes = new ArrayList<CreatureType>(handler.getEnabledCreatureTypes());
-        if (enabledTypes.size() > 0) {
+        if (enabledTypes.size() > 0 && world.getPlayers().size() > 0) {
 
             List<Chunk> spawningChunks = new ArrayList<Chunk>();
 

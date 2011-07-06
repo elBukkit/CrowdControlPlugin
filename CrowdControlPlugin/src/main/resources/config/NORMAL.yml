@@ -10,7 +10,7 @@ mobs:
         targetDistance: 24
         health: 4
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     COW:
         enabled: true
         nature:
@@ -22,7 +22,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     CREEPER:
         enabled: true
         nature:
@@ -34,7 +34,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     GHAST:
         enabled: false
         nature:
@@ -46,7 +46,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     GIANT:
         enabled: false
         nature:
@@ -58,7 +58,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     MONSTER:
         enabled: false
         nature:
@@ -82,7 +82,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     PIG_ZOMBIE:
         enabled: false
         nature:
@@ -94,7 +94,7 @@ mobs:
         targetDistance: 24
         health: 20
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SHEEP:
         enabled: true
         nature:
@@ -106,7 +106,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SKELETON:
         enabled: true
         nature:
@@ -118,7 +118,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: true
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SLIME:
         enabled: true
         nature:
@@ -142,7 +142,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SQUID:
         enabled: true
         nature:
@@ -154,7 +154,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.5
     ZOMBIE:
         enabled: true
         nature:
@@ -166,7 +166,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: true
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     WOLF:
         enabled: true
         nature:
@@ -260,6 +260,10 @@ rules:
                     - LAVA
                     - STATIONARY_LAVA
                 spawnable: false
+        SpawnHeightRule:
+            Defualt:
+                max: 16
+                min: 0
     SPIDER:
         SpawnLightRule:
             Default:

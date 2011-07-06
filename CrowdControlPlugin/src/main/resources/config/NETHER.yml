@@ -1,6 +1,6 @@
 mobs:
     CHICKEN:
-        enabled: false
+        enabled: true
         nature:
             night: PASSIVE
             day: PASSIVE
@@ -10,9 +10,9 @@ mobs:
         targetDistance: 24
         health: 4
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     COW:
-        enabled: false
+        enabled: true
         nature:
             night: PASSIVE
             day: PASSIVE
@@ -22,9 +22,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     CREEPER:
-        enabled: false
+        enabled: true
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
@@ -34,9 +34,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     GHAST:
-        enabled: true
+        enabled: false
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
@@ -46,7 +46,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     GIANT:
         enabled: false
         nature:
@@ -58,7 +58,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     MONSTER:
         enabled: false
         nature:
@@ -72,7 +72,7 @@ mobs:
         burnDay: false
         spawnChance: 0.1
     PIG:
-        enabled: false
+        enabled: true
         nature:
             night: PASSIVE
             day: PASSIVE
@@ -82,9 +82,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     PIG_ZOMBIE:
-        enabled: true
+        enabled: false
         nature:
             night: NEUTRAL
             day: NEUTRAL
@@ -94,9 +94,9 @@ mobs:
         targetDistance: 24
         health: 20
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SHEEP:
-        enabled: false
+        enabled: true
         nature:
             night: PASSIVE
             day: PASSIVE
@@ -106,9 +106,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SKELETON:
-        enabled: false
+        enabled: true
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
@@ -118,9 +118,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: true
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SLIME:
-        enabled: false
+        enabled: true
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
@@ -132,7 +132,7 @@ mobs:
         burnDay: false
         spawnChance: 0.2
     SPIDER:
-        enabled: false
+        enabled: true
         nature:
             night: AGGRESSIVE
             day: NEUTRAL
@@ -142,9 +142,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     SQUID:
-        enabled: false
+        enabled: true
         nature:
             night: PASSIVE
             day: PASSIVE
@@ -154,9 +154,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.699999988079071
+        spawnChance: 0.5
     ZOMBIE:
-        enabled: false
+        enabled: true
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
@@ -166,9 +166,9 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: true
-        spawnChance: 0.699999988079071
+        spawnChance: 0.7
     WOLF:
-        enabled: false
+        enabled: true
         nature:
             night: PASSIVE
             day: PASSIVE

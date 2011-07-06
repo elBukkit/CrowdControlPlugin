@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
@@ -50,8 +51,8 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  */
 public class CreatureHandler implements Runnable {
 
-    private ConcurrentHashMap<CrowdCreature, Set<Player>> attacked;
-    private ConcurrentHashMap<CreatureType, BaseInfo> baseInfo;
+    private Map<CrowdCreature, Set<Player>> attacked;
+    private Map<CreatureType, BaseInfo> baseInfo;
     private Set<CrowdCreature> crowdCreatureSet;
     private Set<CreatureType> enabledCreatures;
     private CrowdControlPlugin plugin;
@@ -156,25 +157,6 @@ public class CreatureHandler implements Runnable {
     }
 
     @ThreadSafe
-    public void clearArrays() {
-        crowdCreatureSet.clear();
-        attacked.clear();
-    }
-
-    @ThreadSafe
-    public void clearArrays(CreatureType type) {
-        Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-
-        while (i.hasNext()) {
-            CrowdCreature c = i.next();
-            if (c.getType() == type) {
-                i.remove();
-                attacked.remove(c);
-            }
-        }
-    }
-
-    @ThreadSafe
     public void damageCreature(CrowdCreature c, int damage) {
         int health = c.getHealth();
         health -= damage;
@@ -209,7 +191,7 @@ public class CreatureHandler implements Runnable {
 
     @ThreadSafe
     public BaseInfo getBaseInfo(CreatureType type) {
-        if (baseInfo.contains(type)) {
+        if (baseInfo.containsKey(type)) {
             return baseInfo.get(type);
         } else {
             BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
