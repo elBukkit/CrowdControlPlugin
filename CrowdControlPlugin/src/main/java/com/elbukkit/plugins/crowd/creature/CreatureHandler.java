@@ -52,13 +52,13 @@ public class CreatureHandler implements Runnable {
 
     private Map<CrowdCreature, Set<Player>> attacked;
     private Map<CreatureType, BaseInfo> baseInfo;
+    private Configuration config;
+    private File configFile;
     private Set<CrowdCreature> crowdCreatureSet;
     private Set<CreatureType> enabledCreatures;
     private CrowdControlPlugin plugin;
     private Random rand = new Random();
     private World world;
-    private Configuration config;
-    private File configFile;
 
     public CreatureHandler(World w, CrowdControlPlugin plugin) throws IOException {
         this.world = w;
@@ -67,25 +67,25 @@ public class CreatureHandler implements Runnable {
         crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature, Boolean>());
         enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
         attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
-        
+
         configFile = new File(plugin.getDataFolder() + File.separator + world.getName() + ".yml");
-        if(!configFile.exists()) {
+        if (!configFile.exists()) {
             File defaults = new File(plugin.getDataFolder() + File.separator + world.getEnvironment().toString() + ".yml");
             if (defaults.exists()) {
                 FileUtils.copyFile(defaults, configFile);
             } else {
                 configFile.createNewFile();
-            }  
+            }
         }
         config = new Configuration(configFile);
         config.load();
-        
+
         List<String> mobs = config.getKeys("mobs");
         if (mobs != null) {
-            for(String mob : mobs) {
+            for (String mob : mobs) {
                 BaseInfo info = new BaseInfo(config, "mobs." + mob);
                 baseInfo.put(CreatureType.valueOf(mob.toUpperCase()), info);
-                
+
                 if (info.isEnabled()) {
                     enabledCreatures.add(CreatureType.valueOf(mob.toUpperCase()));
                 }
@@ -308,7 +308,6 @@ public class CreatureHandler implements Runnable {
         return world.getTime() < 12000 || world.getTime() == 24000;
     }
 
-
     @ThreadSafe
     public void kill(CrowdCreature c) {
         crowdCreatureSet.remove(c);
@@ -387,10 +386,15 @@ public class CreatureHandler implements Runnable {
                 double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
                 if (distance < plugin.getDespawnDistance()) {
-                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
+                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with
+                                                // 1% chance to despawn
                         keep = true;
                     } else {
-                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // Chance of despawning when idle
+                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // Chance
+                                                                                // of
+                                                                                // despawning
+                                                                                // when
+                                                                                // idle
                             keep = true;
                         }
                     }
@@ -442,11 +446,11 @@ public class CreatureHandler implements Runnable {
         }
 
         baseInfo.put(type, info);
-        
+
         config.load();
         info.save(config, "mobs." + type.toString());
         config.save();
-        
+
         if (info.isEnabled()) {
             enabledCreatures.add(type);
         } else {

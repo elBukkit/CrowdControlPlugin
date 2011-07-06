@@ -185,7 +185,8 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Gets the rule handler
      * 
-     * @param w The world to get {@link RuleHandler} from
+     * @param w
+     *            The world to get {@link RuleHandler} from
      * @return {@link RuleHandler}
      */
     public RuleHandler getRuleHandler(World w) {
@@ -246,14 +247,16 @@ public class CrowdControlPlugin extends JavaPlugin {
             config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
         }
         config.save();
-        
+
         ruleHandlers = new ConcurrentHashMap<World, RuleHandler>();
         creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
         this.getServer().getScheduler().cancelTasks(this);
-        
+
         for (World w : Bukkit.getServer().getWorlds()) {
 
-            CreatureHandler cHandler = getCreatureHandler(w); // Create all of the creature handlers
+            CreatureHandler cHandler = getCreatureHandler(w); // Create all of
+                                                              // the creature
+                                                              // handlers
             getRuleHandler(w); // Create the rule handlers
 
             for (LivingEntity e : w.getLivingEntities()) {
@@ -314,7 +317,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
         config = new Configuration(configFile);
         config.load();
-        
+
         // Register our events
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvent(Type.CREATURE_SPAWN, entityListener, Priority.Lowest, this);
@@ -326,7 +329,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
         // Register command
         getCommand("crowd").setExecutor(new CrowdCommand(this));
-        
+
         loadConfigFile();
 
         log.info(pdf.getFullName() + " is enabled!");

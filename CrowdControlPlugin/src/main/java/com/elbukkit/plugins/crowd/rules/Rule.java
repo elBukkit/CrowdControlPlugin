@@ -48,7 +48,10 @@ public abstract class Rule implements Saveable {
 
     public abstract boolean check(Info info);
 
-    public boolean checkCreatureType(CreatureType cType) { // Check if the creature is effected by the rule
+    public boolean checkCreatureType(CreatureType cType) { // Check if the
+                                                           // creature is
+                                                           // effected by the
+                                                           // rule
         return this.type.equals(cType);
     }
 
@@ -113,12 +116,12 @@ public abstract class Rule implements Saveable {
         return null;
     }
 
-    public Type getType() {
-        return ruleType;
-    }
-    
     public String getName() {
         return name;
+    }
+
+    public Type getType() {
+        return ruleType;
     }
 
     public abstract void loadFromString(String data);

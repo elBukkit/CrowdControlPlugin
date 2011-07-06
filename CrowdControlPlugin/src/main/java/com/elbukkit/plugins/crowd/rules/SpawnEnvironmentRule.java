@@ -8,7 +8,8 @@ import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 
 /**
- * A rule that allows or disallows creatures based on the environment, Normal, Nether, (Soon) Ather
+ * A rule that allows or disallows creatures based on the environment, Normal,
+ * Nether, (Soon) Ather
  * 
  * @author Andrew Querol(WinSock)
  * @version 1.0

@@ -130,7 +130,7 @@ public class CrowdCommand implements CommandExecutor {
 
                 while (i.hasNext()) {
                     Rule r = i.next();
-                    sender.sendMessage(r.getCreatureType().toString() + ", " +r.getClass().getSimpleName() + ", Name: " + r.getName());
+                    sender.sendMessage(r.getCreatureType().toString() + ", " + r.getClass().getSimpleName() + ", Name: " + r.getName());
                 }
             } else {
                 sender.sendMessage("Usage: crowd listEnabledRules [world]");

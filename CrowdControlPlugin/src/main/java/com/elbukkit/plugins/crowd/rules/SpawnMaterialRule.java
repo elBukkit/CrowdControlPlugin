@@ -31,7 +31,7 @@ public class SpawnMaterialRule extends Rule {
     public boolean check(Info info) {
         Material blockMaterial = info.getLocation().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
         Material spawnBlockMaterial = info.getLocation().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY(), info.getLocation().getBlockZ()).getType();
-        if(spawnable) {
+        if (spawnable) {
             if (spawnBlockMaterial == Material.WATER || spawnBlockMaterial == Material.STATIONARY_WATER || spawnBlockMaterial == Material.LAVA || spawnBlockMaterial == Material.STATIONARY_LAVA) {
                 if (materials.contains(spawnBlockMaterial)) {
                     return true;
@@ -59,11 +59,11 @@ public class SpawnMaterialRule extends Rule {
     public void load(Configuration config, String node) {
         this.materials = new HashSet<Material>();
         List<Object> data = config.getList(node + ".material");
-        
+
         for (Object material : data) {
-            materials.add(Material.valueOf((String)material));
+            materials.add(Material.valueOf((String) material));
         }
-        
+
         this.spawnable = config.getBoolean(node + ".spawnable", false);
     }
 
@@ -79,7 +79,7 @@ public class SpawnMaterialRule extends Rule {
 
     public void save(Configuration config, String node) {
         Set<String> materialStrings = new HashSet<String>();
-        for(Material m : materials) {
+        for (Material m : materials) {
             materialStrings.add(m.toString());
         }
         config.setProperty(node + ".material", materialStrings);

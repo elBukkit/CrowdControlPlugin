@@ -42,7 +42,7 @@ public class DamageHandler implements Runnable {
                 double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
 
                 // Living entities cannot have targets?
-                if (entity instanceof Creature) { 
+                if (entity instanceof Creature) {
                     Creature c = (Creature) entity;
                     // Targeting System
                     if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {

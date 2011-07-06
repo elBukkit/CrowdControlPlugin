@@ -12,14 +12,14 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  * @version 1.0
  */
 public class BaseInfo implements Saveable {
-    private volatile boolean enabled = false;
     private volatile boolean burnDay = false;
     private volatile int collisionDamage, miscDamage;
     private volatile Nature creatureNatureDay, creatureNatureNight;
+    private volatile boolean enabled = false;
     private volatile int health;
     private volatile double spawnChance = 0.7f;
     private volatile int targetDistance = 24;
-    
+
     public BaseInfo(Configuration config, String node) {
         this.load(config, node);
     }
@@ -85,53 +85,8 @@ public class BaseInfo implements Saveable {
     }
 
     @ThreadSafe
-    public void setBurnDay(boolean burnDay) {
-        this.burnDay = burnDay;
-    }
-
-    @ThreadSafe
-    public void setCollisionDamage(int collisionDamage) {
-        this.collisionDamage = collisionDamage;
-    }
-
-    @ThreadSafe
-    public void setCreatureNatureDay(Nature creatureNature) {
-        this.creatureNatureDay = creatureNature;
-    }
-
-    @ThreadSafe
-    public void setCreatureNatureNight(Nature creatureNatureNight) {
-        this.creatureNatureNight = creatureNatureNight;
-    }
-
-    @ThreadSafe
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
-    @ThreadSafe
-    public void setMiscDamage(int miscDamage) {
-        this.miscDamage = miscDamage;
-    }
-
-    @ThreadSafe
-    public void setSpawnChance(float spawnChance) {
-        this.spawnChance = spawnChance;
-    }
-
-    @ThreadSafe
-    public void setTargetDistance(int targetDistance) {
-        this.targetDistance = targetDistance;
-    }
-
-    @ThreadSafe
     public boolean isEnabled() {
         return enabled;
-    }
-
-    @ThreadSafe
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public void load(Configuration config, String node) {
@@ -156,5 +111,50 @@ public class BaseInfo implements Saveable {
         config.setProperty(node + ".health", health);
         config.setProperty(node + ".spawnChance", spawnChance);
         config.setProperty(node + ".targetDistance", targetDistance);
+    }
+
+    @ThreadSafe
+    public void setBurnDay(boolean burnDay) {
+        this.burnDay = burnDay;
+    }
+
+    @ThreadSafe
+    public void setCollisionDamage(int collisionDamage) {
+        this.collisionDamage = collisionDamage;
+    }
+
+    @ThreadSafe
+    public void setCreatureNatureDay(Nature creatureNature) {
+        this.creatureNatureDay = creatureNature;
+    }
+
+    @ThreadSafe
+    public void setCreatureNatureNight(Nature creatureNatureNight) {
+        this.creatureNatureNight = creatureNatureNight;
+    }
+
+    @ThreadSafe
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @ThreadSafe
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    @ThreadSafe
+    public void setMiscDamage(int miscDamage) {
+        this.miscDamage = miscDamage;
+    }
+
+    @ThreadSafe
+    public void setSpawnChance(float spawnChance) {
+        this.spawnChance = spawnChance;
+    }
+
+    @ThreadSafe
+    public void setTargetDistance(int targetDistance) {
+        this.targetDistance = targetDistance;
     }
 }
