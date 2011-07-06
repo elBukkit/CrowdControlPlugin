@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.rules;
 
-import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.config.Configuration;
 
@@ -17,20 +16,24 @@ public class MovementLocationRule extends Rule {
 
     String elRegionName = "";
 
-    public MovementLocationRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(name, world, type, plugin);
+    public MovementLocationRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, type, plugin);
         this.ruleType = Type.MOVEMENT;
     }
 
     @Override
     public boolean check(Info info) {
-        if (plugin.getRegionsPlugin().getRegionManager(world).getRegion(elRegionName).contains(info.getLocation())) {
+        if (plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(elRegionName).contains(info.getLocation())) {
             return true;
         }
-        
+
         return false;
     }
-    
+
+    public void load(Configuration config, String node) {
+        this.elRegionName = config.getString(node + ".elRegion", "");
+    }
+
     @Override
     public void loadFromString(String data) {
         this.elRegionName = data;
@@ -38,9 +41,5 @@ public class MovementLocationRule extends Rule {
 
     public void save(Configuration config, String node) {
         config.setProperty(node + ".elRegion", this.elRegionName);
-    }
-
-    public void load(Configuration config, String node) {
-        this.elRegionName = config.getString(node + ".elRegion", "");
     }
 }

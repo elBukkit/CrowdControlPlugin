@@ -5,11 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.CreatureType;
 
-import com.elbukkit.plugins.crowd.events.CrowdListener;
 import com.elbukkit.plugins.crowd.rules.Rule;
 import com.elbukkit.plugins.crowd.rules.Type;
 import com.elbukkit.plugins.crowd.utils.ThreadSafe;
@@ -23,10 +20,11 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 public class RuleHandler {
 
     private List<Rule> rules;
+    private World world;
 
-    public RuleHandler() {
+    public RuleHandler(World world) {
         rules = new ArrayList<Rule>();
-        
+        this.world = world;
     }
 
     public void AddRule(Rule rule) {
@@ -43,11 +41,9 @@ public class RuleHandler {
         while (i.hasNext()) {
             Rule r = i.next();
             if (r.getType().equals(type)) {
-                if (r.checkWorld(info.getLocation().getWorld())) {
-                    if (r.checkCreatureType(info.getType())) {
-                        if (!r.check(info)) {
-                            return false;
-                        }
+                if (r.checkCreatureType(info.getType())) {
+                    if (!r.check(info)) {
+                        return false;
                     }
                 }
             }

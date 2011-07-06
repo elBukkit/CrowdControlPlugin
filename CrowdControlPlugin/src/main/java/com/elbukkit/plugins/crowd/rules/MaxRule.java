@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.rules;
 
-import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.config.Configuration;
 
@@ -17,8 +16,8 @@ public class MaxRule extends Rule {
 
     private int maxMobs;
 
-    public MaxRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(name, world, type, plugin);
+    public MaxRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
 
@@ -32,6 +31,10 @@ public class MaxRule extends Rule {
         return false;
     }
 
+    public void load(Configuration config, String node) {
+        this.maxMobs = config.getInt(node + ".max", 0);
+    }
+
     @Override
     public void loadFromString(String data) {
         this.maxMobs = Integer.parseInt(data);
@@ -39,11 +42,7 @@ public class MaxRule extends Rule {
 
     public void save(Configuration config, String node) {
         config.setProperty(node + ".max", maxMobs);
-        
-    }
 
-    public void load(Configuration config, String node) {
-        this.maxMobs = config.getInt(node + ".max", 0);
     }
 
 }

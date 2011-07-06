@@ -19,8 +19,7 @@ import com.elbukkit.plugins.crowd.events.CrowdListener;
 import com.elbukkit.plugins.crowd.rules.Type;
 
 /**
- * This is the main spawner, thanks to the obfuscated minecraft code for helping
- * me
+ * This is the main spawner, thanks to the obfuscated minecraft code for helping me
  * 
  * @author WinSock
  * @version 1.0

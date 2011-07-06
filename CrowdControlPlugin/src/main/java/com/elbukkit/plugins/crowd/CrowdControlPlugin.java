@@ -2,8 +2,6 @@ package com.elbukkit.plugins.crowd;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -56,27 +54,28 @@ public class CrowdControlPlugin extends JavaPlugin {
     private ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
 
     private volatile int despawnDistance = 128;
+    private elRegionsPlugin elRegions;
     private CrowdEntityListener entityListener = new CrowdEntityListener(this);
+
     private volatile double idleDespawnChance = 0.05;
 
     private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
-
     private Logger log;
     private volatile int maxPerChunk = 2;
     private volatile int maxPerWorld = 300;
     private volatile int minDistanceFromPlayer = 10;
+
     private PluginDescriptionFile pdf;
 
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
-
     private RuleHandler ruleHandler;
     private CrowdWorldListener worldListener = new CrowdWorldListener(this);
-    private elRegionsPlugin elRegions;
 
     /**
      * Gets a creature handler for a {@link World}
      * 
-     * @param w {@link World}
+     * @param w
+     *            {@link World}
      * @return {@link CreatureHandler}
      */
     @ThreadSafe
@@ -123,13 +122,13 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Gets the registered listeners.
      * 
-     * @return A {@link Set}<{@link CrowdListener}> 
+     * @return A {@link Set}<{@link CrowdListener}>
      */
     @ThreadSafe
     public Set<CrowdListener> getListeners() {
         return Collections.unmodifiableSet(this.listeners);
     }
-    
+
     /**
      * Gets the logger
      * 
@@ -170,7 +169,17 @@ public class CrowdControlPlugin extends JavaPlugin {
     }
 
     /**
+     * Gets the elRegions plugin
+     * 
+     * @return The elRegionsPlugin
+     */
+    public elRegionsPlugin getRegionsPlugin() {
+        return this.elRegions;
+    }
+
+    /**
      * Gets the rule handler
+     * 
      * @return {@link RuleHandler}
      */
     @ThreadSafe
@@ -180,7 +189,8 @@ public class CrowdControlPlugin extends JavaPlugin {
 
     /**
      * Gets the enabled rules
-     * @return {@link Map}<{@link Class}<? extends {@link Rule}>, {@link String}>
+     * 
+     * @return {@link Map}<{@link Class}<? extends {@link Rule}>, {@link String} >
      */
     @ThreadSafe
     public Map<Class<? extends Rule>, String> getRules() {
@@ -214,15 +224,15 @@ public class CrowdControlPlugin extends JavaPlugin {
     public void onEnable() {
         pdf = this.getDescription();
         log = this.getServer().getLogger();
-        
-        elRegions = (elRegionsPlugin)this.getServer().getPluginManager().getPlugin("elRegions");
-        
-        if(elRegions == null) {
+
+        elRegions = (elRegionsPlugin) this.getServer().getPluginManager().getPlugin("elRegions");
+
+        if (elRegions == null) {
             log.info("ERROR: Could not load elRegions!");
             this.setEnabled(false);
             return;
         }
-        
+
         ruleCommands = new ConcurrentHashMap<Class<? extends Rule>, String>();
         ruleCommands.put(MaxRule.class, "[max number]");
         ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
@@ -283,32 +293,26 @@ public class CrowdControlPlugin extends JavaPlugin {
                 }
             }
         }
-        
+
         log.info(pdf.getFullName() + " is enabled!");
     }
 
     /**
      * Registers a listener
      * 
-     * @param listener {@link CrowdListener}
+     * @param listener
+     *            {@link CrowdListener}
      */
     @ThreadSafe
     public void registerListener(CrowdListener listener) {
         this.listeners.add(listener);
     }
-    
-    /**
-     * Gets the elRegions plugin
-     * @return The elRegionsPlugin
-     */
-    public elRegionsPlugin getRegionsPlugin(){
-        return this.elRegions;
-    }
 
     /**
      * Sets the despawn distance
      * 
-     * @param despawnDistance {@link Integer}
+     * @param despawnDistance
+     *            {@link Integer}
      */
     public void setDespawnDistance(int despawnDistance) {
         this.despawnDistance = despawnDistance;
@@ -320,7 +324,8 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Sets the idle despawn chance
      * 
-     * @param idleDespawnChance {@link Double}
+     * @param idleDespawnChance
+     *            {@link Double}
      */
     public void setIdleDespawnChance(double idleDespawnChance) {
         this.idleDespawnChance = idleDespawnChance;
@@ -332,7 +337,8 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Sets the max per chunk
      * 
-     * @param max {@link Integer}
+     * @param max
+     *            {@link Integer}
      */
     public void setMaxPerChunk(int max) {
         this.maxPerChunk = max;
@@ -344,7 +350,8 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Sets the max per world
      * 
-     * @param max {@link Integer}
+     * @param max
+     *            {@link Integer}
      */
     public void setMaxPerWorld(int max) {
         this.maxPerWorld = max;
@@ -356,7 +363,8 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Sets how close a crowd creature can spawn to a player
      * 
-     * @param minDistanceFromPlayer {@link Integer}
+     * @param minDistanceFromPlayer
+     *            {@link Integer}
      */
     public void setMinDistanceFromPlayer(int minDistanceFromPlayer) {
         this.minDistanceFromPlayer = minDistanceFromPlayer;

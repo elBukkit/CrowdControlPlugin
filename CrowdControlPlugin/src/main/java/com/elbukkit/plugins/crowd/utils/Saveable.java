@@ -10,18 +10,22 @@ import org.bukkit.util.config.Configuration;
  */
 public interface Saveable {
     /**
-     * A method to save the data.
-     * 
-     * @param config The YAML file
-     * @param node The base node
-     */
-    void save(Configuration config, String node);
-    
-    /**
      * A method to load the data
      * 
-     * @param config The YAML file
-     * @param node The base node
+     * @param config
+     *            The YAML file
+     * @param node
+     *            The base node
      */
     void load(Configuration config, String node);
+
+    /**
+     * A method to save the data.
+     * 
+     * @param config
+     *            The YAML file
+     * @param node
+     *            The base node
+     */
+    void save(Configuration config, String node);
 }

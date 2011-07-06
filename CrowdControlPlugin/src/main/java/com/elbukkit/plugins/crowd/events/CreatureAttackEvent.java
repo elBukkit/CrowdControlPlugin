@@ -6,6 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 
+import com.elbukkit.plugins.crowd.creature.CrowdCreature;
+
 /**
  * A simple event for creature attacking
  * 
@@ -39,6 +41,7 @@ public class CreatureAttackEvent extends EventObject implements Cancellable {
 
     /**
      * Gets the entity that did the attacking
+     * 
      * @return {@link LivingEntity}
      */
     public LivingEntity getAttacker() {
@@ -66,7 +69,8 @@ public class CreatureAttackEvent extends EventObject implements Cancellable {
     /**
      * Sets if the event is canceled
      * 
-     * @param cancel {@link Boolean}
+     * @param cancel
+     *            {@link Boolean}
      */
     public void setCancelled(boolean cancel) {
         this.canceled = cancel;

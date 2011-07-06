@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.rules;
 
-import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.config.Configuration;
 
@@ -17,8 +16,8 @@ public class SpawnTimeRule extends Rule {
 
     private Time spawnTime;
 
-    public SpawnTimeRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(name, world, type, plugin);
+    public SpawnTimeRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
 
@@ -46,6 +45,10 @@ public class SpawnTimeRule extends Rule {
         return false;
     }
 
+    public void load(Configuration config, String node) {
+        this.spawnTime = Time.valueOf(config.getString(node + ".time", "DAY").toUpperCase());
+    }
+
     @Override
     public void loadFromString(String data) {
         this.spawnTime = Time.valueOf(data);
@@ -53,10 +56,6 @@ public class SpawnTimeRule extends Rule {
 
     public void save(Configuration config, String node) {
         config.setProperty(node + ".time", spawnTime.toString());
-    }
-
-    public void load(Configuration config, String node) {
-        this.spawnTime = Time.valueOf(config.getString(node + ".time", "DAY").toUpperCase());
     }
 
 }

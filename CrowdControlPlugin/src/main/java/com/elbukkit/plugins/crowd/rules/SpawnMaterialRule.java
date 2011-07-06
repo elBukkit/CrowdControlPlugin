@@ -1,7 +1,6 @@
 package com.elbukkit.plugins.crowd.rules;
 
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.config.Configuration;
 
@@ -18,19 +17,23 @@ public class SpawnMaterialRule extends Rule {
 
     private Material material;
 
-    public SpawnMaterialRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(name, world, type, plugin);
+    public SpawnMaterialRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
 
     @Override
     public boolean check(Info info) {
-        Material blockMaterial = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
-        Material spawnBlockMaterial = world.getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY(), info.getLocation().getBlockZ()).getType();
+        Material blockMaterial = info.getEntity().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
+        Material spawnBlockMaterial = info.getEntity().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY(), info.getLocation().getBlockZ()).getType();
         if (material != blockMaterial && material != spawnBlockMaterial) {
             return true;
         }
         return false;
+    }
+
+    public void load(Configuration config, String node) {
+        this.material = Material.valueOf(config.getString(node + ".material", "AIR").toUpperCase());
     }
 
     @Override
@@ -41,10 +44,6 @@ public class SpawnMaterialRule extends Rule {
 
     public void save(Configuration config, String node) {
         config.setProperty(node + ".material", material.toString());
-    }
-
-    public void load(Configuration config, String node) {
-        this.material = Material.valueOf(config.getString(node + ".material", "AIR").toUpperCase());
     }
 
 }

@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.rules;
 
-import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.config.Configuration;
 
@@ -17,8 +16,8 @@ public class SpawnReplaceRule extends Rule {
 
     private CreatureType replaceType;
 
-    public SpawnReplaceRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(name, world, type, plugin);
+    public SpawnReplaceRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
 
@@ -32,6 +31,11 @@ public class SpawnReplaceRule extends Rule {
         replaceType = cType;
     }
 
+    public void load(Configuration config, String node) {
+        this.replaceType = CreatureType.valueOf(config.getString(node + ".replaceType", "MONSTER").toUpperCase());
+
+    }
+
     @Override
     public void loadFromString(String data) {
         replaceType = CreatureType.valueOf(data.toUpperCase());
@@ -39,11 +43,6 @@ public class SpawnReplaceRule extends Rule {
 
     public void save(Configuration config, String node) {
         config.setProperty(node + ".replaceType", replaceType.toString());
-    }
-
-    public void load(Configuration config, String node) {
-        this.replaceType = CreatureType.valueOf(config.getString(node + ".replaceType", "MONSTER").toUpperCase());
-        
     }
 
 }

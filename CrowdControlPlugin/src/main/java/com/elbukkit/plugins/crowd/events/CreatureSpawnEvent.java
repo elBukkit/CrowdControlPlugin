@@ -55,7 +55,8 @@ public class CreatureSpawnEvent extends EventObject implements Cancellable {
     /**
      * Sets if the event is canceled
      * 
-     * @param cancel {@link Boolean}
+     * @param cancel
+     *            {@link Boolean}
      */
     public void setCancelled(boolean cancel) {
         this.canceled = cancel;

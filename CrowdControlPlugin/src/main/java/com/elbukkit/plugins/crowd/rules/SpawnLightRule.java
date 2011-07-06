@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.rules;
 
-import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.config.Configuration;
 
@@ -17,8 +16,8 @@ public class SpawnLightRule extends Rule {
 
     private int min, max;
 
-    public SpawnLightRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(name, world, type, plugin);
+    public SpawnLightRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, type, plugin);
         this.ruleType = Type.SPAWN;
         // TODO Auto-generated constructor stub
     }
@@ -33,6 +32,11 @@ public class SpawnLightRule extends Rule {
         return false;
     }
 
+    public void load(Configuration config, String node) {
+        this.max = config.getInt(node + ".max", 15);
+        this.min = config.getInt(node + ".min", 0);
+    }
+
     @Override
     public void loadFromString(String data) {
         String[] split = data.split(",");
@@ -43,12 +47,7 @@ public class SpawnLightRule extends Rule {
     public void save(Configuration config, String node) {
         config.setProperty(node + ".min", this.min);
         config.setProperty(node + ".max", this.max);
-        
-    }
 
-    public void load(Configuration config, String node) {
-        this.max = config.getInt(node + ".max", 15);
-        this.min = config.getInt(node + ".min", 0);
     }
 
 }

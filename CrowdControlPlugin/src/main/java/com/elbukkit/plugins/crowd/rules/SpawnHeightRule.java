@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.rules;
 
-import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.util.config.Configuration;
 
@@ -17,9 +16,24 @@ public class SpawnHeightRule extends Rule {
 
     private int min, max;
 
-    public SpawnHeightRule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
-        super(name, world, type, plugin);
+    public SpawnHeightRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+        super(name, type, plugin);
         this.ruleType = Type.SPAWN;
+    }
+
+    @Override
+    public boolean check(Info info) {
+        if (info.getLocation().getBlockY() >= min) {
+            if (info.getLocation().getBlockY() <= max) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void load(Configuration config, String node) {
+        this.max = config.getInt(node + ".max", 128);
+        this.min = config.getInt(node + ".min", 0);
     }
 
     @Override
@@ -32,21 +46,6 @@ public class SpawnHeightRule extends Rule {
     public void save(Configuration config, String node) {
         config.setProperty(node + ".min", this.min);
         config.setProperty(node + ".max", this.max);
-    }
-
-    public void load(Configuration config, String node) {
-        this.max = config.getInt(node + ".max", 128);
-        this.min = config.getInt(node + ".min", 0);
-    }
-
-    @Override
-    public boolean check(Info info) {
-        if (info.getLocation().getBlockY() >= min) {
-            if (info.getLocation().getBlockY() <= max) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

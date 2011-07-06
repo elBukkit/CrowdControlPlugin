@@ -68,7 +68,8 @@ public class CreatureMoveEvent extends EventObject implements Cancellable {
     /**
      * Sets if the event is canceled
      * 
-     * @param cancel {@link Boolean}
+     * @param cancel
+     *            {@link Boolean}
      */
     public void setCancelled(boolean cancel) {
         this.canceled = cancel;
@@ -77,7 +78,8 @@ public class CreatureMoveEvent extends EventObject implements Cancellable {
     /**
      * Sets a new location to move the crowd creature to
      * 
-     * @param newLocation {@link Location}
+     * @param newLocation
+     *            {@link Location}
      */
     public void setNewLocation(Location newLocation) {
         this.newLocation = newLocation;

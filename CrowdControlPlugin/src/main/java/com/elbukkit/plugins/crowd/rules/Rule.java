@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.rules;
 
-import org.bukkit.World;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
@@ -36,16 +35,13 @@ import com.elbukkit.plugins.crowd.utils.Saveable;
  */
 public abstract class Rule implements Saveable {
 
-    // ESCA-JAVA0098:
+    protected String name;
     protected CrowdControlPlugin plugin;
     protected Type ruleType;
     protected CreatureType type;
-    protected World world;
-    protected String name;
 
-    protected Rule(String name, World world, CreatureType type, CrowdControlPlugin plugin) {
+    protected Rule(String name, CreatureType type, CrowdControlPlugin plugin) {
         this.name = name;
-        this.world = world;
         this.type = type;
         this.plugin = plugin;
     }
@@ -54,10 +50,6 @@ public abstract class Rule implements Saveable {
 
     public boolean checkCreatureType(CreatureType cType) { // Check if the creature is effected by the rule
         return this.type.equals(cType);
-    }
-
-    public boolean checkWorld(World cWorld) { // Check if the world is effected by this rule
-        return this.world.equals(cWorld);
     }
 
     // Classes used for saving data
@@ -123,10 +115,6 @@ public abstract class Rule implements Saveable {
 
     public Type getType() {
         return ruleType;
-    }
-
-    public World getWorld() {
-        return world;
     }
 
     public abstract void loadFromString(String data);

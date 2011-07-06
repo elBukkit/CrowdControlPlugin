@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.creature;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -64,8 +63,6 @@ public class CreatureHandler implements Runnable {
         // ESCA-JAVA0261:
         enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
         attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
-
-        
 
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new SpawnHandler(plugin, this), 0, 20);
 
@@ -401,7 +398,7 @@ public class CreatureHandler implements Runnable {
                     if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
                         keep = true;
                     } else {
-                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // 5%  Chance of despawning when idle
+                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // Chance of despawning when idle
                             keep = true;
                         }
                     }

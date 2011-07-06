@@ -2,12 +2,9 @@ package com.elbukkit.plugins.crowd;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -121,8 +118,8 @@ public class CrowdCommand implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("listEnabledRules")) {
             List<Rule> rules = plugin.getRuleHandler().getRules();
             Iterator<Rule> i = rules.iterator();
-            
-            while(i.hasNext()) {
+
+            while (i.hasNext()) {
                 Rule r = i.next();
                 sender.sendMessage(r.getClass().getSimpleName() + ", ID: " + rules.indexOf(r));
             }
@@ -182,10 +179,10 @@ public class CrowdCommand implements CommandExecutor {
                         sender.sendMessage("Invalid setting!");
                         return true;
                     }
-                    
+
                     plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2].toUpperCase()));
                     sender.sendMessage("Set creature info!");
-                    
+
                 } else {
                     sender.sendMessage("That creature type does not exist!");
                 }
