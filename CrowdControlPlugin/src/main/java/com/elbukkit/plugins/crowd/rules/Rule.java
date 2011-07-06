@@ -35,8 +35,7 @@ import com.elbukkit.plugins.crowd.utils.Saveable;
  */
 public abstract class Rule implements Saveable {
 
-    protected String name;
-
+    protected String name = "default";
     protected CrowdControlPlugin plugin;
     protected Type ruleType;
     protected CreatureType type;

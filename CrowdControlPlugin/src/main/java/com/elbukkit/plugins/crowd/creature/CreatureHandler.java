@@ -1,8 +1,11 @@
 package com.elbukkit.plugins.crowd.creature;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
@@ -33,8 +36,10 @@ import org.bukkit.entity.Squid;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
+import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
+import com.elbukkit.plugins.crowd.utils.FileUtils;
 import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
 /**
@@ -52,8 +57,10 @@ public class CreatureHandler implements Runnable {
     private CrowdControlPlugin plugin;
     private Random rand = new Random();
     private World world;
+    private Configuration config;
+    private File configFile;
 
-    public CreatureHandler(World w, CrowdControlPlugin plugin) {
+    public CreatureHandler(World w, CrowdControlPlugin plugin) throws IOException {
         this.world = w;
         this.plugin = plugin;
         // ESCA-JAVA0261:
@@ -62,12 +69,38 @@ public class CreatureHandler implements Runnable {
         // ESCA-JAVA0261:
         enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
         attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
+        
+        configFile = new File(plugin.getDataFolder() + File.separator + world.getName() + ".yml");
+        if(!configFile.exists()) {
+            File defaults = new File(plugin.getDataFolder() + File.separator + world.getEnvironment().toString() + ".yml");
+            if (defaults.exists()) {
+                FileUtils.copy(defaults, configFile);
+            } else {
+                configFile.createNewFile();
+            }  
+        }
+        config = new Configuration(configFile);
+        config.load();
+        
+        List<String> mobs = config.getKeys("mobs");
+        if (mobs != null) {
+            for(String mob : mobs) {
+                BaseInfo info = new BaseInfo(config, "mobs." + mob);
+                baseInfo.put(CreatureType.valueOf(mob.toUpperCase()), info);
+                
+                if (info.isEnabled()) {
+                    enabledCreatures.add(CreatureType.valueOf(mob.toUpperCase()));
+                }
+            }
+        } else {
+            generateDefaults();
+        }
 
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new SpawnHandler(plugin, this), 0, 20);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new SpawnHandler(plugin, this), 0, 10);
 
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MovementHandler(plugin, this), 20, 20);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MovementHandler(plugin, this), 0, 15);
 
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new DamageHandler(plugin, this), 40, 20);
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new DamageHandler(plugin, this), 0, 20);
 
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 
@@ -165,7 +198,7 @@ public class CreatureHandler implements Runnable {
 
     public void generateDefaults() {
         for (CreatureType t : CreatureType.values()) {
-            BaseInfo info = new BaseInfo(Nature.Passive, Nature.Passive, 0, 0, 10);
+            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
 
             setInfo(info, t);
         }
@@ -181,7 +214,8 @@ public class CreatureHandler implements Runnable {
         if (baseInfo.contains(type)) {
             return baseInfo.get(type);
         } else {
-            BaseInfo info = new BaseInfo(Nature.Passive, Nature.Passive, 0, 0, 10);
+            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
+            setInfo(info, type);
             return info;
         }
     }
@@ -437,15 +471,6 @@ public class CreatureHandler implements Runnable {
         }
     }
 
-    @ThreadSafe
-    public void setEnabled(CreatureType type, boolean enabled) {
-        if (enabled) {
-            this.enabledCreatures.add(type);
-        } else {
-            this.enabledCreatures.remove(type);
-        }
-    }
-
     public void setInfo(BaseInfo info, CreatureType type) {
         Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
 
@@ -458,6 +483,16 @@ public class CreatureHandler implements Runnable {
         }
 
         baseInfo.put(type, info);
+        
+        config.load();
+        info.save(config, "mobs." + type.toString());
+        config.save();
+        
+        if (info.isEnabled()) {
+            enabledCreatures.add(type);
+        } else {
+            enabledCreatures.remove(type);
+        }
     }
 
     public boolean shouldBurn(Location loc) {

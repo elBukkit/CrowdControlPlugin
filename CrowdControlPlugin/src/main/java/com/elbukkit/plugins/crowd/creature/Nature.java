@@ -7,5 +7,5 @@ package com.elbukkit.plugins.crowd.creature;
  * @version 1.0
  */
 public enum Nature {
-    Aggressive, Neutral, Passive
+    AGGRESSIVE, NEUTRAL, PASSIVE
 }

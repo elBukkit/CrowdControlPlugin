@@ -51,10 +51,10 @@ public class DamageHandler implements Runnable {
                             // ESCA-JAVA0032:
                             // ESCA-JAVA0253:
                             switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
-                            case Aggressive:
+                            case AGGRESSIVE:
                                 c.setTarget(p);
                                 break;
-                            case Neutral:
+                            case NEUTRAL:
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
@@ -67,10 +67,10 @@ public class DamageHandler implements Runnable {
                             // ESCA-JAVA0032:
                             // ESCA-JAVA0253:
                             switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
-                            case Aggressive:
+                            case AGGRESSIVE:
                                 c.setTarget(p);
                                 break;
-                            case Neutral:
+                            case NEUTRAL:
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
@@ -90,10 +90,10 @@ public class DamageHandler implements Runnable {
                         // ESCA-JAVA0032:
                         // ESCA-JAVA0253:
                         switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
-                        case Aggressive:
+                        case AGGRESSIVE:
                             p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
                             break;
-                        case Neutral:
+                        case NEUTRAL:
                             Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
                             if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                 if (attackingPlayers.contains(p)) {
@@ -105,10 +105,10 @@ public class DamageHandler implements Runnable {
                     } else {
                         // ESCA-JAVA0253:
                         switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
-                        case Aggressive:
+                        case AGGRESSIVE:
                             p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
                             break;
-                        case Neutral:
+                        case NEUTRAL:
                             Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
                             if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                 if (attackingPlayers.contains(p)) {

@@ -2,10 +2,12 @@ package com.elbukkit.plugins.crowd;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -52,7 +54,7 @@ public class CrowdCommand implements CommandExecutor {
                         pendingCommands.add(c);
                         sender.sendMessage("Add added to pending with id: " + String.valueOf(pendingCommands.indexOf(c)));
                         sender.sendMessage("Args needed: ");
-                        sender.sendMessage("Use crowd finish " + pendingCommands.indexOf(c) + " [worldname] [creaturetype] " + plugin.getRules().get(c) + " to complete");
+                        sender.sendMessage("Use crowd finish " + pendingCommands.indexOf(c) + " [name] [worldname] [creaturetype] " + plugin.getRules().get(c) + " to complete");
                     }
                 }
             } else {
@@ -76,7 +78,11 @@ public class CrowdCommand implements CommandExecutor {
                             Object classObj = c.newInstance(args[2], CreatureType.valueOf(args[4]), plugin);
                             if (classObj instanceof Rule) {
                                 Rule r = (Rule) classObj;
-                                r.loadFromString(args[5]);
+                                String load = "";
+                                for (int i = 5; i < args.length; i++) {
+                                    load += args[i] + " ";
+                                }
+                                r.loadFromString(load);
                                 plugin.getRuleHandler(Bukkit.getServer().getWorld(args[3])).AddRule(r);
                                 sender.sendMessage("Rule added!");
                                 pendingCommands.remove(ruleClass);
@@ -124,17 +130,21 @@ public class CrowdCommand implements CommandExecutor {
 
                 while (i.hasNext()) {
                     Rule r = i.next();
-                    sender.sendMessage(r.getClass().getSimpleName() + ", Name: " + r.getName());
+                    sender.sendMessage(r.getCreatureType().toString() + ", " +r.getClass().getSimpleName() + ", Name: " + r.getName());
                 }
             } else {
                 sender.sendMessage("Usage: crowd listEnabledRules [world]");
             }
         } else if (args[0].equalsIgnoreCase("remove")) {
-            if (args.length > 2) {
-                plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).RemoveRule(args[2]);
-                sender.sendMessage("Removed rule with id: " + args[2] + "!");
+            if (args.length > 3) {
+                try {
+                    plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).RemoveRule(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(args[2], new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(Class.forName("com.elbukkit.plugins.crowd.rules." + args[3]).asSubclass(Rule.class), CreatureType.valueOf(args[4].toUpperCase()))));
+                } catch (ClassNotFoundException e) {
+                    sender.sendMessage("Unable to remove the rule!");
+                }
+                sender.sendMessage("Removed rule with name: " + args[2] + "!");
             } else {
-                sender.sendMessage("Usage: crowd remove [world] [name]");
+                sender.sendMessage("Usage: crowd remove [world] [name] [rule class] [creature type]");
             }
         } else if (args[0].equalsIgnoreCase("removePending")) {
             if (args.length >= 2) {
@@ -164,9 +174,9 @@ public class CrowdCommand implements CommandExecutor {
 
                 if (info != null) {
                     if (args[3].equalsIgnoreCase("NatureDay")) {
-                        info.setCreatureNatureDay(Nature.valueOf(args[4]));
+                        info.setCreatureNatureDay(Nature.valueOf(args[4].toUpperCase()));
                     } else if (args[3].equalsIgnoreCase("NatureNight")) {
-                        info.setCreatureNatureNight(Nature.valueOf(args[4]));
+                        info.setCreatureNatureNight(Nature.valueOf(args[4].toUpperCase()));
                     } else if (args[3].equalsIgnoreCase("CollisionDamage")) {
                         info.setCollisionDamage(Integer.parseInt(args[4]));
                     } else if (args[3].equalsIgnoreCase("MiscDamage")) {
@@ -180,7 +190,7 @@ public class CrowdCommand implements CommandExecutor {
                     } else if (args[3].equalsIgnoreCase("SpawnChance")) {
                         info.setSpawnChance(Float.parseFloat(args[4]));
                     } else if (args[3].equalsIgnoreCase("Enabled")) {
-                        plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setEnabled(CreatureType.valueOf(args[2].toUpperCase()), Boolean.valueOf(args[4]));
+                        info.setEnabled(Boolean.parseBoolean(args[4]));
                     } else {
                         sender.sendMessage("Invalid setting!");
                         return true;

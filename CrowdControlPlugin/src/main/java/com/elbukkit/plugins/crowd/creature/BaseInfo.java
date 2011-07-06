@@ -1,5 +1,8 @@
 package com.elbukkit.plugins.crowd.creature;
 
+import org.bukkit.util.config.Configuration;
+
+import com.elbukkit.plugins.crowd.utils.Saveable;
 import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
 /**
@@ -8,13 +11,18 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  * @author WinSock
  * @version 1.0
  */
-public class BaseInfo {
+public class BaseInfo implements Saveable {
+    private volatile boolean enabled = false;
     private volatile boolean burnDay = false;
     private volatile int collisionDamage, miscDamage;
     private volatile Nature creatureNatureDay, creatureNatureNight;
     private volatile int health;
-    private volatile float spawnChance = 0.7f;
+    private volatile double spawnChance = 0.7f;
     private volatile int targetDistance = 24;
+    
+    public BaseInfo(Configuration config, String node) {
+        this.load(config, node);
+    }
 
     public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health) {
         this.creatureNatureDay = creatureNatureDay;
@@ -25,7 +33,7 @@ public class BaseInfo {
     }
 
     // ESCA-JAVA0138:
-    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, float spawnChance) {
+    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, double spawnChance) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;
         this.collisionDamage = collisionDamage;
@@ -62,7 +70,7 @@ public class BaseInfo {
     }
 
     @ThreadSafe
-    public float getSpawnChance() {
+    public double getSpawnChance() {
         return spawnChance;
     }
 
@@ -114,5 +122,39 @@ public class BaseInfo {
     @ThreadSafe
     public void setTargetDistance(int targetDistance) {
         this.targetDistance = targetDistance;
+    }
+
+    @ThreadSafe
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @ThreadSafe
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void load(Configuration config, String node) {
+        this.enabled = config.getBoolean(node + ".enabled", false);
+        this.burnDay = config.getBoolean(node + ".burnDay", false);
+        this.collisionDamage = config.getInt(node + ".damage.collision", 0);
+        this.miscDamage = config.getInt(node + "damage.misc", 0);
+        this.creatureNatureDay = Nature.valueOf(config.getString(node + "nature.day", "PASSIVE").toUpperCase());
+        this.creatureNatureNight = Nature.valueOf(config.getString(node + "nature.night", "PASSIVE").toUpperCase());
+        this.health = config.getInt(node + ".health", 10);
+        this.spawnChance = config.getDouble(".spawnChance", 0.7D);
+        this.targetDistance = config.getInt(".targetDistance", 24);
+    }
+
+    public void save(Configuration config, String node) {
+        config.setProperty(node + ".enabled", false);
+        config.setProperty(node + ".burnDay", burnDay);
+        config.setProperty(node + ".damage.collision", collisionDamage);
+        config.setProperty(node + ".damage.misc", miscDamage);
+        config.setProperty(node + ".nature.day", creatureNatureDay.toString());
+        config.setProperty(node + ".nature.night", creatureNatureNight.toString());
+        config.setProperty(node + ".health", health);
+        config.setProperty(node + ".spawnChance", spawnChance);
+        config.setProperty(node + ".targetDistance", targetDistance);
     }
 }

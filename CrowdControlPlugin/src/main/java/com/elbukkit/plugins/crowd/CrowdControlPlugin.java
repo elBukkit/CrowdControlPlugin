@@ -53,7 +53,7 @@ public class CrowdControlPlugin extends JavaPlugin {
     private static Lock cHandlerLock = new ReentrantLock();
     private static Lock rHandlerLock = new ReentrantLock();
     private Configuration config;
-    private ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
+    private ConcurrentHashMap<World, CreatureHandler> creatureHandlers;
     private volatile int despawnDistance = 128;
 
     private elRegionsPlugin elRegions;
@@ -70,7 +70,7 @@ public class CrowdControlPlugin extends JavaPlugin {
 
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
 
-    private ConcurrentHashMap<World, RuleHandler> ruleHandlers = new ConcurrentHashMap<World, RuleHandler>();
+    private ConcurrentHashMap<World, RuleHandler> ruleHandlers;
     private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 
     /**
@@ -87,12 +87,17 @@ public class CrowdControlPlugin extends JavaPlugin {
         } else {
             CreatureHandler creatureHandler = null;
             if (cHandlerLock.tryLock()) {
-                creatureHandler = new CreatureHandler(w, this);
-                // Register the despawner
-                getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 10);
-                creatureHandlers.put(w, creatureHandler);
-                cHandlerLock.unlock();
-                return creatureHandler;
+                try {
+                    creatureHandler = new CreatureHandler(w, this);
+                    // Register the despawner
+                    getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 10);
+                    creatureHandlers.put(w, creatureHandler);
+                    return creatureHandler;
+                } catch (IOException e) {
+                    log.info("[CrowdControl] Error making creature handler!");
+                } finally {
+                    cHandlerLock.unlock();
+                }
             }
 
         }
@@ -241,6 +246,27 @@ public class CrowdControlPlugin extends JavaPlugin {
             config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
         }
         config.save();
+        
+        ruleHandlers = new ConcurrentHashMap<World, RuleHandler>();
+        creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
+        this.getServer().getScheduler().cancelTasks(this);
+        
+        for (World w : Bukkit.getServer().getWorlds()) {
+
+            CreatureHandler cHandler = getCreatureHandler(w); // Create all of the creature handlers
+            getRuleHandler(w); // Create the rule handlers
+
+            for (LivingEntity e : w.getLivingEntities()) {
+                if (!(e instanceof Player)) {
+                    CreatureType cType = cHandler.getCreatureType(e);
+                    BaseInfo info = cHandler.getBaseInfo(cType);
+
+                    if (info != null) {
+                        cHandler.addCrowdCreature(new CrowdCreature(e, cType, info));
+                    }
+                }
+            }
+        }
     }
 
     public void onDisable() {
@@ -264,7 +290,7 @@ public class CrowdControlPlugin extends JavaPlugin {
         ruleCommands.put(SpawnEnvironmentRule.class, "[NORMAL,NETHER]");
         ruleCommands.put(SpawnHeightRule.class, "[max,min]");
         ruleCommands.put(SpawnLightRule.class, "[max,min]");
-        ruleCommands.put(SpawnMaterialRule.class, "[material name]");
+        ruleCommands.put(SpawnMaterialRule.class, "[material name list] [spawnable]");
         ruleCommands.put(TargetPlayerRule.class, "[player,targetable(true,false)]");
         ruleCommands.put(SpawnReplaceRule.class, "[creature name]");
         ruleCommands.put(SpawnLocationRule.class, "[elRegion name]");
@@ -287,37 +313,20 @@ public class CrowdControlPlugin extends JavaPlugin {
 
         config = new Configuration(configFile);
         config.load();
-
-        loadConfigFile();
-
+        
         // Register our events
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Type.CREATURE_SPAWN, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);
-        pm.registerEvent(Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);
+        pm.registerEvent(Type.CREATURE_SPAWN, entityListener, Priority.Lowest, this);
+        pm.registerEvent(Type.ENTITY_TARGET, entityListener, Priority.Lowest, this);
+        pm.registerEvent(Type.ENTITY_COMBUST, entityListener, Priority.Lowest, this);
+        pm.registerEvent(Type.ENTITY_EXPLODE, entityListener, Priority.Lowest, this);
+        pm.registerEvent(Type.ENTITY_DAMAGE, entityListener, Priority.Lowest, this);
         pm.registerEvent(Type.CHUNK_UNLOAD, worldListener, Priority.Monitor, this);
 
         // Register command
         getCommand("crowd").setExecutor(new CrowdCommand(this));
-
-        for (World w : Bukkit.getServer().getWorlds()) {
-
-            CreatureHandler cHandler = getCreatureHandler(w); // Create all of the creature handlers
-            getRuleHandler(w); // Create the rule handlers
-
-            for (LivingEntity e : w.getLivingEntities()) {
-                if (!(e instanceof Player)) {
-                    CreatureType cType = cHandler.getCreatureType(e);
-                    BaseInfo info = cHandler.getBaseInfo(cType);
-
-                    if (info != null) {
-                        cHandler.addCrowdCreature(new CrowdCreature(e, cType, info));
-                    }
-                }
-            }
-        }
+        
+        loadConfigFile();
 
         log.info(pdf.getFullName() + " is enabled!");
     }
