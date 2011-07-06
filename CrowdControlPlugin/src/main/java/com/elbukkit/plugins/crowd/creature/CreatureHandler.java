@@ -63,10 +63,8 @@ public class CreatureHandler implements Runnable {
     public CreatureHandler(World w, CrowdControlPlugin plugin) throws IOException {
         this.world = w;
         this.plugin = plugin;
-        // ESCA-JAVA0261:
         baseInfo = new ConcurrentHashMap<CreatureType, BaseInfo>();
         crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature, Boolean>());
-        // ESCA-JAVA0261:
         enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
         attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
         
@@ -74,7 +72,7 @@ public class CreatureHandler implements Runnable {
         if(!configFile.exists()) {
             File defaults = new File(plugin.getDataFolder() + File.separator + world.getEnvironment().toString() + ".yml");
             if (defaults.exists()) {
-                FileUtils.copy(defaults, configFile);
+                FileUtils.copyFile(defaults, configFile);
             } else {
                 configFile.createNewFile();
             }  

@@ -1,0 +1,209 @@
+mobs:
+    CHICKEN:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 4
+        burnDay: false
+        spawnChance: 0.699999988079071
+    COW:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    CREEPER:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    GHAST:
+        enabled: true
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 0
+            misc: 5
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    GIANT:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    MONSTER:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 1
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.1
+    PIG:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    PIG_ZOMBIE:
+        enabled: true
+        nature:
+            night: NEUTRAL
+            day: NEUTRAL
+        damage:
+            collision: 5
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.699999988079071
+    SHEEP:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    SKELETON:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 0
+            misc: 4
+        targetDistance: 24
+        health: 10
+        burnDay: true
+        spawnChance: 0.699999988079071
+    SLIME:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 4
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.2
+    SPIDER:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: NEUTRAL
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    SQUID:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    ZOMBIE:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 5
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: true
+        spawnChance: 0.699999988079071
+    WOLF:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 5
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.4
+        
+rules:
+    CHICKEN:
+    COW:
+    CREEPER:
+    GHAST:
+    GIANT:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - AIR
+                spawnable: true
+    MONSTER:
+    PIG:
+    PIG_ZOMBIE:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - NETHERRACK
+                    - SOUL_SAND
+                spawnable: true
+    SHEEP:
+    SKELETON:
+    SLIME:
+    SPIDER:
+    SQUID:
+    ZOMBIE:
+    WOLF:

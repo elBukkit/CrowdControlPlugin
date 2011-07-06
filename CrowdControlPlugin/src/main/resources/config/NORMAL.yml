@@ -1,0 +1,305 @@
+mobs:
+    CHICKEN:
+        enabled: true
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 4
+        burnDay: false
+        spawnChance: 0.699999988079071
+    COW:
+        enabled: true
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    CREEPER:
+        enabled: true
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    GHAST:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 0
+            misc: 5
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    GIANT:
+        enabled: false
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    MONSTER:
+        enabled: false
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 1
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.1
+    PIG:
+        enabled: true
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    PIG_ZOMBIE:
+        enabled: false
+        nature:
+            night: NEUTRAL
+            day: NEUTRAL
+        damage:
+            collision: 5
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.699999988079071
+    SHEEP:
+        enabled: true
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    SKELETON:
+        enabled: true
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 0
+            misc: 4
+        targetDistance: 24
+        health: 10
+        burnDay: true
+        spawnChance: 0.699999988079071
+    SLIME:
+        enabled: true
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 4
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.2
+    SPIDER:
+        enabled: true
+        nature:
+            night: AGGRESSIVE
+            day: NEUTRAL
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    SQUID:
+        enabled: true
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 0
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: false
+        spawnChance: 0.699999988079071
+    ZOMBIE:
+        enabled: true
+        nature:
+            night: AGGRESSIVE
+            day: AGGRESSIVE
+        damage:
+            collision: 5
+            misc: 0
+        targetDistance: 24
+        health: 10
+        burnDay: true
+        spawnChance: 0.699999988079071
+    WOLF:
+        enabled: true
+        nature:
+            night: PASSIVE
+            day: PASSIVE
+        damage:
+            collision: 5
+            misc: 0
+        targetDistance: 24
+        health: 20
+        burnDay: false
+        spawnChance: 0.4
+        
+rules:
+    CHICKEN:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - GRASS
+                spawnable: true
+        SpawnLightRule:
+            Default:
+                min: 9
+                max: 15
+    COW:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - GRASS
+                spawnable: true
+        SpawnLightRule:
+            Default:
+                min: 9
+                max: 15
+    CREEPER:
+        SpawnLightRule:
+            Default:
+                min: 0
+                max: 7
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - WATER
+                    - STATIONARY_WATER
+                    - LAVA
+                    - STATIONARY_LAVA
+                spawnable: false
+    GHAST:
+    GIANT:
+    MONSTER:
+    PIG:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - GRASS
+                spawnable: true
+        SpawnLightRule:
+            Default:
+                min: 9
+                max: 15
+    PIG_ZOMBIE:
+    SHEEP:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - GRASS
+                spawnable: true
+        SpawnLightRule:
+            Default:
+                min: 9
+                max: 15
+    SKELETON:
+        SpawnLightRule:
+            Default:
+                min: 0
+                max: 7
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - WATER
+                    - STATIONARY_WATER
+                    - LAVA
+                    - STATIONARY_LAVA
+                spawnable: false
+    SLIME:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - WATER
+                    - STATIONARY_WATER
+                    - LAVA
+                    - STATIONARY_LAVA
+                spawnable: false
+    SPIDER:
+        SpawnLightRule:
+            Default:
+                min: 0
+                max: 7
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - WATER
+                    - STATIONARY_WATER
+                    - LAVA
+                    - STATIONARY_LAVA
+                spawnable: false
+    SQUID:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - WATER
+                    - STATIONARY_WATER
+                spawnable: true
+    ZOMBIE:
+        SpawnLightRule:
+            Default:
+                min: 0
+                max: 7
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - WATER
+                    - STATIONARY_WATER
+                    - LAVA
+                    - STATIONARY_LAVA
+                spawnable: false
+    WOLF:
+        SpawnMaterialRule:
+            Default:
+                material:
+                    - GRASS
+                spawnable: true
+        SpawnLightRule:
+            Default:
+                min: 9
+                max: 15

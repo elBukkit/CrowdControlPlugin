@@ -41,7 +41,7 @@ public class RuleHandler {
         if(!configFile.exists()) {
             File defaults = new File(plugin.getDataFolder() + File.separator + world.getEnvironment().toString() + ".yml");
             if (defaults.exists()) {
-                FileUtils.copy(defaults, configFile);
+                FileUtils.copyFile(defaults, configFile);
             } else {
                 configFile.createNewFile();
             }
