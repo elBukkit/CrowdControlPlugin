@@ -36,6 +36,7 @@ import com.elbukkit.plugins.crowd.utils.Saveable;
 public abstract class Rule implements Saveable {
 
     protected String name;
+
     protected CrowdControlPlugin plugin;
     protected Type ruleType;
     protected CreatureType type;
@@ -115,6 +116,10 @@ public abstract class Rule implements Saveable {
 
     public Type getType() {
         return ruleType;
+    }
+    
+    public String getName() {
+        return name;
     }
 
     public abstract void loadFromString(String data);

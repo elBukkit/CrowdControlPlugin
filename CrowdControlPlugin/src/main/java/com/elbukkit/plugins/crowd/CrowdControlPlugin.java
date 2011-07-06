@@ -2,6 +2,7 @@ package com.elbukkit.plugins.crowd;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -179,20 +180,34 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Gets the rule handler
      * 
-     * @param w
-     *            The world to get {@link RuleHandler} from
+     * @param w The world to get {@link RuleHandler} from
      * @return {@link RuleHandler}
      */
     public RuleHandler getRuleHandler(World w) {
-        if (ruleHandlers.contains(w)) {
+        if (ruleHandlers.containsKey(w)) {
             return ruleHandlers.get(w);
         } else {
             RuleHandler ruleHandler = null;
             if (rHandlerLock.tryLock()) {
-                ruleHandler = new RuleHandler(w);
-                ruleHandlers.put(w, ruleHandler);
-                rHandlerLock.unlock();
-                return ruleHandler;
+                try {
+                    ruleHandler = new RuleHandler(w, this);
+                    ruleHandlers.put(w, ruleHandler);
+                    return ruleHandler;
+                } catch (ClassNotFoundException e) {
+                    log.info("Error loading rules!");
+                } catch (NoSuchMethodException e) {
+                    log.info("Error loading rules!");
+                } catch (InstantiationException e) {
+                    log.info("Error loading rules!");
+                } catch (IllegalAccessException e) {
+                    log.info("Error loading rules!");
+                } catch (InvocationTargetException e) {
+                    log.info("Error loading rules!");
+                } catch (IOException e) {
+                    log.info("Error loading rules!");
+                } finally {
+                    rHandlerLock.unlock();
+                }
             }
         }
         return null;
@@ -201,7 +216,7 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Gets the enabled rules
      * 
-     * @return {@link Map}<{@link Class}<? extends {@link Rule}>, {@link String} >
+     * @return The enabled rules
      */
     @ThreadSafe
     public Map<Class<? extends Rule>, String> getRules() {
@@ -289,9 +304,8 @@ public class CrowdControlPlugin extends JavaPlugin {
 
         for (World w : Bukkit.getServer().getWorlds()) {
 
-            CreatureHandler cHandler = getCreatureHandler(w); // Create all of
-                                                              // the creature
-                                                              // handlers
+            CreatureHandler cHandler = getCreatureHandler(w); // Create all of the creature handlers
+            getRuleHandler(w); // Create the rule handlers
 
             for (LivingEntity e : w.getLivingEntities()) {
                 if (!(e instanceof Player)) {

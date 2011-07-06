@@ -3,8 +3,10 @@ package com.elbukkit.plugins.crowd;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -117,22 +119,22 @@ public class CrowdCommand implements CommandExecutor {
             }
         } else if (args[0].equalsIgnoreCase("listEnabledRules")) {
             if (args.length > 1) {
-                List<Rule> rules = plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).getRules();
+                Set<Rule> rules = new HashSet<Rule>(plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).getRules());
                 Iterator<Rule> i = rules.iterator();
 
                 while (i.hasNext()) {
                     Rule r = i.next();
-                    sender.sendMessage(r.getClass().getSimpleName() + ", ID: " + rules.indexOf(r));
+                    sender.sendMessage(r.getClass().getSimpleName() + ", Name: " + r.getName());
                 }
             } else {
                 sender.sendMessage("Usage: crowd listEnabledRules [world]");
             }
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args.length > 2) {
-                plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).RemoveRule(Integer.valueOf(args[2]));
+                plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).RemoveRule(args[2]);
                 sender.sendMessage("Removed rule with id: " + args[2] + "!");
             } else {
-                sender.sendMessage("Usage: crowd remove [world] [enabled id]");
+                sender.sendMessage("Usage: crowd remove [world] [name]");
             }
         } else if (args[0].equalsIgnoreCase("removePending")) {
             if (args.length >= 2) {
