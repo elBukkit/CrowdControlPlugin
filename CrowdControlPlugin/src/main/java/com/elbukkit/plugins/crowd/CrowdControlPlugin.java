@@ -50,25 +50,26 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 public class CrowdControlPlugin extends JavaPlugin {
 
     private static Lock cHandlerLock = new ReentrantLock();
+    private static Lock rHandlerLock = new ReentrantLock();
     private Configuration config;
     private ConcurrentHashMap<World, CreatureHandler> creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
-
     private volatile int despawnDistance = 128;
+
     private elRegionsPlugin elRegions;
     private CrowdEntityListener entityListener = new CrowdEntityListener(this);
-
     private volatile double idleDespawnChance = 0.05;
 
     private Set<CrowdListener> listeners = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
+
     private Logger log;
     private volatile int maxPerChunk = 2;
     private volatile int maxPerWorld = 300;
     private volatile int minDistanceFromPlayer = 10;
-
     private PluginDescriptionFile pdf;
 
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
-    private RuleHandler ruleHandler;
+
+    private ConcurrentHashMap<World, RuleHandler> ruleHandlers = new ConcurrentHashMap<World, RuleHandler>();
     private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 
     /**
@@ -84,17 +85,15 @@ public class CrowdControlPlugin extends JavaPlugin {
             return creatureHandlers.get(w);
         } else {
             CreatureHandler creatureHandler = null;
-            try {
-                if (cHandlerLock.tryLock()) {
-                    creatureHandler = new CreatureHandler(w, this);
-                    // Register the despawner
-                    getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 10);
-                    creatureHandlers.put(w, creatureHandler);
-                    return creatureHandler;
-                }
-            } finally {
+            if (cHandlerLock.tryLock()) {
+                creatureHandler = new CreatureHandler(w, this);
+                // Register the despawner
+                getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 10);
+                creatureHandlers.put(w, creatureHandler);
                 cHandlerLock.unlock();
+                return creatureHandler;
             }
+
         }
         return null;
     }
@@ -180,11 +179,23 @@ public class CrowdControlPlugin extends JavaPlugin {
     /**
      * Gets the rule handler
      * 
+     * @param w
+     *            The world to get {@link RuleHandler} from
      * @return {@link RuleHandler}
      */
-    @ThreadSafe
-    public RuleHandler getRuleHandler() {
-        return ruleHandler;
+    public RuleHandler getRuleHandler(World w) {
+        if (ruleHandlers.contains(w)) {
+            return ruleHandlers.get(w);
+        } else {
+            RuleHandler ruleHandler = null;
+            if (rHandlerLock.tryLock()) {
+                ruleHandler = new RuleHandler(w);
+                ruleHandlers.put(w, ruleHandler);
+                rHandlerLock.unlock();
+                return ruleHandler;
+            }
+        }
+        return null;
     }
 
     /**

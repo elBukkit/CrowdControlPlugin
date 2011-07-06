@@ -70,12 +70,12 @@ public class CrowdCommand implements CommandExecutor {
                         Class<? extends Rule> ruleClass = pendingCommands.get(Integer.valueOf(args[1]));
                         Constructor<? extends Rule> c = null;
                         try {
-                            c = ruleClass.getDeclaredConstructor(String.class, World.class, CreatureType.class, CrowdControlPlugin.class);
-                            Object classObj = c.newInstance(args[2], Bukkit.getServer().getWorld(args[3]), CreatureType.valueOf(args[4]), plugin);
+                            c = ruleClass.getDeclaredConstructor(String.class, CreatureType.class, CrowdControlPlugin.class);
+                            Object classObj = c.newInstance(args[2], CreatureType.valueOf(args[4]), plugin);
                             if (classObj instanceof Rule) {
                                 Rule r = (Rule) classObj;
                                 r.loadFromString(args[5]);
-                                plugin.getRuleHandler().AddRule(r);
+                                plugin.getRuleHandler(Bukkit.getServer().getWorld(args[3])).AddRule(r);
                                 sender.sendMessage("Rule added!");
                                 pendingCommands.remove(ruleClass);
                             }
@@ -116,19 +116,23 @@ public class CrowdCommand implements CommandExecutor {
                 sender.sendMessage("No rules!"); // should never happen :)
             }
         } else if (args[0].equalsIgnoreCase("listEnabledRules")) {
-            List<Rule> rules = plugin.getRuleHandler().getRules();
-            Iterator<Rule> i = rules.iterator();
+            if (args.length > 1) {
+                List<Rule> rules = plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).getRules();
+                Iterator<Rule> i = rules.iterator();
 
-            while (i.hasNext()) {
-                Rule r = i.next();
-                sender.sendMessage(r.getClass().getSimpleName() + ", ID: " + rules.indexOf(r));
+                while (i.hasNext()) {
+                    Rule r = i.next();
+                    sender.sendMessage(r.getClass().getSimpleName() + ", ID: " + rules.indexOf(r));
+                }
+            } else {
+                sender.sendMessage("Usage: crowd listEnabledRules [world]");
             }
         } else if (args[0].equalsIgnoreCase("remove")) {
-            if (args.length >= 2) {
-                plugin.getRuleHandler().RemoveRule(Integer.valueOf(args[1]));
-                sender.sendMessage("Removed rule with id: " + args[1] + "!");
+            if (args.length > 2) {
+                plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).RemoveRule(Integer.valueOf(args[2]));
+                sender.sendMessage("Removed rule with id: " + args[2] + "!");
             } else {
-                sender.sendMessage("Usage: crowd remove [enabled id]");
+                sender.sendMessage("Usage: crowd remove [world] [enabled id]");
             }
         } else if (args[0].equalsIgnoreCase("removePending")) {
             if (args.length >= 2) {

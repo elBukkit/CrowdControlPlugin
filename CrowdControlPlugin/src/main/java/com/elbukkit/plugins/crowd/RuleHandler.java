@@ -23,8 +23,8 @@ public class RuleHandler {
     private World world;
 
     public RuleHandler(World world) {
-        rules = new ArrayList<Rule>();
         this.world = world;
+        rules = new ArrayList<Rule>();
     }
 
     public void AddRule(Rule rule) {
@@ -33,6 +33,10 @@ public class RuleHandler {
 
     public List<Rule> getRules() {
         return Collections.unmodifiableList(rules);
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     @ThreadSafe
@@ -49,10 +53,6 @@ public class RuleHandler {
             }
         }
         return true;
-    }
-
-    public void rebuildDB() {
-
     }
 
     public void RemoveRule(int id) {

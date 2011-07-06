@@ -96,7 +96,7 @@ public class SpawnHandler implements Runnable {
                                             }
                                         }
 
-                                        if (plugin.getRuleHandler().passesRules(info, Type.SPAWN)) {
+                                        if (plugin.getRuleHandler(spawnBlock.getWorld()).passesRules(info, Type.SPAWN)) {
                                             CreatureSpawnEvent event = new CreatureSpawnEvent(this, info.getLocation(), info.getType());
 
                                             for (CrowdListener cListener : plugin.getListeners()) {

@@ -1,6 +1,5 @@
 package com.elbukkit.plugins.crowd.creature;
 
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -164,7 +163,7 @@ public class CreatureHandler implements Runnable {
         c.getEntity().remove();
     }
 
-    public void generateDefaults() throws SQLException {
+    public void generateDefaults() {
         for (CreatureType t : CreatureType.values()) {
             BaseInfo info = new BaseInfo(Nature.Passive, Nature.Passive, 0, 0, 10);
 
