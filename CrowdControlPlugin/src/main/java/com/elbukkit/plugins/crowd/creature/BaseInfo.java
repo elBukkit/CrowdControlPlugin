@@ -93,9 +93,9 @@ public class BaseInfo implements Saveable {
         this.enabled = config.getBoolean(node + ".enabled", false);
         this.burnDay = config.getBoolean(node + ".burnDay", false);
         this.collisionDamage = config.getInt(node + ".damage.collision", 0);
-        this.miscDamage = config.getInt(node + "damage.misc", 0);
-        this.creatureNatureDay = Nature.valueOf(config.getString(node + "nature.day", "PASSIVE").toUpperCase());
-        this.creatureNatureNight = Nature.valueOf(config.getString(node + "nature.night", "PASSIVE").toUpperCase());
+        this.miscDamage = config.getInt(node + ".damage.misc", 0);
+        this.creatureNatureDay = Nature.valueOf(config.getString(node + ".nature.day", "PASSIVE").toUpperCase());
+        this.creatureNatureNight = Nature.valueOf(config.getString(node + ".nature.night", "PASSIVE").toUpperCase());
         this.health = config.getInt(node + ".health", 10);
         this.spawnChance = config.getDouble(".spawnChance", 0.7D);
         this.targetDistance = config.getInt(".targetDistance", 24);
