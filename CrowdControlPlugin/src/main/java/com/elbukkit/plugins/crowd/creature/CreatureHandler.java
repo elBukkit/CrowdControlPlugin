@@ -145,18 +145,6 @@ public class CreatureHandler implements Runnable {
     }
 
     @ThreadSafe
-    public boolean canSeeSky(Location locI) {
-        Location loc = locI.clone();
-        for (int i = 128; i >= 0; i++) {
-            if (!isTransparentBlock(loc.getWorld().getBlockTypeIdAt(loc.getBlockX(), i, loc.getBlockZ()))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @ThreadSafe
     public void damageCreature(CrowdCreature c, int damage) {
         int health = c.getHealth();
         health -= damage;
@@ -322,15 +310,6 @@ public class CreatureHandler implements Runnable {
     }
 
     @ThreadSafe
-    public boolean isTransparentBlock(int i) {
-        if (i != Material.AIR.getId() || i != Material.LEAVES.getId()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @ThreadSafe
     public void kill(CrowdCreature c) {
         crowdCreatureSet.remove(c);
         removeAllAttacked(c);
@@ -477,8 +456,8 @@ public class CreatureHandler implements Runnable {
 
     public boolean shouldBurn(Location loc) {
         if (isDay()) {
-            if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() == 12) {
-                if (canSeeSky(loc)) {
+            if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() >= 15) {
+                if (world.getHighestBlockYAt(loc) == loc.getBlockY()) {
                     return true;
                 }
             }
