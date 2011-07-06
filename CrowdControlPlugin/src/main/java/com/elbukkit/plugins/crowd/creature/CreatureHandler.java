@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Chicken;
@@ -308,6 +307,7 @@ public class CreatureHandler implements Runnable {
     public boolean isDay() {
         return world.getTime() < 12000 || world.getTime() == 24000;
     }
+
 
     @ThreadSafe
     public void kill(CrowdCreature c) {
