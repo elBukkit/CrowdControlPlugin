@@ -81,33 +81,36 @@ public class DamageHandler implements Runnable {
                 // Collision damage system
                 if (distance <= 1.8) {
 
-                    if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
-                        switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
-                        case AGGRESSIVE:
-                            p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
-                            break;
-                        case NEUTRAL:
-                            Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
-                            if (attackingPlayers != null && attackingPlayers.size() > 0) {
-                                if (attackingPlayers.contains(p)) {
-                                    p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
+                    if (p.getNoDamageTicks() <= 0) {
+
+                        if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
+                            switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
+                            case AGGRESSIVE:
+                                p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
+                                break;
+                            case NEUTRAL:
+                                Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
+                                if (attackingPlayers != null && attackingPlayers.size() > 0) {
+                                    if (attackingPlayers.contains(p)) {
+                                        p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
+                                    }
                                 }
+                                break;
                             }
-                            break;
-                        }
-                    } else {
-                        switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
-                        case AGGRESSIVE:
-                            p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
-                            break;
-                        case NEUTRAL:
-                            Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
-                            if (attackingPlayers != null && attackingPlayers.size() > 0) {
-                                if (attackingPlayers.contains(p)) {
-                                    p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
+                        } else {
+                            switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
+                            case AGGRESSIVE:
+                                p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
+                                break;
+                            case NEUTRAL:
+                                Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
+                                if (attackingPlayers != null && attackingPlayers.size() > 0) {
+                                    if (attackingPlayers.contains(p)) {
+                                        p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
+                                    }
                                 }
+                                break;
                             }
-                            break;
                         }
                     }
                 }

@@ -82,6 +82,10 @@ public class CrowdEntityListener extends EntityListener {
         if (event.getEntity() instanceof Player) {
             Player attacked = (Player) event.getEntity();
 
+            if (attacked.getNoDamageTicks() > 0) {
+                return;
+            }
+
             if (event instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent eventDmg = (EntityDamageByEntityEvent) event;
                 CrowdCreature attacker = null;
@@ -104,8 +108,6 @@ public class CrowdEntityListener extends EntityListener {
                         }
                     }
                 }
-            } else {
-                attacked.damage(event.getDamage());
             }
 
             if (attacked.isDead() || (attacked.getHealth() - event.getDamage()) <= 0) {
