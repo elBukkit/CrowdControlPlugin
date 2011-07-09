@@ -29,12 +29,12 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  */
 public class RuleHandler {
 
-    private Configuration config;
-    private File configFile;
-    private ConcurrentHashMap<Entry<String, Entry<Class<? extends Rule>, CreatureType>>, Rule> rules;
-    private World world;
+    private final Configuration config;
+    private final File configFile;
+    private final ConcurrentHashMap<Entry<String, Entry<Class<? extends Rule>, CreatureType>>, Rule> rules;
+    private final World world;
 
-    public RuleHandler(World world, CrowdControlPlugin plugin) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
+    public RuleHandler(final World world, final CrowdControlPlugin plugin) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
         this.world = world;
         rules = new ConcurrentHashMap<Entry<String, Entry<Class<? extends Rule>, CreatureType>>, Rule>();
         configFile = new File(plugin.getDataFolder() + File.separator + world.getName() + ".yml");
@@ -59,10 +59,10 @@ public class RuleHandler {
                         if (rules != null) {
                             for (String ruleName : rules) {
                                 Class<? extends Rule> ruleClass = Class.forName("com.elbukkit.plugins.crowd.rules." + ruleC).asSubclass(Rule.class);
-                                Constructor<? extends Rule> c = ruleClass.getDeclaredConstructor(String.class, CreatureType.class, CrowdControlPlugin.class);
-                                Rule r = c.newInstance(ruleName, CreatureType.valueOf(node.toUpperCase()), plugin);
-                                r.load(config, "rules." + r.getCreatureType() + "." + ruleClass.getSimpleName() + "." + r.getName());
-                                this.rules.put(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(r.getName(), new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(ruleClass, r.getCreatureType())), r);
+                                Constructor<? extends Rule> constructor = ruleClass.getDeclaredConstructor(String.class, CreatureType.class, CrowdControlPlugin.class);
+                                Rule rule = constructor.newInstance(ruleName, CreatureType.valueOf(node.toUpperCase()), plugin);
+                                rule.load(config, "rules." + rule.getCreatureType() + "." + ruleClass.getSimpleName() + "." + rule.getName());
+                                this.rules.put(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(rule.getName(), new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(ruleClass, rule.getCreatureType())), rule);
                             }
                         }
                     }
@@ -71,7 +71,7 @@ public class RuleHandler {
         }
     }
 
-    public void AddRule(Rule rule) {
+    public void addRule(Rule rule) {
         this.rules.put(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(rule.getName(), new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(rule.getClass(), rule.getCreatureType())), rule);
 
         config.load();
@@ -91,21 +91,17 @@ public class RuleHandler {
     public boolean passesRules(Info info, Type type) {
         Iterator<Rule> i = rules.values().iterator();
         while (i.hasNext()) {
-            Rule r = i.next();
-            if (r.getType().equals(type)) {
-                if (r.checkCreatureType(info.getType())) {
-                    if (!r.check(info)) {
-                        return false;
-                    }
-                }
+            Rule rule = i.next();
+            if (rule.getType().equals(type) && rule.checkCreatureType(info.getType()) &&!rule.check(info)) {
+                return false;
             }
         }
         return true;
     }
 
-    public void RemoveRule(Entry<String, Entry<Class<? extends Rule>, CreatureType>> entry) {
-        Rule r = rules.get(entry);
-        config.removeProperty("rules." + r.getCreatureType() + "." + entry.getValue().getKey().getSimpleName() + "." + r.getName());
+    public void removeRule(Entry<String, Entry<Class<? extends Rule>, CreatureType>> entry) {
+        Rule rule = rules.get(entry);
+        config.removeProperty("rules." + rule.getCreatureType() + "." + entry.getValue().getKey().getSimpleName() + "." + rule.getName());
         rules.remove(entry);
         config.save();
     }

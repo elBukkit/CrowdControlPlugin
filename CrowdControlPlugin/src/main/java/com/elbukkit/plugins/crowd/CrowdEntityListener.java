@@ -1,8 +1,10 @@
 package com.elbukkit.plugins.crowd;
 
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCombustEvent;
@@ -151,6 +153,18 @@ public class CrowdEntityListener extends EntityListener {
                 }
             } else {
                 attacked.damage(event.getDamage());
+            }
+            
+            if (attacked.isDead() && attacked.getType() == CreatureType.SLIME) {
+                Slime slime = (Slime)attacked.getEntity();
+                
+                if(slime.getSize() > 1) {
+                    slime.remove();
+                    for (int i = 0; i < 2; i++) {
+                        Slime slimeSmall = (Slime)slime.getWorld().spawnCreature(slime.getLocation(), CreatureType.SLIME);
+                        slimeSmall.setSize(slime.getSize() - 1);
+                    }
+                }
             }
 
             event.setCancelled(true);

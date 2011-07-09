@@ -17,10 +17,10 @@ import com.elbukkit.plugins.crowd.creature.CrowdCreature;
 public class CreatureAttackEvent extends EventObject implements Cancellable {
 
     private static final long serialVersionUID = 3745243179503069710L;
-    private LivingEntity attacked;
-    private LivingEntity attacker;
+    private transient LivingEntity attacked;
+    private transient LivingEntity attacker;
     private boolean canceled = false;
-    private Location location;
+    private transient Location location;
 
     public CreatureAttackEvent(Object sender, Location location, LivingEntity attacker, LivingEntity attacked) {
         super(sender);

@@ -83,7 +83,7 @@ public class CrowdCommand implements CommandExecutor {
                                     load += args[i] + " ";
                                 }
                                 r.loadFromString(load);
-                                plugin.getRuleHandler(Bukkit.getServer().getWorld(args[3])).AddRule(r);
+                                plugin.getRuleHandler(Bukkit.getServer().getWorld(args[3])).addRule(r);
                                 sender.sendMessage("Rule added!");
                                 pendingCommands.remove(ruleClass);
                             }
@@ -138,7 +138,7 @@ public class CrowdCommand implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("remove")) {
             if (args.length > 3) {
                 try {
-                    plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).RemoveRule(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(args[2], new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(Class.forName("com.elbukkit.plugins.crowd.rules." + args[3]).asSubclass(Rule.class), CreatureType.valueOf(args[4].toUpperCase()))));
+                    plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).removeRule(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(args[2], new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(Class.forName("com.elbukkit.plugins.crowd.rules." + args[3]).asSubclass(Rule.class), CreatureType.valueOf(args[4].toUpperCase()))));
                 } catch (ClassNotFoundException e) {
                     sender.sendMessage("Unable to remove the rule!");
                 }

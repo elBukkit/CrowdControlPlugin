@@ -15,7 +15,7 @@ import org.bukkit.event.Cancellable;
 public class CreatureSpawnEvent extends EventObject implements Cancellable {
     private static final long serialVersionUID = -5031301408889128018L;
     private boolean canceled = false;
-    private Location location;
+    private transient Location location;
     private CreatureType type;
 
     public CreatureSpawnEvent(Object sender, Location location, CreatureType type) {

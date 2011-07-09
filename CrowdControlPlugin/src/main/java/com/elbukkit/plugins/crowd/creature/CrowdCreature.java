@@ -69,6 +69,11 @@ public class CrowdCreature {
     public CreatureType getType() {
         return type;
     }
+    
+    @ThreadSafe
+    public boolean isDead() {
+        return health <= 0 || entity.isDead();
+    }
 
     @ThreadSafe
     public void setBaseInfo(BaseInfo baseInfo) {

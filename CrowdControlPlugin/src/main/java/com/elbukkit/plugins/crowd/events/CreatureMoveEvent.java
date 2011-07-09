@@ -17,15 +17,15 @@ public class CreatureMoveEvent extends EventObject implements Cancellable {
 
     private static final long serialVersionUID = -3743383825319521868L;
     private boolean canceled = false;
-    private CrowdCreature creature;
-    private Location newLocation;
-    private Location prevLocation;
+    private transient CrowdCreature creature;
+    private transient Location newLocation;
+    private transient Location prevLocation;
 
     public CreatureMoveEvent(Object sender, Location prevLocation, Location newLocation, CrowdCreature c) {
         super(sender);
 
         this.prevLocation = prevLocation;
-        this.setNewLocation(newLocation);
+        this.newLocation = newLocation;
         this.creature = c;
     }
 
