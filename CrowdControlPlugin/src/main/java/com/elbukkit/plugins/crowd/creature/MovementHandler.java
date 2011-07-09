@@ -37,7 +37,7 @@ public class MovementHandler implements Runnable {
             Location cLoc = c.getCurrentLocation();
 
             if (cLoc.getBlockX() != lLoc.getBlockX() || cLoc.getBlockY() != lLoc.getBlockY() || cLoc.getBlockZ() != lLoc.getBlockZ() || cLoc.getWorld() != lLoc.getWorld()) {
-                Info info = new Info();
+                Info info = new Info(plugin);
                 info.setLocation(cLoc);
                 info.setEntity(c.getEntity());
                 info.setEnv(c.getEntity().getWorld().getEnvironment());

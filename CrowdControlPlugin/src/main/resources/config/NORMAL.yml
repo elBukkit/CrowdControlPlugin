@@ -125,10 +125,10 @@ mobs:
             night: AGGRESSIVE
             day: AGGRESSIVE
         damage:
-            collision: 4
+            collision: 4 # Slime damage is the arithmetic series 2n, n = slimeSize - 1
             misc: 0
         targetDistance: 24
-        health: 20
+        health: 1 # Slime health is the geometric series 3^n. N = slimeSize - 1
         burnDay: false
         spawnChance: 0.2
     SPIDER:

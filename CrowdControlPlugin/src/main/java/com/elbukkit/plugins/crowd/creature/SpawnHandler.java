@@ -78,7 +78,7 @@ public class SpawnHandler implements Runnable {
 
                             if (spawnBlock.getType() == Material.AIR || spawnBlock.getType() == Material.WATER || spawnBlock.getType() == Material.STATIONARY_WATER) {
                                 if (world.getBlockAt(spawnBlock.getX(), spawnBlock.getY() - 1, spawnBlock.getZ()).getType() != Material.AIR) {
-                                    Info info = new Info();
+                                    Info info = new Info(plugin);
 
                                     info.setLocation(spawnBlock.getLocation());
                                     info.setEnv(world.getEnvironment());

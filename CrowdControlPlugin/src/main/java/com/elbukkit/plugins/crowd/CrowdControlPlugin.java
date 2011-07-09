@@ -67,6 +67,7 @@ public class CrowdControlPlugin extends JavaPlugin {
     private volatile int maxPerWorld = 300;
     private volatile int minDistanceFromPlayer = 10;
     private volatile boolean slimeSplit = true;
+    private volatile double spiderRiderChance = 0.01;
     private PluginDescriptionFile pdf;
 
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
@@ -242,6 +243,7 @@ public class CrowdControlPlugin extends JavaPlugin {
             this.maxPerWorld = config.getInt("global.maxPerWorld", this.maxPerWorld);
             this.minDistanceFromPlayer = config.getInt("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
             this.slimeSplit = config.getBoolean("global.slimeSplit", this.slimeSplit);
+            this.spiderRiderChance = config.getDouble("global.spiderRiderChance", this.spiderRiderChance);
         } else {
             config.setProperty("global.despawnDistance", this.despawnDistance);
             config.setProperty("global.idleDespawnChance", this.idleDespawnChance);
@@ -249,6 +251,7 @@ public class CrowdControlPlugin extends JavaPlugin {
             config.setProperty("global.maxPerWorld", this.maxPerWorld);
             config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
             config.setProperty("global.slimeSplit", this.slimeSplit);
+            config.setProperty("global.spiderRiderChance", this.spiderRiderChance);
         }
         config.save();
 
@@ -433,6 +436,26 @@ public class CrowdControlPlugin extends JavaPlugin {
         this.minDistanceFromPlayer = minDistanceFromPlayer;
 
         config.setProperty("global.minDistanceFromPlayer", minDistanceFromPlayer);
+        config.save();
+    }
+
+    /**
+     * Gets the chance of a spider spawning with a skeleton riding it
+     * @return the chance 0.0 - 1.0
+     */
+    public double getSpiderRiderChance() {
+        return spiderRiderChance;
+    }
+
+    /**
+     * Sets the chance of a skeleton rides a spider
+     * 
+     * @param spiderRiderChance the chance 0.0 - 1.0
+     */
+    public void setSpiderRiderChance(double spiderRiderChance) {
+        this.spiderRiderChance = spiderRiderChance;
+        
+        config.setProperty("global.spiderRiderChance", spiderRiderChance);
         config.save();
     }
 }

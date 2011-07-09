@@ -3,6 +3,7 @@ package com.elbukkit.plugins.crowd.creature;
 import org.bukkit.Location;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Slime;
 
 import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
@@ -27,7 +28,11 @@ public class CrowdCreature {
         this.lastLocation = entity.getLocation().clone();
         this.type = type;
         this.baseInfo = info;
-        this.setHealth(info.getHealth());
+        this.health = info.getHealth();
+        
+        if(entity instanceof Slime) {
+            health *= 3^(((Slime)entity).getSize() - 1); // Geometric series 3^n n = size - 1. Close enough to the default minecraft values 
+        }
     }
 
     @ThreadSafe
@@ -40,7 +45,17 @@ public class CrowdCreature {
     public BaseInfo getBaseInfo() {
         return baseInfo;
     }
+    
+    @ThreadSafe
+    public int getCollisionDamage() {
+        if (entity instanceof Slime) {
+            return baseInfo.getCollisionDamage() * (2 * (((Slime)entity).getSize() - 1)); // Arithmetic series 2n, n = size -1
+        }
+        
+        return baseInfo.getCollisionDamage();
+    }
 
+    @ThreadSafe
     public Location getCurrentLocation() {
         return entity.getLocation().clone();
     }

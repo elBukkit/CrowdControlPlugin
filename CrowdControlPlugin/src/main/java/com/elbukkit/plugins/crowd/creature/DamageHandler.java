@@ -86,13 +86,13 @@ public class DamageHandler implements Runnable {
                         if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
                             switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                             case AGGRESSIVE:
-                                p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
+                                p.damage(crowdCreature.getCollisionDamage());
                                 break;
                             case NEUTRAL:
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
-                                        p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
+                                        p.damage(crowdCreature.getCollisionDamage(), entity);
                                     }
                                 }
                                 break;
@@ -100,13 +100,13 @@ public class DamageHandler implements Runnable {
                         } else {
                             switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
                             case AGGRESSIVE:
-                                p.damage(crowdCreature.getBaseInfo().getCollisionDamage());
+                                p.damage(crowdCreature.getCollisionDamage());
                                 break;
                             case NEUTRAL:
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
-                                        p.damage(crowdCreature.getBaseInfo().getCollisionDamage(), entity);
+                                        p.damage(crowdCreature.getCollisionDamage(), entity);
                                     }
                                 }
                                 break;

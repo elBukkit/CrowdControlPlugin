@@ -106,7 +106,7 @@ public class CrowdEntityListener extends EntityListener {
                         LivingEntity e = (LivingEntity) eventDmg.getDamager();
                         attacker = cHandler.getCrowdCreature(e);
                         if (attacker != null) {
-                            event.setDamage(attacker.getBaseInfo().getCollisionDamage());
+                            event.setDamage(attacker.getCollisionDamage());
                         }
                     }
                 }
@@ -145,7 +145,7 @@ public class CrowdEntityListener extends EntityListener {
                         CrowdCreature attacker = cHandler.getCrowdCreature(ea);
 
                         if (attacker != null) {
-                            attacked.damage(attacker.getBaseInfo().getCollisionDamage());
+                            attacked.damage(attacker.getCollisionDamage());
                         }
                     } else {
                         attacked.damage(event.getDamage());
@@ -160,7 +160,7 @@ public class CrowdEntityListener extends EntityListener {
                 
                 if(slime.getSize() > 1) {
                     plugin.getCreatureHandler(slime.getWorld()).despawn(attacked);
-                    for (int i = 0; i < 2; i++) {
+                    for (int i = 0; i < 4; i++) {
                         Slime slimeSmall = (Slime)slime.getWorld().spawnCreature(slime.getLocation(), CreatureType.SLIME);
                         slimeSmall.setSize(slime.getSize() - 1);
                     }
@@ -180,7 +180,7 @@ public class CrowdEntityListener extends EntityListener {
         CreatureHandler cHandler = plugin.getCreatureHandler(event.getEntity().getWorld());
 
         if (event.getEntity() instanceof LivingEntity) {
-            Info info = new Info();
+            Info info = new Info(plugin);
             info.setEntity((LivingEntity) event.getEntity());
             info.setTarget(event.getTarget());
             info.setReason(event.getReason());
