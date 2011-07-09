@@ -66,6 +66,7 @@ public class CrowdControlPlugin extends JavaPlugin {
     private volatile int maxPerChunk = 2;
     private volatile int maxPerWorld = 300;
     private volatile int minDistanceFromPlayer = 10;
+    private volatile boolean slimeSplit = true;
     private PluginDescriptionFile pdf;
 
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
@@ -233,18 +234,21 @@ public class CrowdControlPlugin extends JavaPlugin {
      * Loads or reloads the config file
      */
     public void loadConfigFile() {
+        config.load();
         if (config.getNode("global") != null) {
             this.despawnDistance = config.getInt("global.despawnDistance", this.despawnDistance);
             this.idleDespawnChance = config.getDouble("global.idleDespawnChance", this.idleDespawnChance);
             this.maxPerChunk = config.getInt("global.maxPerChunk", this.maxPerChunk);
             this.maxPerWorld = config.getInt("global.maxPerWorld", this.maxPerWorld);
             this.minDistanceFromPlayer = config.getInt("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
+            this.slimeSplit = config.getBoolean("global.slimeSplit", this.slimeSplit);
         } else {
             config.setProperty("global.despawnDistance", this.despawnDistance);
             config.setProperty("global.idleDespawnChance", this.idleDespawnChance);
             config.setProperty("global.maxPerChunk", this.maxPerChunk);
             config.setProperty("global.maxPerWorld", this.maxPerWorld);
             config.setProperty("global.minDistanceFromPlayer", this.minDistanceFromPlayer);
+            config.setProperty("global.slimeSplit", this.slimeSplit);
         }
         config.save();
 
@@ -316,7 +320,6 @@ public class CrowdControlPlugin extends JavaPlugin {
         }
 
         config = new Configuration(configFile);
-        config.load();
 
         // Register our events
         PluginManager pm = getServer().getPluginManager();
@@ -383,6 +386,28 @@ public class CrowdControlPlugin extends JavaPlugin {
 
         config.setProperty("global.maxPerChunk", max);
         config.save();
+    }
+    
+    /**
+     * Sets if a slime should split
+     * 
+     * @param split true if you want them to split to smaller slimes
+     */
+    public void setSlimeSplit(boolean split) {
+        this.slimeSplit = split;
+        
+        config.setProperty("global.slimeSplit", split);
+        config.save();
+    }
+    
+    /**
+     * Gets if a slime should split.
+     * 
+     * @return If a slime should split.
+     */
+    
+    public boolean getSlimeSplit() {
+        return slimeSplit;
     }
 
     /**
