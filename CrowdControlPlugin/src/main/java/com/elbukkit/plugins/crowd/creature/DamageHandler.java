@@ -4,8 +4,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.bukkit.entity.Creature;
+import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 
@@ -35,6 +37,15 @@ public class DamageHandler implements Runnable {
 
                 CrowdCreature crowdCreature = i.next();
                 LivingEntity entity = crowdCreature.getEntity();
+                
+                if (crowdCreature.getType() == CreatureType.WOLF) {
+                    Wolf wolf = (Wolf)entity;
+                    
+                    // Ignore tamed wolves
+                    if(wolf.isTamed()) {
+                        continue;
+                    }
+                }
 
                 double deltax = Math.abs(entity.getLocation().getX() - p.getLocation().getX());
                 double deltay = Math.abs(entity.getLocation().getY() - p.getLocation().getY());
