@@ -8,8 +8,11 @@ import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
+import com.elbukkit.plugins.crowd.Info;
+import com.elbukkit.plugins.crowd.rules.Type;
 
 /**
  * This handles all of the damage stuff for my plugin
@@ -28,6 +31,8 @@ public class DamageHandler implements Runnable {
     }
 
     public void run() {
+        
+        
 
         for (Player p : handler.getWorld().getPlayers()) {
 
@@ -55,18 +60,28 @@ public class DamageHandler implements Runnable {
                 // Living entities cannot have targets?
                 if (entity instanceof Creature) {
                     Creature c = (Creature) entity;
+                    
+                    Info info = new Info(plugin);
+                    info.setEntity(entity);
+                    info.setTarget(p);
+                    info.setReason(TargetReason.CLOSEST_PLAYER);
+                    
                     // Targeting System
                     if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
                         if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
                             switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                             case AGGRESSIVE:
-                                c.setTarget(p);
+                                if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                    c.setTarget(p);
+                                }
                                 break;
                             case NEUTRAL:
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
-                                        c.setTarget(p);
+                                        if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                            c.setTarget(p);
+                                        }c.setTarget(p);
                                     }
                                 }
                                 break;
@@ -74,13 +89,17 @@ public class DamageHandler implements Runnable {
                         } else {
                             switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
                             case AGGRESSIVE:
-                                c.setTarget(p);
+                                if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                    c.setTarget(p);
+                                }
                                 break;
                             case NEUTRAL:
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
-                                        c.setTarget(p);
+                                        if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                            c.setTarget(p);
+                                        }
                                     }
                                 }
                                 break;
