@@ -92,7 +92,7 @@ public class RuleHandler {
         Iterator<Rule> i = rules.values().iterator();
         while (i.hasNext()) {
             Rule rule = i.next();
-            if (rule.getType().equals(type) && rule.checkCreatureType(info.getType()) &&!rule.check(info)) {
+            if (rule.getType().equals(type) && rule.checkCreatureType(info.getType()) && !rule.check(info)) {
                 return false;
             }
         }

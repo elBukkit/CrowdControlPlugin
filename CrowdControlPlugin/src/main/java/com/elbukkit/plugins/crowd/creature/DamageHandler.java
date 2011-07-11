@@ -31,8 +31,6 @@ public class DamageHandler implements Runnable {
     }
 
     public void run() {
-        
-        
 
         for (Player p : handler.getWorld().getPlayers()) {
 
@@ -42,12 +40,12 @@ public class DamageHandler implements Runnable {
 
                 CrowdCreature crowdCreature = i.next();
                 LivingEntity entity = crowdCreature.getEntity();
-                
+
                 if (crowdCreature.getType() == CreatureType.WOLF) {
-                    Wolf wolf = (Wolf)entity;
-                    
+                    Wolf wolf = (Wolf) entity;
+
                     // Ignore tamed wolves
-                    if(wolf.isTamed()) {
+                    if (wolf.isTamed()) {
                         continue;
                     }
                 }
@@ -60,18 +58,18 @@ public class DamageHandler implements Runnable {
                 // Living entities cannot have targets?
                 if (entity instanceof Creature) {
                     Creature c = (Creature) entity;
-                    
+
                     Info info = new Info(plugin);
                     info.setEntity(entity);
                     info.setTarget(p);
                     info.setReason(TargetReason.CLOSEST_PLAYER);
-                    
+
                     // Targeting System
                     if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
                         if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
                             switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                             case AGGRESSIVE:
-                                if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                if (plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
                                     c.setTarget(p);
                                 }
                                 break;
@@ -79,9 +77,10 @@ public class DamageHandler implements Runnable {
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
-                                        if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                        if (plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
                                             c.setTarget(p);
-                                        }c.setTarget(p);
+                                        }
+                                        c.setTarget(p);
                                     }
                                 }
                                 break;
@@ -89,7 +88,7 @@ public class DamageHandler implements Runnable {
                         } else {
                             switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
                             case AGGRESSIVE:
-                                if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                if (plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
                                     c.setTarget(p);
                                 }
                                 break;
@@ -97,7 +96,7 @@ public class DamageHandler implements Runnable {
                                 Set<Player> attackingPlayers = plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if (attackingPlayers != null && attackingPlayers.size() > 0) {
                                     if (attackingPlayers.contains(p)) {
-                                        if(plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                        if (plugin.getRuleHandler(handler.getWorld()).passesRules(info, Type.TARGET)) {
                                             c.setTarget(p);
                                         }
                                     }

@@ -154,14 +154,14 @@ public class CrowdEntityListener extends EntityListener {
             } else {
                 attacked.damage(event.getDamage());
             }
-            
+
             if (plugin.getSlimeSplit() && attacked.isDead() && attacked.getType() == CreatureType.SLIME) {
-                Slime slime = (Slime)attacked.getEntity();
-                
-                if(slime.getSize() > 1) {
+                Slime slime = (Slime) attacked.getEntity();
+
+                if (slime.getSize() > 1) {
                     plugin.getCreatureHandler(slime.getWorld()).despawn(attacked);
                     for (int i = 0; i < 4; i++) {
-                        Slime slimeSmall = (Slime)slime.getWorld().spawnCreature(slime.getLocation(), CreatureType.SLIME);
+                        Slime slimeSmall = (Slime) slime.getWorld().spawnCreature(slime.getLocation(), CreatureType.SLIME);
                         slimeSmall.setSize(slime.getSize() - 1);
                     }
                 }

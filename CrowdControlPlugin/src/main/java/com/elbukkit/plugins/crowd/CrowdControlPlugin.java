@@ -66,13 +66,13 @@ public class CrowdControlPlugin extends JavaPlugin {
     private volatile int maxPerChunk = 2;
     private volatile int maxPerWorld = 300;
     private volatile int minDistanceFromPlayer = 10;
-    private volatile boolean slimeSplit = true;
-    private volatile double spiderRiderChance = 0.01;
     private PluginDescriptionFile pdf;
-
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;
-
     private ConcurrentHashMap<World, RuleHandler> ruleHandlers;
+
+    private volatile boolean slimeSplit = true;
+
+    private volatile double spiderRiderChance = 0.01;
     private CrowdWorldListener worldListener = new CrowdWorldListener(this);
 
     /**
@@ -229,6 +229,25 @@ public class CrowdControlPlugin extends JavaPlugin {
     @ThreadSafe
     public Map<Class<? extends Rule>, String> getRules() {
         return ruleCommands;
+    }
+
+    /**
+     * Gets if a slime should split.
+     * 
+     * @return If a slime should split.
+     */
+
+    public boolean getSlimeSplit() {
+        return slimeSplit;
+    }
+
+    /**
+     * Gets the chance of a spider spawning with a skeleton riding it
+     * 
+     * @return the chance 0.0 - 1.0
+     */
+    public double getSpiderRiderChance() {
+        return spiderRiderChance;
     }
 
     /**
@@ -390,28 +409,6 @@ public class CrowdControlPlugin extends JavaPlugin {
         config.setProperty("global.maxPerChunk", max);
         config.save();
     }
-    
-    /**
-     * Sets if a slime should split
-     * 
-     * @param split true if you want them to split to smaller slimes
-     */
-    public void setSlimeSplit(boolean split) {
-        this.slimeSplit = split;
-        
-        config.setProperty("global.slimeSplit", split);
-        config.save();
-    }
-    
-    /**
-     * Gets if a slime should split.
-     * 
-     * @return If a slime should split.
-     */
-    
-    public boolean getSlimeSplit() {
-        return slimeSplit;
-    }
 
     /**
      * Sets the max per world
@@ -440,21 +437,27 @@ public class CrowdControlPlugin extends JavaPlugin {
     }
 
     /**
-     * Gets the chance of a spider spawning with a skeleton riding it
-     * @return the chance 0.0 - 1.0
+     * Sets if a slime should split
+     * 
+     * @param split
+     *            true if you want them to split to smaller slimes
      */
-    public double getSpiderRiderChance() {
-        return spiderRiderChance;
+    public void setSlimeSplit(boolean split) {
+        this.slimeSplit = split;
+
+        config.setProperty("global.slimeSplit", split);
+        config.save();
     }
 
     /**
      * Sets the chance of a skeleton rides a spider
      * 
-     * @param spiderRiderChance the chance 0.0 - 1.0
+     * @param spiderRiderChance
+     *            the chance 0.0 - 1.0
      */
     public void setSpiderRiderChance(double spiderRiderChance) {
         this.spiderRiderChance = spiderRiderChance;
-        
+
         config.setProperty("global.spiderRiderChance", spiderRiderChance);
         config.save();
     }

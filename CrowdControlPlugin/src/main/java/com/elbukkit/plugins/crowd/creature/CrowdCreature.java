@@ -29,9 +29,13 @@ public class CrowdCreature {
         this.type = type;
         this.baseInfo = info;
         this.health = info.getHealth();
-        
-        if(entity instanceof Slime) {
-            health *= 3^(((Slime)entity).getSize() - 1); // Geometric series 3^n n = size - 1. Close enough to the default minecraft values 
+
+        if (entity instanceof Slime) {
+            health *= 3 ^ (((Slime) entity).getSize() - 1); // Geometric series
+                                                            // 3^n n = size - 1.
+                                                            // Close enough to
+                                                            // the default
+                                                            // minecraft values
         }
     }
 
@@ -45,13 +49,19 @@ public class CrowdCreature {
     public BaseInfo getBaseInfo() {
         return baseInfo;
     }
-    
+
     @ThreadSafe
     public int getCollisionDamage() {
         if (entity instanceof Slime) {
-            return baseInfo.getCollisionDamage() * (2 * (((Slime)entity).getSize() - 1)); // Arithmetic series 2n, n = size -1
+            return baseInfo.getCollisionDamage() * (2 * (((Slime) entity).getSize() - 1)); // Arithmetic
+                                                                                           // series
+                                                                                           // 2n,
+                                                                                           // n
+                                                                                           // =
+                                                                                           // size
+                                                                                           // -1
         }
-        
+
         return baseInfo.getCollisionDamage();
     }
 
@@ -84,7 +94,7 @@ public class CrowdCreature {
     public CreatureType getType() {
         return type;
     }
-    
+
     @ThreadSafe
     public boolean isDead() {
         return health <= 0 || entity.isDead();

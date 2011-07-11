@@ -24,11 +24,11 @@ public class Info {
     private Environment env;
     private int id;
     private Location location;
+    private CrowdControlPlugin plugin;
     private TargetReason reason;
     private Entity target;
     private CreatureType type;
-    private CrowdControlPlugin plugin;
-    
+
     public Info(CrowdControlPlugin plugin) {
         this.plugin = plugin;
     }
@@ -87,18 +87,18 @@ public class Info {
 
     public void spawn() {
         Random rand = new Random();
-        
+
         this.entity = location.getWorld().spawnCreature(location, type);
-        
+
         // Random slime size
         if (entity instanceof Slime) {
             Slime slime = (Slime) entity;
-            
+
             slime.setSize(rand.nextInt(4));
         } else if (entity instanceof Spider) {
-            if (rand.nextFloat() < plugin.getSpiderRiderChance() ) {
+            if (rand.nextFloat() < plugin.getSpiderRiderChance()) {
                 LivingEntity rider = entity.getWorld().spawnCreature(entity.getLocation(), CreatureType.SKELETON);
-                Spider spider = (Spider)entity;
+                Spider spider = (Spider) entity;
                 spider.setPassenger(rider);
             }
         }
