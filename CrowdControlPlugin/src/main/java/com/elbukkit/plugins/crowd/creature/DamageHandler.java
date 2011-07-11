@@ -111,7 +111,7 @@ public class DamageHandler implements Runnable {
                 // Collision damage system
                 if (distance <= 1.8) {
 
-                    if (p.getNoDamageTicks() <= 0) {
+                    if (p.getNoDamageTicks() > 0) {
 
                         if (plugin.getCreatureHandler(p.getWorld()).isDay()) {
                             switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
