@@ -8,4 +8,4 @@ depends: [elRegions]
 commands:
   crowd:
     description: Control mob spawning
-    usage: crowd [add,finish,listPending,listEnabledRules,rebuildDB,listRules,getDetailedInfo]     
+    usage: crowd [add,finish,listPending,listEnabledRules,reloadConfig,listRules]     

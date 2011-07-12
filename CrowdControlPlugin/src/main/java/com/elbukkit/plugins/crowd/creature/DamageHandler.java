@@ -1,10 +1,14 @@
 package com.elbukkit.plugins.crowd.creature;
 
+import java.util.AbstractMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
@@ -31,8 +35,7 @@ public class DamageHandler implements Runnable {
     }
 
     public void run() {
-
-        for (Player p : handler.getWorld().getPlayers()) {
+        
 
             Iterator<CrowdCreature> i = handler.getCrowdCreatures().iterator();
 
@@ -40,7 +43,9 @@ public class DamageHandler implements Runnable {
 
                 CrowdCreature crowdCreature = i.next();
                 LivingEntity entity = crowdCreature.getEntity();
-
+                List<Entity> near = entity.getNearbyEntities(crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance());
+                Entry<Double, Player> player = null;
+                
                 if (crowdCreature.getType() == CreatureType.WOLF) {
                     Wolf wolf = (Wolf) entity;
 
@@ -49,11 +54,37 @@ public class DamageHandler implements Runnable {
                         continue;
                     }
                 }
-
-                double deltax = Math.abs(entity.getLocation().getX() - p.getLocation().getX());
-                double deltay = Math.abs(entity.getLocation().getY() - p.getLocation().getY());
-                double deltaz = Math.abs(entity.getLocation().getZ() - p.getLocation().getZ());
-                double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+                
+                if (near == null || near.size() <= 0) {
+                    continue;
+                }
+                
+                for (Entity e : near) {
+                    
+                    if (e instanceof Player) {
+                        
+                        double deltax = Math.abs(entity.getLocation().getX() - e.getLocation().getX());
+                        double deltay = Math.abs(entity.getLocation().getY() - e.getLocation().getY());
+                        double deltaz = Math.abs(entity.getLocation().getZ() - e.getLocation().getZ());
+                        double distance = (deltax * deltax) + (deltay * deltay) + (deltaz * deltaz);
+                        
+                        if (player != null) {
+                            if (player.getKey() > distance) {
+                                player = new AbstractMap.SimpleEntry<Double, Player>(distance, (Player)e);
+                            }
+                        } else {
+                            player = new AbstractMap.SimpleEntry<Double, Player>(distance, (Player)e);
+                        }
+                    }
+                    
+                }
+                
+                if (player == null) {
+                    continue;
+                }
+                
+                double distance = Math.sqrt(player.getKey());
+                Player p = player.getValue();
 
                 // Living entities cannot have targets?
                 if (entity instanceof Creature) {
@@ -150,6 +181,5 @@ public class DamageHandler implements Runnable {
                     crowdCreature.getEntity().setFireTicks(0);
                 }
             }
-        }
     }
 }
