@@ -22,15 +22,15 @@ public class SpawnMaterialRule extends Rule {
     private Set<Material> materials;
     private boolean       spawnable;
     
-    public SpawnMaterialRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    public SpawnMaterialRule(String name, CreatureType type, CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
     
     @Override
-    public boolean check(final Info info) {
-        final Material blockMaterial = info.getLocation().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
-        final Material spawnBlockMaterial = info.getLocation().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY(), info.getLocation().getBlockZ()).getType();
+    public boolean check(Info info) {
+        Material blockMaterial = info.getLocation().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY() - 1, info.getLocation().getBlockZ()).getType();
+        Material spawnBlockMaterial = info.getLocation().getWorld().getBlockAt(info.getLocation().getBlockX(), info.getLocation().getBlockY(), info.getLocation().getBlockZ()).getType();
         if (this.spawnable) {
             if ((spawnBlockMaterial == Material.WATER) || (spawnBlockMaterial == Material.STATIONARY_WATER) || (spawnBlockMaterial == Material.LAVA) || (spawnBlockMaterial == Material.STATIONARY_LAVA)) {
                 if (this.materials.contains(spawnBlockMaterial)) {
@@ -56,11 +56,11 @@ public class SpawnMaterialRule extends Rule {
         }
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.materials = new HashSet<Material>();
-        final List<Object> data = config.getList(node + ".material");
+        List<Object> data = config.getList(node + ".material");
         
-        for (final Object material : data) {
+        for (Object material : data) {
             this.materials.add(Material.valueOf((String) material));
         }
         
@@ -68,18 +68,18 @@ public class SpawnMaterialRule extends Rule {
     }
     
     @Override
-    public void loadFromString(final String data) {
-        final String[] split = data.split(" ");
-        final String[] materialArray = split[0].split(",");
-        for (final String s : materialArray) {
+    public void loadFromString(String data) {
+        String[] split = data.split(" ");
+        String[] materialArray = split[0].split(",");
+        for (String s : materialArray) {
             this.materials.add(Material.valueOf(s.toUpperCase()));
         }
         this.spawnable = Boolean.valueOf(split[1]);
     }
     
-    public void save(final Configuration config, final String node) {
-        final Set<String> materialStrings = new HashSet<String>();
-        for (final Material m : this.materials) {
+    public void save(Configuration config, String node) {
+        Set<String> materialStrings = new HashSet<String>();
+        for (Material m : this.materials) {
             materialStrings.add(m.toString());
         }
         config.setProperty(node + ".material", materialStrings);

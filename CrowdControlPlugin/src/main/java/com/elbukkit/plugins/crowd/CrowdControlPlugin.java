@@ -83,7 +83,12 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @return {@link CreatureHandler}
      */
     @ThreadSafe
-    public CreatureHandler getCreatureHandler(final World w) {
+    public CreatureHandler getCreatureHandler(World w) {
+        
+        if (this.creatureHandlers == null) {
+            return null;
+        }
+        
         if (this.creatureHandlers.containsKey(w)) {
             return this.creatureHandlers.get(w);
         } else {
@@ -95,7 +100,7 @@ public class CrowdControlPlugin extends JavaPlugin {
                     this.getServer().getScheduler().scheduleSyncRepeatingTask(this, creatureHandler, 0, 10);
                     this.creatureHandlers.put(w, creatureHandler);
                     return creatureHandler;
-                } catch (final IOException e) {
+                } catch (IOException e) {
                     this.log.info("[CrowdControl] Error making creature handler!");
                 } finally {
                     CrowdControlPlugin.cHandlerLock.unlock();
@@ -191,7 +196,12 @@ public class CrowdControlPlugin extends JavaPlugin {
      *            The world to get {@link RuleHandler} from
      * @return {@link RuleHandler}
      */
-    public RuleHandler getRuleHandler(final World w) {
+    public RuleHandler getRuleHandler(World w) {
+        
+        if (this.ruleHandlers == null) {
+            return null;
+        }
+        
         if (this.ruleHandlers.containsKey(w)) {
             return this.ruleHandlers.get(w);
         } else {
@@ -201,17 +211,17 @@ public class CrowdControlPlugin extends JavaPlugin {
                     ruleHandler = new RuleHandler(w, this);
                     this.ruleHandlers.put(w, ruleHandler);
                     return ruleHandler;
-                } catch (final ClassNotFoundException e) {
+                } catch (ClassNotFoundException e) {
                     this.log.info("Error loading rules!");
-                } catch (final NoSuchMethodException e) {
+                } catch (NoSuchMethodException e) {
                     this.log.info("Error loading rules!");
-                } catch (final InstantiationException e) {
+                } catch (InstantiationException e) {
                     this.log.info("Error loading rules!");
-                } catch (final IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     this.log.info("Error loading rules!");
-                } catch (final InvocationTargetException e) {
+                } catch (InvocationTargetException e) {
                     this.log.info("Error loading rules!");
-                } catch (final IOException e) {
+                } catch (IOException e) {
                     this.log.info("Error loading rules!");
                 } finally {
                     CrowdControlPlugin.rHandlerLock.unlock();
@@ -274,25 +284,27 @@ public class CrowdControlPlugin extends JavaPlugin {
         }
         this.config.save();
         
-        for (final CreatureHandler h : this.creatureHandlers.values()) {
-            h.killAll();
+        if (this.creatureHandlers != null) {
+            for (CreatureHandler h : this.creatureHandlers.values()) {
+                h.killAll();
+            }
         }
         
         this.ruleHandlers = new ConcurrentHashMap<World, RuleHandler>();
         this.creatureHandlers = new ConcurrentHashMap<World, CreatureHandler>();
         this.getServer().getScheduler().cancelTasks(this);
         
-        for (final World w : Bukkit.getServer().getWorlds()) {
+        for (World w : Bukkit.getServer().getWorlds()) {
             
-            final CreatureHandler cHandler = this.getCreatureHandler(w); // Create all of
+            CreatureHandler cHandler = this.getCreatureHandler(w); // Create all of
             // the creature
             // handlers
             this.getRuleHandler(w); // Create the rule handlers
             
-            for (final LivingEntity e : w.getLivingEntities()) {
+            for (LivingEntity e : w.getLivingEntities()) {
                 if (!(e instanceof Player)) {
-                    final CreatureType cType = cHandler.getCreatureType(e);
-                    final BaseInfo info = cHandler.getBaseInfo(cType);
+                    CreatureType cType = cHandler.getCreatureType(e);
+                    BaseInfo info = cHandler.getBaseInfo(cType);
                     
                     if (info != null) {
                         cHandler.addCrowdCreature(new CrowdCreature(e, cType, info));
@@ -338,12 +350,12 @@ public class CrowdControlPlugin extends JavaPlugin {
             FileUtils.copyResourcesRecursively(super.getClass().getResource("/config"), this.getDataFolder());
         }
         
-        final File configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.yml");
+        File configFile = new File(this.getDataFolder().getAbsolutePath() + File.separator + "config.yml");
         
         if (!configFile.exists()) {
             try {
                 configFile.createNewFile();
-            } catch (final IOException e) {
+            } catch (IOException e) {
                 this.log.info("Unable to make config.yml!");
             }
         }
@@ -351,7 +363,7 @@ public class CrowdControlPlugin extends JavaPlugin {
         this.config = new Configuration(configFile);
         
         // Register our events
-        final PluginManager pm = this.getServer().getPluginManager();
+        PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvent(Type.CREATURE_SPAWN, this.entityListener, Priority.Lowest, this);
         pm.registerEvent(Type.ENTITY_TARGET, this.entityListener, Priority.Lowest, this);
         pm.registerEvent(Type.ENTITY_COMBUST, this.entityListener, Priority.Lowest, this);
@@ -374,7 +386,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      *            {@link CrowdListener}
      */
     @ThreadSafe
-    public void registerListener(final CrowdListener listener) {
+    public void registerListener(CrowdListener listener) {
         this.listeners.add(listener);
     }
     
@@ -384,7 +396,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @param despawnDistance
      *            {@link Integer}
      */
-    public void setDespawnDistance(final int despawnDistance) {
+    public void setDespawnDistance(int despawnDistance) {
         this.despawnDistance = despawnDistance;
         
         this.config.setProperty("global.despawnDistance", despawnDistance);
@@ -397,7 +409,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @param idleDespawnChance
      *            {@link Double}
      */
-    public void setIdleDespawnChance(final double idleDespawnChance) {
+    public void setIdleDespawnChance(double idleDespawnChance) {
         this.idleDespawnChance = idleDespawnChance;
         
         this.config.setProperty("global.idleDespawnChance", idleDespawnChance);
@@ -410,7 +422,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @param max
      *            {@link Integer}
      */
-    public void setMaxPerChunk(final int max) {
+    public void setMaxPerChunk(int max) {
         this.maxPerChunk = max;
         
         this.config.setProperty("global.maxPerChunk", max);
@@ -423,7 +435,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @param max
      *            {@link Integer}
      */
-    public void setMaxPerWorld(final int max) {
+    public void setMaxPerWorld(int max) {
         this.maxPerWorld = max;
         
         this.config.setProperty("global.maxPerWorld", max);
@@ -436,7 +448,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @param minDistanceFromPlayer
      *            {@link Integer}
      */
-    public void setMinDistanceFromPlayer(final int minDistanceFromPlayer) {
+    public void setMinDistanceFromPlayer(int minDistanceFromPlayer) {
         this.minDistanceFromPlayer = minDistanceFromPlayer;
         
         this.config.setProperty("global.minDistanceFromPlayer", minDistanceFromPlayer);
@@ -449,7 +461,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @param split
      *            true if you want them to split to smaller slimes
      */
-    public void setSlimeSplit(final boolean split) {
+    public void setSlimeSplit(boolean split) {
         this.slimeSplit = split;
         
         this.config.setProperty("global.slimeSplit", split);
@@ -462,7 +474,7 @@ public class CrowdControlPlugin extends JavaPlugin {
      * @param spiderRiderChance
      *            the chance 0.0 - 1.0
      */
-    public void setSpiderRiderChance(final double spiderRiderChance) {
+    public void setSpiderRiderChance(double spiderRiderChance) {
         this.spiderRiderChance = spiderRiderChance;
         
         this.config.setProperty("global.spiderRiderChance", spiderRiderChance);

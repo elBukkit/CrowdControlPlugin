@@ -18,7 +18,7 @@ public class CreatureSpawnEvent extends EventObject implements Cancellable {
     private transient Location location;
     private final CreatureType type;
     
-    public CreatureSpawnEvent(final Object sender, final Location location, final CreatureType type) {
+    public CreatureSpawnEvent(Object sender, Location location, CreatureType type) {
         super(sender);
         
         this.location = location;
@@ -58,7 +58,7 @@ public class CreatureSpawnEvent extends EventObject implements Cancellable {
      * @param cancel
      *            {@link Boolean}
      */
-    public void setCancelled(final boolean cancel) {
+    public void setCancelled(boolean cancel) {
         this.canceled = cancel;
     }
 }

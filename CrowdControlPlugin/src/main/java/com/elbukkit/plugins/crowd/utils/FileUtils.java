@@ -120,7 +120,7 @@ public class FileUtils {
         return f.exists() || f.mkdir();
     }
     
-    private static String removeStart(final String str, final String remove) {
+    private static String removeStart(String str, String remove) {
         if (str.isEmpty() || remove.isEmpty()) {
             return str;
         }

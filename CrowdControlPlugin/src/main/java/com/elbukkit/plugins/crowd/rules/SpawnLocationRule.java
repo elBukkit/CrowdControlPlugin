@@ -17,13 +17,13 @@ public class SpawnLocationRule extends Rule {
     private String  elRegionName = "";
     private boolean spawnable    = true;
     
-    public SpawnLocationRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    public SpawnLocationRule(String name, CreatureType type, CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
     
     @Override
-    public boolean check(final Info info) {
+    public boolean check(Info info) {
         
         if (this.plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(this.elRegionName).contains(info.getLocation())) {
             return this.spawnable;
@@ -32,18 +32,18 @@ public class SpawnLocationRule extends Rule {
         return !this.spawnable;
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.elRegionName = config.getString(node + ".elRegion", "");
     }
     
     @Override
-    public void loadFromString(final String data) {
-        final String[] split = data.split(" ");
+    public void loadFromString(String data) {
+        String[] split = data.split(" ");
         this.elRegionName = split[0];
         this.spawnable = Boolean.parseBoolean(split[1]);
     }
     
-    public void save(final Configuration config, final String node) {
+    public void save(Configuration config, String node) {
         config.setProperty(node + ".elRegion", this.elRegionName);
         config.setProperty(node + ".spawnable", this.spawnable);
     }

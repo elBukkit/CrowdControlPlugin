@@ -60,7 +60,7 @@ public class CreatureHandler implements Runnable {
     private final Random                          rand = new Random();
     private final World                           world;
     
-    public CreatureHandler(final World w, final CrowdControlPlugin plugin) throws IOException {
+    public CreatureHandler(World w, CrowdControlPlugin plugin) throws IOException {
         this.world = w;
         this.plugin = plugin;
         this.baseInfo = new ConcurrentHashMap<CreatureType, BaseInfo>();
@@ -70,7 +70,7 @@ public class CreatureHandler implements Runnable {
         
         this.configFile = new File(plugin.getDataFolder() + File.separator + this.world.getName() + ".yml");
         if (!this.configFile.exists()) {
-            final File defaults = new File(plugin.getDataFolder() + File.separator + this.world.getEnvironment().toString() + ".yml");
+            File defaults = new File(plugin.getDataFolder() + File.separator + this.world.getEnvironment().toString() + ".yml");
             if (defaults.exists()) {
                 FileUtils.copyFile(defaults, this.configFile);
             } else {
@@ -82,10 +82,10 @@ public class CreatureHandler implements Runnable {
         this.config = new Configuration(this.configFile);
         this.config.load();
         
-        final List<String> mobs = this.config.getKeys("mobs");
+        List<String> mobs = this.config.getKeys("mobs");
         if (mobs != null) {
-            for (final String mob : mobs) {
-                final BaseInfo info = new BaseInfo(this.config, "mobs." + mob);
+            for (String mob : mobs) {
+                BaseInfo info = new BaseInfo(this.config, "mobs." + mob);
                 this.baseInfo.put(CreatureType.valueOf(mob.toUpperCase()), info);
                 
                 if (info.isEnabled()) {
@@ -105,9 +105,9 @@ public class CreatureHandler implements Runnable {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
             
             public void run() {
-                final Iterator<CrowdCreature> i = CreatureHandler.this.crowdCreatureSet.iterator();
+                Iterator<CrowdCreature> i = CreatureHandler.this.crowdCreatureSet.iterator();
                 while (i.hasNext()) {
-                    final CrowdCreature creature = i.next();
+                    CrowdCreature creature = i.next();
                     
                     if (creature.getHealth() <= 0) {
                         CreatureHandler.this.kill(creature);
@@ -129,7 +129,7 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public void addAttacked(final CrowdCreature c, final Player p) {
+    public void addAttacked(CrowdCreature c, Player p) {
         Set<Player> pList = null;
         if (this.attacked.containsKey(c)) {
             pList = this.attacked.get(c);
@@ -141,12 +141,12 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public void addCrowdCreature(final CrowdCreature c) {
+    public void addCrowdCreature(CrowdCreature c) {
         this.crowdCreatureSet.add(c);
     }
     
     @ThreadSafe
-    public void damageCreature(final CrowdCreature c, final int damage) {
+    public void damageCreature(CrowdCreature c, int damage) {
         int health = c.getHealth();
         health -= damage;
         c.setHealth(health);
@@ -159,31 +159,31 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public void despawn(final CrowdCreature c) {
+    public void despawn(CrowdCreature c) {
         this.crowdCreatureSet.remove(c);
         this.removeAllAttacked(c);
         c.getEntity().remove();
     }
     
     public void generateDefaults() {
-        for (final CreatureType t : CreatureType.values()) {
-            final BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
+        for (CreatureType t : CreatureType.values()) {
+            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
             
             this.setInfo(info, t);
         }
     }
     
     @ThreadSafe
-    public Set<Player> getAttackingPlayers(final CrowdCreature c) {
+    public Set<Player> getAttackingPlayers(CrowdCreature c) {
         return this.attacked.get(c);
     }
     
     @ThreadSafe
-    public BaseInfo getBaseInfo(final CreatureType type) {
+    public BaseInfo getBaseInfo(CreatureType type) {
         if (this.baseInfo.containsKey(type)) {
             return this.baseInfo.get(type);
         } else {
-            final BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
+            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
             this.setInfo(info, type);
             return info;
         }
@@ -195,12 +195,12 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public int getCreatureCount(final CreatureType type) {
-        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+    public int getCreatureCount(CreatureType type) {
+        Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
         
         int count = 0;
         while (i.hasNext()) {
-            final CrowdCreature c = i.next();
+            CrowdCreature c = i.next();
             if (c.getType() == type) {
                 count++;
             }
@@ -210,7 +210,7 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public CreatureType getCreatureType(final LivingEntity entity) {
+    public CreatureType getCreatureType(LivingEntity entity) {
         if (entity instanceof Creature) {
             // Animals
             if (entity instanceof Animals) {
@@ -263,27 +263,27 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public CrowdCreature getCrowdCreature(final LivingEntity entity) {
+    public CrowdCreature getCrowdCreature(LivingEntity entity) {
         
         if (entity instanceof Player) {
             return null;
         }
         
-        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
         
         while (i.hasNext()) {
-            final CrowdCreature c = i.next();
+            CrowdCreature c = i.next();
             
             if (c.getEntity() == entity) {
                 return c;
             }
         }
         
-        final CreatureType cType = this.getCreatureType(entity);
-        final BaseInfo info = this.getBaseInfo(cType);
+        CreatureType cType = this.getCreatureType(entity);
+        BaseInfo info = this.getBaseInfo(cType);
         
         if (info != null) {
-            final CrowdCreature c = new CrowdCreature(entity, cType, info);
+            CrowdCreature c = new CrowdCreature(entity, cType, info);
             this.addCrowdCreature(c);
             return c;
         }
@@ -311,7 +311,7 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public void kill(final CrowdCreature c) {
+    public void kill(CrowdCreature c) {
         this.crowdCreatureSet.remove(c);
         this.removeAllAttacked(c);
         c.getEntity().damage(200);
@@ -319,10 +319,10 @@ public class CreatureHandler implements Runnable {
     
     @ThreadSafe
     public void killAll() {
-        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
         
         while (i.hasNext()) {
-            final CrowdCreature c = i.next();
+            CrowdCreature c = i.next();
             i.remove();
             this.removeAllAttacked(c);
             c.getEntity().remove();
@@ -330,11 +330,11 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public void killAll(final CreatureType type) {
-        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+    public void killAll(CreatureType type) {
+        Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
         
         while (i.hasNext()) {
-            final CrowdCreature c = i.next();
+            CrowdCreature c = i.next();
             if (c.getType() == type) {
                 i.remove();
                 this.removeAllAttacked(c);
@@ -344,24 +344,24 @@ public class CreatureHandler implements Runnable {
     }
     
     @ThreadSafe
-    public void removeAllAttacked(final CrowdCreature c) {
+    public void removeAllAttacked(CrowdCreature c) {
         this.attacked.remove(c);
     }
     
     @ThreadSafe
-    public void removeAttacked(final CrowdCreature c, final Player p) {
+    public void removeAttacked(CrowdCreature c, Player p) {
         if (this.attacked.containsKey(c)) {
-            final Set<Player> pList = this.attacked.get(c);
+            Set<Player> pList = this.attacked.get(c);
             pList.remove(p);
             this.attacked.put(c, pList);
         }
     }
     
     @ThreadSafe
-    public void removePlayer(final Player p) {
-        final Iterator<Entry<CrowdCreature, Set<Player>>> i = this.attacked.entrySet().iterator();
+    public void removePlayer(Player p) {
+        Iterator<Entry<CrowdCreature, Set<Player>>> i = this.attacked.entrySet().iterator();
         while (i.hasNext()) {
-            final CrowdCreature c = i.next().getKey();
+            CrowdCreature c = i.next().getKey();
             if (this.attacked.get(c) != null) {
                 this.attacked.get(c).remove(p);
             }
@@ -372,20 +372,20 @@ public class CreatureHandler implements Runnable {
         
         // Despawning code
         
-        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
         
         while (i.hasNext()) {
             
-            final CrowdCreature c = i.next();
-            final LivingEntity e = c.getEntity();
+            CrowdCreature c = i.next();
+            LivingEntity e = c.getEntity();
             
             boolean keep = false;
             
-            for (final Player p : this.world.getPlayers()) {
-                final double deltax = Math.abs(e.getLocation().getX() - p.getLocation().getX());
-                final double deltay = Math.abs(e.getLocation().getY() - p.getLocation().getY());
-                final double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
-                final double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+            for (Player p : this.world.getPlayers()) {
+                double deltax = Math.abs(e.getLocation().getX() - p.getLocation().getX());
+                double deltay = Math.abs(e.getLocation().getY() - p.getLocation().getY());
+                double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
+                double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
                 
                 if (distance < this.plugin.getDespawnDistance()) {
                     if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with
@@ -410,13 +410,13 @@ public class CreatureHandler implements Runnable {
             
             if (e instanceof Creature) {
                 
-                final LivingEntity target = ((Creature) e).getTarget();
+                LivingEntity target = ((Creature) e).getTarget();
                 
                 if (target != null) {
-                    final double deltax = Math.abs(e.getLocation().getX() - target.getLocation().getX());
-                    final double deltay = Math.abs(e.getLocation().getY() - target.getLocation().getY());
-                    final double deltaz = Math.abs(e.getLocation().getZ() - target.getLocation().getZ());
-                    final double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+                    double deltax = Math.abs(e.getLocation().getX() - target.getLocation().getX());
+                    double deltay = Math.abs(e.getLocation().getY() - target.getLocation().getY());
+                    double deltaz = Math.abs(e.getLocation().getZ() - target.getLocation().getZ());
+                    double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
                     
                     if (distance > c.getBaseInfo().getTargetDistance()) {
                         ((Creature) e).setTarget(null);
@@ -436,11 +436,11 @@ public class CreatureHandler implements Runnable {
         }
     }
     
-    public void setInfo(final BaseInfo info, final CreatureType type) {
-        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+    public void setInfo(BaseInfo info, CreatureType type) {
+        Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
         
         while (i.hasNext()) {
-            final CrowdCreature creature = i.next();
+            CrowdCreature creature = i.next();
             
             if (creature.getType() == type) {
                 creature.setBaseInfo(info);
@@ -460,7 +460,7 @@ public class CreatureHandler implements Runnable {
         }
     }
     
-    public boolean shouldBurn(final Location loc) {
+    public boolean shouldBurn(Location loc) {
         if (this.isDay()) {
             if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() >= 15) {
                 if (this.world.getHighestBlockYAt(loc) == loc.getBlockY()) {

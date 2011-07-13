@@ -16,13 +16,13 @@ public class SpawnTimeRule extends Rule {
     
     private Time spawnTime;
     
-    public SpawnTimeRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    public SpawnTimeRule(String name, CreatureType type, CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
     
     @Override
-    public boolean check(final Info info) {
+    public boolean check(Info info) {
         
         if (this.plugin.getCreatureHandler(info.getLocation().getWorld()).isDay()) {
             // ESCA-JAVA0032:
@@ -45,16 +45,16 @@ public class SpawnTimeRule extends Rule {
         return false;
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.spawnTime = Time.valueOf(config.getString(node + ".time", "DAY").toUpperCase());
     }
     
     @Override
-    public void loadFromString(final String data) {
+    public void loadFromString(String data) {
         this.spawnTime = Time.valueOf(data);
     }
     
-    public void save(final Configuration config, final String node) {
+    public void save(Configuration config, String node) {
         config.setProperty(node + ".time", this.spawnTime.toString());
     }
     

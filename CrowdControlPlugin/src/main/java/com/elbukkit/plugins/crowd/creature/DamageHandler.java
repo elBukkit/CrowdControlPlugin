@@ -29,24 +29,24 @@ public class DamageHandler implements Runnable {
     private final CreatureHandler    handler;
     private final CrowdControlPlugin plugin;
     
-    public DamageHandler(final CrowdControlPlugin plugin, final CreatureHandler handler) {
+    public DamageHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
         this.plugin = plugin;
         this.handler = handler;
     }
     
     public void run() {
         
-        final Iterator<CrowdCreature> i = this.handler.getCrowdCreatures().iterator();
+        Iterator<CrowdCreature> i = this.handler.getCrowdCreatures().iterator();
         
         while (i.hasNext()) {
             
-            final CrowdCreature crowdCreature = i.next();
-            final LivingEntity entity = crowdCreature.getEntity();
-            final List<Entity> near = entity.getNearbyEntities(crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance());
+            CrowdCreature crowdCreature = i.next();
+            LivingEntity entity = crowdCreature.getEntity();
+            List<Entity> near = entity.getNearbyEntities(crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance());
             Entry<Double, Player> player = null;
             
             if (crowdCreature.getType() == CreatureType.WOLF) {
-                final Wolf wolf = (Wolf) entity;
+                Wolf wolf = (Wolf) entity;
                 
                 // Ignore tamed wolves
                 if (wolf.isTamed()) {
@@ -58,14 +58,14 @@ public class DamageHandler implements Runnable {
                 continue;
             }
             
-            for (final Entity e : near) {
+            for (Entity e : near) {
                 
                 if (e instanceof Player) {
                     
-                    final double deltax = Math.abs(entity.getLocation().getX() - e.getLocation().getX());
-                    final double deltay = Math.abs(entity.getLocation().getY() - e.getLocation().getY());
-                    final double deltaz = Math.abs(entity.getLocation().getZ() - e.getLocation().getZ());
-                    final double distance = (deltax * deltax) + (deltay * deltay) + (deltaz * deltaz);
+                    double deltax = Math.abs(entity.getLocation().getX() - e.getLocation().getX());
+                    double deltay = Math.abs(entity.getLocation().getY() - e.getLocation().getY());
+                    double deltaz = Math.abs(entity.getLocation().getZ() - e.getLocation().getZ());
+                    double distance = (deltax * deltax) + (deltay * deltay) + (deltaz * deltaz);
                     
                     if (player != null) {
                         if (player.getKey() > distance) {
@@ -82,14 +82,14 @@ public class DamageHandler implements Runnable {
                 continue;
             }
             
-            final double distance = Math.sqrt(player.getKey());
-            final Player p = player.getValue();
+            double distance = Math.sqrt(player.getKey());
+            Player p = player.getValue();
             
             // Living entities cannot have targets?
             if (entity instanceof Creature) {
-                final Creature c = (Creature) entity;
+                Creature c = (Creature) entity;
                 
-                final Info info = new Info(this.plugin);
+                Info info = new Info(this.plugin);
                 info.setEntity(entity);
                 info.setTarget(p);
                 info.setReason(TargetReason.CLOSEST_PLAYER);
@@ -104,7 +104,7 @@ public class DamageHandler implements Runnable {
                                 }
                                 break;
                             case NEUTRAL:
-                                final Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
+                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
                                     if (attackingPlayers.contains(p)) {
                                         if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
@@ -123,7 +123,7 @@ public class DamageHandler implements Runnable {
                                 }
                                 break;
                             case NEUTRAL:
-                                final Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
+                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
                                 if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
                                     if (attackingPlayers.contains(p)) {
                                         if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
@@ -148,7 +148,7 @@ public class DamageHandler implements Runnable {
                                 p.damage(crowdCreature.getCollisionDamage());
                                 break;
                             case NEUTRAL:
-                                final Set<Player> attackingPlayers = this.plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
+                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
                                 if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
                                     if (attackingPlayers.contains(p)) {
                                         p.damage(crowdCreature.getCollisionDamage(), entity);
@@ -162,7 +162,7 @@ public class DamageHandler implements Runnable {
                                 p.damage(crowdCreature.getCollisionDamage());
                                 break;
                             case NEUTRAL:
-                                final Set<Player> attackingPlayers = this.plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
+                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
                                 if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
                                     if (attackingPlayers.contains(p)) {
                                         p.damage(crowdCreature.getCollisionDamage(), entity);

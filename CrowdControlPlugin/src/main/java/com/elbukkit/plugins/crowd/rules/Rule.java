@@ -40,7 +40,7 @@ public abstract class Rule implements Saveable {
     protected Type               ruleType;
     protected CreatureType       type;
     
-    protected Rule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    protected Rule(String name, CreatureType type, CrowdControlPlugin plugin) {
         this.name = name;
         this.type = type;
         this.plugin = plugin;
@@ -48,10 +48,10 @@ public abstract class Rule implements Saveable {
     
     public abstract boolean check(Info info);
     
-    public boolean checkCreatureType(final CreatureType cType) { // Check if the
-        // creature is
-        // effected by the
-        // rule
+    public boolean checkCreatureType(CreatureType cType) { // Check if the
+                                                           // creature is
+                                                           // effected by the
+                                                           // rule
         return this.type.equals(cType);
     }
     
@@ -60,7 +60,7 @@ public abstract class Rule implements Saveable {
         return this.type;
     }
     
-    protected CreatureType getCreatureType(final Entity entity) {
+    protected CreatureType getCreatureType(Entity entity) {
         if (entity instanceof LivingEntity) {
             if (entity instanceof Creature) {
                 // Animals

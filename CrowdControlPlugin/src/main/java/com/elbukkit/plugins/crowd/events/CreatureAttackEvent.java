@@ -22,7 +22,7 @@ public class CreatureAttackEvent extends EventObject implements Cancellable {
     private boolean                canceled         = false;
     private transient Location     location;
     
-    public CreatureAttackEvent(final Object sender, final Location location, final LivingEntity attacker, final LivingEntity attacked) {
+    public CreatureAttackEvent(Object sender, Location location, LivingEntity attacker, LivingEntity attacked) {
         super(sender);
         
         this.location = location;
@@ -72,7 +72,7 @@ public class CreatureAttackEvent extends EventObject implements Cancellable {
      * @param cancel
      *            {@link Boolean}
      */
-    public void setCancelled(final boolean cancel) {
+    public void setCancelled(boolean cancel) {
         this.canceled = cancel;
     }
 }

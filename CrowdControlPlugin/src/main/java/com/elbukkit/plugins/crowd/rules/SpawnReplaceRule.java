@@ -16,32 +16,32 @@ public class SpawnReplaceRule extends Rule {
     
     private CreatureType replaceType;
     
-    public SpawnReplaceRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    public SpawnReplaceRule(String name, CreatureType type, CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
     
     @Override
-    public boolean check(final Info info) {
+    public boolean check(Info info) {
         info.setType(this.replaceType);
         return true;
     }
     
-    public void init(final CreatureType cType) {
+    public void init(CreatureType cType) {
         this.replaceType = cType;
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.replaceType = CreatureType.valueOf(config.getString(node + ".replaceType", "MONSTER").toUpperCase());
         
     }
     
     @Override
-    public void loadFromString(final String data) {
+    public void loadFromString(String data) {
         this.replaceType = CreatureType.valueOf(data.toUpperCase());
     }
     
-    public void save(final Configuration config, final String node) {
+    public void save(Configuration config, String node) {
         config.setProperty(node + ".replaceType", this.replaceType.toString());
     }
     

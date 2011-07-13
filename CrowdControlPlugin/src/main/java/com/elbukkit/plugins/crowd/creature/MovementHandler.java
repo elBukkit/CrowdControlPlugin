@@ -22,22 +22,22 @@ public class MovementHandler implements Runnable {
     
     CrowdControlPlugin            plugin;
     
-    public MovementHandler(final CrowdControlPlugin plugin, final CreatureHandler handler) {
+    public MovementHandler(CrowdControlPlugin plugin, CreatureHandler handler) {
         this.plugin = plugin;
         this.handler = handler;
     }
     
     public void run() {
-        final Iterator<CrowdCreature> i = this.handler.getCrowdCreatures().iterator();
+        Iterator<CrowdCreature> i = this.handler.getCrowdCreatures().iterator();
         
         while (i.hasNext()) {
-            final CrowdCreature c = i.next();
+            CrowdCreature c = i.next();
             
-            final Location lLoc = c.getLastLocation();
-            final Location cLoc = c.getCurrentLocation();
+            Location lLoc = c.getLastLocation();
+            Location cLoc = c.getCurrentLocation();
             
             if ((cLoc.getBlockX() != lLoc.getBlockX()) || (cLoc.getBlockY() != lLoc.getBlockY()) || (cLoc.getBlockZ() != lLoc.getBlockZ()) || (cLoc.getWorld() != lLoc.getWorld())) {
-                final Info info = new Info(this.plugin);
+                Info info = new Info(this.plugin);
                 info.setLocation(cLoc);
                 info.setEntity(c.getEntity());
                 info.setEnv(c.getEntity().getWorld().getEnvironment());
@@ -45,8 +45,8 @@ public class MovementHandler implements Runnable {
                 
                 if (this.plugin.getRuleHandler(c.getEntity().getWorld()).passesRules(info, Type.MOVEMENT)) {
                     
-                    final CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
-                    for (final CrowdListener cListener : this.plugin.getListeners()) {
+                    CreatureMoveEvent event = new CreatureMoveEvent(this, lLoc, cLoc, c);
+                    for (CrowdListener cListener : this.plugin.getListeners()) {
                         cListener.onCreatureMove(event);
                     }
                     

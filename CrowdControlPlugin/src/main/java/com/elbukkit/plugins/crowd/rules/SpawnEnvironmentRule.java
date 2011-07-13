@@ -18,29 +18,29 @@ public class SpawnEnvironmentRule extends Rule {
     
     private Environment spawnableEnvironment;
     
-    public SpawnEnvironmentRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    public SpawnEnvironmentRule(String name, CreatureType type, CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
     
     @Override
-    public boolean check(final Info info) {
+    public boolean check(Info info) {
         if (this.spawnableEnvironment.equals(info.getEnv())) {
             return true;
         }
         return false;
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.spawnableEnvironment = Environment.valueOf(config.getString(node + ".SpawnableEnvironment", "NORMAL").toUpperCase());
     }
     
     @Override
-    public void loadFromString(final String data) {
+    public void loadFromString(String data) {
         this.spawnableEnvironment = Environment.valueOf(data.toUpperCase());
     }
     
-    public void save(final Configuration config, final String node) {
+    public void save(Configuration config, String node) {
         config.setProperty(node + ".SpawnableEnvironment", this.spawnableEnvironment.toString());
     }
 }

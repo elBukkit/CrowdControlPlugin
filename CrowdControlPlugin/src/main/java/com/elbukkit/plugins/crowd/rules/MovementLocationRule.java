@@ -16,13 +16,13 @@ public class MovementLocationRule extends Rule {
     
     String elRegionName = "";
     
-    public MovementLocationRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    public MovementLocationRule(String name, CreatureType type, CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.MOVEMENT;
     }
     
     @Override
-    public boolean check(final Info info) {
+    public boolean check(Info info) {
         if (this.plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(this.elRegionName).contains(info.getLocation())) {
             return true;
         }
@@ -30,16 +30,16 @@ public class MovementLocationRule extends Rule {
         return false;
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.elRegionName = config.getString(node + ".elRegion", "");
     }
     
     @Override
-    public void loadFromString(final String data) {
+    public void loadFromString(String data) {
         this.elRegionName = data;
     }
     
-    public void save(final Configuration config, final String node) {
+    public void save(Configuration config, String node) {
         config.setProperty(node + ".elRegion", this.elRegionName);
     }
 }

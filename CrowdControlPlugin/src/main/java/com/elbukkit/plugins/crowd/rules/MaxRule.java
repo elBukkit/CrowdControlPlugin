@@ -16,13 +16,13 @@ public class MaxRule extends Rule {
     
     private int maxMobs;
     
-    public MaxRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
+    public MaxRule(String name, CreatureType type, CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
     
     @Override
-    public boolean check(final Info info) {
+    public boolean check(Info info) {
         
         if (this.plugin.getCreatureHandler(info.getLocation().getWorld()).getCreatureCount(this.type) < this.maxMobs) {
             return true;
@@ -31,16 +31,16 @@ public class MaxRule extends Rule {
         return false;
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.maxMobs = config.getInt(node + ".max", 0);
     }
     
     @Override
-    public void loadFromString(final String data) {
+    public void loadFromString(String data) {
         this.maxMobs = Integer.parseInt(data);
     }
     
-    public void save(final Configuration config, final String node) {
+    public void save(Configuration config, String node) {
         config.setProperty(node + ".max", this.maxMobs);
         
     }

@@ -21,7 +21,7 @@ public class CreatureMoveEvent extends EventObject implements Cancellable {
     private transient Location      newLocation;
     private transient Location      prevLocation;
     
-    public CreatureMoveEvent(final Object sender, final Location prevLocation, final Location newLocation, final CrowdCreature c) {
+    public CreatureMoveEvent(Object sender, Location prevLocation, Location newLocation, CrowdCreature c) {
         super(sender);
         
         this.prevLocation = prevLocation;
@@ -71,7 +71,7 @@ public class CreatureMoveEvent extends EventObject implements Cancellable {
      * @param cancel
      *            {@link Boolean}
      */
-    public void setCancelled(final boolean cancel) {
+    public void setCancelled(boolean cancel) {
         this.canceled = cancel;
     }
     
@@ -81,7 +81,7 @@ public class CreatureMoveEvent extends EventObject implements Cancellable {
      * @param newLocation
      *            {@link Location}
      */
-    public void setNewLocation(final Location newLocation) {
+    public void setNewLocation(Location newLocation) {
         this.newLocation = newLocation;
     }
     

@@ -23,7 +23,7 @@ public class CrowdCreature {
     private final Location        lastLocation;
     private volatile CreatureType type;
     
-    public CrowdCreature(final LivingEntity entity, final CreatureType type, final BaseInfo info) {
+    public CrowdCreature(LivingEntity entity, CreatureType type, BaseInfo info) {
         this.entity = entity;
         this.lastLocation = entity.getLocation().clone();
         this.type = type;
@@ -36,7 +36,7 @@ public class CrowdCreature {
     }
     
     @ThreadSafe
-    public void damage(final int amount) {
+    public void damage(int amount) {
         this.health -= amount;
         this.entity.damage(0); // Work around to make the entity turn red
     }
@@ -91,21 +91,21 @@ public class CrowdCreature {
     }
     
     @ThreadSafe
-    public void setBaseInfo(final BaseInfo baseInfo) {
+    public void setBaseInfo(BaseInfo baseInfo) {
         this.baseInfo = baseInfo;
     }
     
     @ThreadSafe
-    public void setHealth(final int health) {
+    public void setHealth(int health) {
         this.health = health;
     }
     
     @ThreadSafe
-    public void setIdleTicks(final int idleTicks) {
+    public void setIdleTicks(int idleTicks) {
         this.idleTicks = idleTicks;
     }
     
-    public void setLocation(final Location loc) {
+    public void setLocation(Location loc) {
         this.entity.teleport(loc);
     }
 }

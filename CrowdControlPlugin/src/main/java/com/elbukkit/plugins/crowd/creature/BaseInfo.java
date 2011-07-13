@@ -20,11 +20,11 @@ public class BaseInfo implements Saveable {
     private volatile double  spawnChance    = 0.7f;
     private volatile int     targetDistance = 24;
     
-    public BaseInfo(final Configuration config, final String node) {
+    public BaseInfo(Configuration config, String node) {
         this.load(config, node);
     }
     
-    public BaseInfo(final Nature creatureNatureDay, final Nature creatureNatureNight, final int collisionDamage, final int miscDamage, final int health) {
+    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;
         this.collisionDamage = collisionDamage;
@@ -33,7 +33,7 @@ public class BaseInfo implements Saveable {
     }
     
     // ESCA-JAVA0138:
-    public BaseInfo(final Nature creatureNatureDay, final Nature creatureNatureNight, final int collisionDamage, final int miscDamage, final int health, final int targetDistance, final boolean burnDay, final double spawnChance) {
+    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, double spawnChance) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;
         this.collisionDamage = collisionDamage;
@@ -89,7 +89,7 @@ public class BaseInfo implements Saveable {
         return this.enabled;
     }
     
-    public void load(final Configuration config, final String node) {
+    public void load(Configuration config, String node) {
         this.enabled = config.getBoolean(node + ".enabled", false);
         this.burnDay = config.getBoolean(node + ".burnDay", false);
         this.collisionDamage = config.getInt(node + ".damage.collision", 0);
@@ -101,7 +101,7 @@ public class BaseInfo implements Saveable {
         this.targetDistance = config.getInt(".targetDistance", 24);
     }
     
-    public void save(final Configuration config, final String node) {
+    public void save(Configuration config, String node) {
         config.setProperty(node + ".enabled", false);
         config.setProperty(node + ".burnDay", this.burnDay);
         config.setProperty(node + ".damage.collision", this.collisionDamage);
@@ -114,47 +114,47 @@ public class BaseInfo implements Saveable {
     }
     
     @ThreadSafe
-    public void setBurnDay(final boolean burnDay) {
+    public void setBurnDay(boolean burnDay) {
         this.burnDay = burnDay;
     }
     
     @ThreadSafe
-    public void setCollisionDamage(final int collisionDamage) {
+    public void setCollisionDamage(int collisionDamage) {
         this.collisionDamage = collisionDamage;
     }
     
     @ThreadSafe
-    public void setCreatureNatureDay(final Nature creatureNature) {
+    public void setCreatureNatureDay(Nature creatureNature) {
         this.creatureNatureDay = creatureNature;
     }
     
     @ThreadSafe
-    public void setCreatureNatureNight(final Nature creatureNatureNight) {
+    public void setCreatureNatureNight(Nature creatureNatureNight) {
         this.creatureNatureNight = creatureNatureNight;
     }
     
     @ThreadSafe
-    public void setEnabled(final boolean enabled) {
+    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
     
     @ThreadSafe
-    public void setHealth(final int health) {
+    public void setHealth(int health) {
         this.health = health;
     }
     
     @ThreadSafe
-    public void setMiscDamage(final int miscDamage) {
+    public void setMiscDamage(int miscDamage) {
         this.miscDamage = miscDamage;
     }
     
     @ThreadSafe
-    public void setSpawnChance(final float spawnChance) {
+    public void setSpawnChance(float spawnChance) {
         this.spawnChance = spawnChance;
     }
     
     @ThreadSafe
-    public void setTargetDistance(final int targetDistance) {
+    public void setTargetDistance(int targetDistance) {
         this.targetDistance = targetDistance;
     }
 }

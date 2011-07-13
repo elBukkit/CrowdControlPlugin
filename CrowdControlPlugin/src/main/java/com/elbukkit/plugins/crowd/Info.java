@@ -29,7 +29,7 @@ public class Info {
     private Entity                   target;
     private CreatureType             type;
     
-    public Info(final CrowdControlPlugin plugin) {
+    public Info(CrowdControlPlugin plugin) {
         this.plugin = plugin;
     }
     
@@ -61,44 +61,44 @@ public class Info {
         return this.type;
     }
     
-    public void setEntity(final LivingEntity entity) {
+    public void setEntity(LivingEntity entity) {
         this.entity = entity;
     }
     
-    public void setEnv(final Environment env) {
+    public void setEnv(Environment env) {
         this.env = env;
     }
     
-    public void setLocation(final Location location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
     
-    public void setReason(final TargetReason reason) {
+    public void setReason(TargetReason reason) {
         this.reason = reason;
     }
     
-    public void setTarget(final Entity target) {
+    public void setTarget(Entity target) {
         this.target = target;
     }
     
-    public void setType(final CreatureType type) {
+    public void setType(CreatureType type) {
         this.type = type;
     }
     
     public void spawn() {
-        final Random rand = new Random();
+        Random rand = new Random();
         
         this.entity = this.location.getWorld().spawnCreature(this.location, this.type);
         
         // Random slime size
         if (this.entity instanceof Slime) {
-            final Slime slime = (Slime) this.entity;
+            Slime slime = (Slime) this.entity;
             
             slime.setSize(rand.nextInt(4));
         } else if (this.entity instanceof Spider) {
             if (rand.nextFloat() < this.plugin.getSpiderRiderChance()) {
-                final LivingEntity rider = this.entity.getWorld().spawnCreature(this.entity.getLocation(), CreatureType.SKELETON);
-                final Spider spider = (Spider) this.entity;
+                LivingEntity rider = this.entity.getWorld().spawnCreature(this.entity.getLocation(), CreatureType.SKELETON);
+                Spider spider = (Spider) this.entity;
                 spider.setPassenger(rider);
             }
         }

@@ -32,11 +32,11 @@ public class CrowdCommand implements CommandExecutor {
     private final List<Class<? extends Rule>> pendingCommands = new ArrayList<Class<? extends Rule>>();
     private final CrowdControlPlugin          plugin;
     
-    public CrowdCommand(final CrowdControlPlugin plugin) {
+    public CrowdCommand(CrowdControlPlugin plugin) {
         this.plugin = plugin;
     }
     
-    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         
         if (!sender.isOp()) {
             sender.sendMessage("Must be OP of the server to use this command");
@@ -49,7 +49,7 @@ public class CrowdCommand implements CommandExecutor {
         
         if (args[0].equalsIgnoreCase("add")) {
             if (!(args.length < 2)) {
-                for (final Class<? extends Rule> c : this.plugin.getRules().keySet()) {
+                for (Class<? extends Rule> c : this.plugin.getRules().keySet()) {
                     if (args[1].equals(c.getSimpleName())) {
                         this.pendingCommands.add(c);
                         sender.sendMessage("Add added to pending with id: " + String.valueOf(this.pendingCommands.indexOf(c)));
@@ -61,7 +61,7 @@ public class CrowdCommand implements CommandExecutor {
                 sender.sendMessage("Usage: crowd add [Rule class]");
             }
         } else if (args[0].equalsIgnoreCase("listPending")) {
-            for (final Class<? extends Rule> c : this.pendingCommands) {
+            for (Class<? extends Rule> c : this.pendingCommands) {
                 sender.sendMessage(c.getSimpleName() + ", ID: " + String.valueOf(this.pendingCommands.indexOf(c)));
                 sender.sendMessage("[data] = " + this.plugin.getRules().get(c));
             }
@@ -71,14 +71,14 @@ public class CrowdCommand implements CommandExecutor {
                 if (this.pendingCommands.size() > 0) {
                     if (this.pendingCommands.size() >= Integer.valueOf(args[1])) {
                         
-                        final Class<? extends Rule> ruleClass = this.pendingCommands.get(Integer.valueOf(args[1]));
+                        Class<? extends Rule> ruleClass = this.pendingCommands.get(Integer.valueOf(args[1]));
                         Constructor<? extends Rule> c = null;
                         try {
                             c = ruleClass.getDeclaredConstructor(String.class, CreatureType.class, CrowdControlPlugin.class);
-                            final Object classObj = c.newInstance(args[2], CreatureType.valueOf(args[4]), this.plugin);
+                            Object classObj = c.newInstance(args[2], CreatureType.valueOf(args[4]), this.plugin);
                             if (classObj instanceof Rule) {
-                                final Rule r = (Rule) classObj;
-                                final StringBuffer buf = new StringBuffer();
+                                Rule r = (Rule) classObj;
+                                StringBuffer buf = new StringBuffer();
                                 for (int i = 5; i < args.length; i++) {
                                     buf.append(args[i]);
                                     buf.append(" ");
@@ -88,17 +88,17 @@ public class CrowdCommand implements CommandExecutor {
                                 sender.sendMessage("Rule added!");
                                 this.pendingCommands.remove(ruleClass);
                             }
-                        } catch (final SecurityException e) {
+                        } catch (SecurityException e) {
                             sender.sendMessage("Error: security exception!");
-                        } catch (final NoSuchMethodException e) {
+                        } catch (NoSuchMethodException e) {
                             sender.sendMessage("Error: no such method");
-                        } catch (final IllegalArgumentException e) {
+                        } catch (IllegalArgumentException e) {
                             sender.sendMessage("Error: argument exception! Are the arguments in the right order?");
-                        } catch (final InstantiationException e) {
+                        } catch (InstantiationException e) {
                             sender.sendMessage("Error: Failed to create a new rule instance!");
-                        } catch (final IllegalAccessException e) {
+                        } catch (IllegalAccessException e) {
                             sender.sendMessage("Error: Illegal Access!");
-                        } catch (final InvocationTargetException e) {
+                        } catch (InvocationTargetException e) {
                             sender.sendMessage("Error: Invocation Exception");
                         }
                     } else {
@@ -112,8 +112,8 @@ public class CrowdCommand implements CommandExecutor {
             }
         } else if (args[0].equalsIgnoreCase("listRules")) {
             if (this.plugin.getRules().size() > 0) {
-                final StringBuffer buf = new StringBuffer();
-                for (final Class<? extends Rule> r : this.plugin.getRules().keySet()) {
+                StringBuffer buf = new StringBuffer();
+                for (Class<? extends Rule> r : this.plugin.getRules().keySet()) {
                     if (buf.length() > 0) {
                         buf.append(", ");
                     }
@@ -126,11 +126,11 @@ public class CrowdCommand implements CommandExecutor {
             }
         } else if (args[0].equalsIgnoreCase("listEnabledRules")) {
             if (args.length > 1) {
-                final Set<Rule> rules = new HashSet<Rule>(this.plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).getRules());
-                final Iterator<Rule> i = rules.iterator();
+                Set<Rule> rules = new HashSet<Rule>(this.plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).getRules());
+                Iterator<Rule> i = rules.iterator();
                 
                 while (i.hasNext()) {
-                    final Rule r = i.next();
+                    Rule r = i.next();
                     sender.sendMessage(r.getCreatureType().toString() + ", " + r.getClass().getSimpleName() + ", Name: " + r.getName());
                 }
             } else {
@@ -140,7 +140,7 @@ public class CrowdCommand implements CommandExecutor {
             if (args.length > 3) {
                 try {
                     this.plugin.getRuleHandler(Bukkit.getServer().getWorld(args[1])).removeRule(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(args[2], new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(Class.forName("com.elbukkit.plugins.crowd.rules." + args[3]).asSubclass(Rule.class), CreatureType.valueOf(args[4].toUpperCase()))));
-                } catch (final ClassNotFoundException e) {
+                } catch (ClassNotFoundException e) {
                     sender.sendMessage("Unable to remove the rule!");
                 }
                 sender.sendMessage("Removed rule with name: " + args[2] + "!");
@@ -156,7 +156,7 @@ public class CrowdCommand implements CommandExecutor {
             }
         } else if (args[0].equalsIgnoreCase("nuke")) {
             if (args.length >= 3) {
-                final World w = Bukkit.getServer().getWorld(args[1]);
+                World w = Bukkit.getServer().getWorld(args[1]);
                 if (args[2].equalsIgnoreCase("all")) {
                     sender.sendMessage("Killing: " + String.valueOf(this.plugin.getCreatureHandler(w).getCreatureCount()));
                     this.plugin.getCreatureHandler(w).killAll();
@@ -171,7 +171,7 @@ public class CrowdCommand implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length >= 5) {
                 
-                final BaseInfo info = this.plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).getBaseInfo(CreatureType.valueOf(args[2].toUpperCase()));
+                BaseInfo info = this.plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).getBaseInfo(CreatureType.valueOf(args[2].toUpperCase()));
                 
                 if (info != null) {
                     if (args[3].equalsIgnoreCase("NatureDay")) {
