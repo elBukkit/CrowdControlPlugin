@@ -18,7 +18,7 @@ public interface Saveable {
      *            he base node
      */
     void load(Configuration config, String node);
-
+    
     /**
      * A method to save the data.
      * 

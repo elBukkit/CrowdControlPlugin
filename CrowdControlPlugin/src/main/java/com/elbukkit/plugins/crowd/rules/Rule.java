@@ -34,33 +34,33 @@ import com.elbukkit.plugins.crowd.utils.Saveable;
  * @version 1.0
  */
 public abstract class Rule implements Saveable {
-
-    protected String name = "default";
+    
+    protected String             name = "default";
     protected CrowdControlPlugin plugin;
-    protected Type ruleType;
-    protected CreatureType type;
-
-    protected Rule(String name, CreatureType type, CrowdControlPlugin plugin) {
+    protected Type               ruleType;
+    protected CreatureType       type;
+    
+    protected Rule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
         this.name = name;
         this.type = type;
         this.plugin = plugin;
     }
-
+    
     public abstract boolean check(Info info);
-
-    public boolean checkCreatureType(CreatureType cType) { // Check if the
-                                                           // creature is
-                                                           // effected by the
-                                                           // rule
+    
+    public boolean checkCreatureType(final CreatureType cType) { // Check if the
+        // creature is
+        // effected by the
+        // rule
         return this.type.equals(cType);
     }
-
+    
     // Classes used for saving data
     public CreatureType getCreatureType() {
-        return type;
+        return this.type;
     }
-
-    protected CreatureType getCreatureType(Entity entity) {
+    
+    protected CreatureType getCreatureType(final Entity entity) {
         if (entity instanceof LivingEntity) {
             if (entity instanceof Creature) {
                 // Animals
@@ -115,15 +115,15 @@ public abstract class Rule implements Saveable {
         }
         return null;
     }
-
+    
     public String getName() {
-        return name;
+        return this.name;
     }
-
+    
     public Type getType() {
-        return ruleType;
+        return this.ruleType;
     }
-
+    
     public abstract void loadFromString(String data);
-
+    
 }

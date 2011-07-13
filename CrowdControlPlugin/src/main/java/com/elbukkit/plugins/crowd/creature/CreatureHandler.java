@@ -49,168 +49,168 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  * @version 1.0
  */
 public class CreatureHandler implements Runnable {
-
-    private Map<CrowdCreature, Set<Player>> attacked;
-    private Map<CreatureType, BaseInfo> baseInfo;
-    private Configuration config;
-    private File configFile;
-    private Set<CrowdCreature> crowdCreatureSet;
-    private Set<CreatureType> enabledCreatures;
-    private CrowdControlPlugin plugin;
-    private Random rand = new Random();
-    private World world;
-
-    public CreatureHandler(World w, CrowdControlPlugin plugin) throws IOException {
+    
+    private final Map<CrowdCreature, Set<Player>> attacked;
+    private final Map<CreatureType, BaseInfo>     baseInfo;
+    private final Configuration                   config;
+    private final File                            configFile;
+    private final Set<CrowdCreature>              crowdCreatureSet;
+    private final Set<CreatureType>               enabledCreatures;
+    private final CrowdControlPlugin              plugin;
+    private final Random                          rand = new Random();
+    private final World                           world;
+    
+    public CreatureHandler(final World w, final CrowdControlPlugin plugin) throws IOException {
         this.world = w;
         this.plugin = plugin;
-        baseInfo = new ConcurrentHashMap<CreatureType, BaseInfo>();
-        crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature, Boolean>());
-        enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
-        attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
-
-        configFile = new File(plugin.getDataFolder() + File.separator + world.getName() + ".yml");
-        if (!configFile.exists()) {
-            File defaults = new File(plugin.getDataFolder() + File.separator + world.getEnvironment().toString() + ".yml");
+        this.baseInfo = new ConcurrentHashMap<CreatureType, BaseInfo>();
+        this.crowdCreatureSet = Collections.newSetFromMap(new ConcurrentHashMap<CrowdCreature, Boolean>());
+        this.enabledCreatures = Collections.newSetFromMap(new ConcurrentHashMap<CreatureType, Boolean>());
+        this.attacked = new ConcurrentHashMap<CrowdCreature, Set<Player>>();
+        
+        this.configFile = new File(plugin.getDataFolder() + File.separator + this.world.getName() + ".yml");
+        if (!this.configFile.exists()) {
+            final File defaults = new File(plugin.getDataFolder() + File.separator + this.world.getEnvironment().toString() + ".yml");
             if (defaults.exists()) {
-                FileUtils.copyFile(defaults, configFile);
+                FileUtils.copyFile(defaults, this.configFile);
             } else {
-                if(configFile.createNewFile()) {
+                if (this.configFile.createNewFile()) {
                     plugin.getLog().info("[CrowdControl] Created config for " + w.getName() + "!");
                 }
             }
         }
-        config = new Configuration(configFile);
-        config.load();
-
-        List<String> mobs = config.getKeys("mobs");
+        this.config = new Configuration(this.configFile);
+        this.config.load();
+        
+        final List<String> mobs = this.config.getKeys("mobs");
         if (mobs != null) {
-            for (String mob : mobs) {
-                BaseInfo info = new BaseInfo(config, "mobs." + mob);
-                baseInfo.put(CreatureType.valueOf(mob.toUpperCase()), info);
-
+            for (final String mob : mobs) {
+                final BaseInfo info = new BaseInfo(this.config, "mobs." + mob);
+                this.baseInfo.put(CreatureType.valueOf(mob.toUpperCase()), info);
+                
                 if (info.isEnabled()) {
-                    enabledCreatures.add(CreatureType.valueOf(mob.toUpperCase()));
+                    this.enabledCreatures.add(CreatureType.valueOf(mob.toUpperCase()));
                 }
             }
         } else {
-            generateDefaults();
+            this.generateDefaults();
         }
-
+        
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new SpawnHandler(plugin, this), 0, 10);
-
+        
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MovementHandler(plugin, this), 0, 15);
-
+        
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new DamageHandler(plugin, this), 0, 20);
-
+        
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-
+            
             public void run() {
-                Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
+                final Iterator<CrowdCreature> i = CreatureHandler.this.crowdCreatureSet.iterator();
                 while (i.hasNext()) {
-                    CrowdCreature creature = i.next();
-
+                    final CrowdCreature creature = i.next();
+                    
                     if (creature.getHealth() <= 0) {
-                        kill(creature);
+                        CreatureHandler.this.kill(creature);
                     }
-
+                    
                     if (creature.getEntity() != null) {
-                        if (creature.getEntity().isDead() || creature.getEntity().getHealth() <= 0) {
-                            removeAllAttacked(creature);
+                        if (creature.getEntity().isDead() || (creature.getEntity().getHealth() <= 0)) {
+                            CreatureHandler.this.removeAllAttacked(creature);
                             i.remove();
                         }
                     } else {
-                        removeAllAttacked(creature);
+                        CreatureHandler.this.removeAllAttacked(creature);
                         i.remove();
                     }
                 }
-
+                
             }
         }, 0, 5);
     }
-
+    
     @ThreadSafe
-    public void addAttacked(CrowdCreature c, Player p) {
+    public void addAttacked(final CrowdCreature c, final Player p) {
         Set<Player> pList = null;
         if (this.attacked.containsKey(c)) {
             pList = this.attacked.get(c);
         } else {
             pList = new HashSet<Player>();
-            attacked.put(c, pList);
+            this.attacked.put(c, pList);
         }
         pList.add(p);
     }
-
+    
     @ThreadSafe
-    public void addCrowdCreature(CrowdCreature c) {
+    public void addCrowdCreature(final CrowdCreature c) {
         this.crowdCreatureSet.add(c);
     }
-
+    
     @ThreadSafe
-    public void damageCreature(CrowdCreature c, int damage) {
+    public void damageCreature(final CrowdCreature c, final int damage) {
         int health = c.getHealth();
         health -= damage;
         c.setHealth(health);
-
+        
         if (health <= 0) {
-            removeAllAttacked(c);
+            this.removeAllAttacked(c);
             c.getEntity().damage(9999);
-            crowdCreatureSet.remove(c);
+            this.crowdCreatureSet.remove(c);
         }
     }
-
+    
     @ThreadSafe
-    public void despawn(CrowdCreature c) {
-        crowdCreatureSet.remove(c);
-        removeAllAttacked(c);
+    public void despawn(final CrowdCreature c) {
+        this.crowdCreatureSet.remove(c);
+        this.removeAllAttacked(c);
         c.getEntity().remove();
     }
-
+    
     public void generateDefaults() {
-        for (CreatureType t : CreatureType.values()) {
-            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
-
-            setInfo(info, t);
+        for (final CreatureType t : CreatureType.values()) {
+            final BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
+            
+            this.setInfo(info, t);
         }
     }
-
+    
     @ThreadSafe
-    public Set<Player> getAttackingPlayers(CrowdCreature c) {
+    public Set<Player> getAttackingPlayers(final CrowdCreature c) {
         return this.attacked.get(c);
     }
-
+    
     @ThreadSafe
-    public BaseInfo getBaseInfo(CreatureType type) {
-        if (baseInfo.containsKey(type)) {
-            return baseInfo.get(type);
+    public BaseInfo getBaseInfo(final CreatureType type) {
+        if (this.baseInfo.containsKey(type)) {
+            return this.baseInfo.get(type);
         } else {
-            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
-            setInfo(info, type);
+            final BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
+            this.setInfo(info, type);
             return info;
         }
     }
-
+    
     @ThreadSafe
     public int getCreatureCount() {
-        return crowdCreatureSet.size();
+        return this.crowdCreatureSet.size();
     }
-
+    
     @ThreadSafe
-    public int getCreatureCount(CreatureType type) {
-        Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-
+    public int getCreatureCount(final CreatureType type) {
+        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        
         int count = 0;
         while (i.hasNext()) {
-            CrowdCreature c = i.next();
+            final CrowdCreature c = i.next();
             if (c.getType() == type) {
                 count++;
             }
         }
-
+        
         return count;
     }
-
+    
     @ThreadSafe
-    public CreatureType getCreatureType(LivingEntity entity) {
+    public CreatureType getCreatureType(final LivingEntity entity) {
         if (entity instanceof Creature) {
             // Animals
             if (entity instanceof Animals) {
@@ -261,213 +261,213 @@ public class CreatureHandler implements Runnable {
         }
         return CreatureType.MONSTER;
     }
-
+    
     @ThreadSafe
-    public CrowdCreature getCrowdCreature(LivingEntity entity) {
-
+    public CrowdCreature getCrowdCreature(final LivingEntity entity) {
+        
         if (entity instanceof Player) {
             return null;
         }
-
-        Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-
+        
+        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        
         while (i.hasNext()) {
-            CrowdCreature c = i.next();
-
+            final CrowdCreature c = i.next();
+            
             if (c.getEntity() == entity) {
                 return c;
             }
         }
-
-        CreatureType cType = getCreatureType(entity);
-        BaseInfo info = getBaseInfo(cType);
-
+        
+        final CreatureType cType = this.getCreatureType(entity);
+        final BaseInfo info = this.getBaseInfo(cType);
+        
         if (info != null) {
-            CrowdCreature c = new CrowdCreature(entity, cType, info);
-            addCrowdCreature(c);
+            final CrowdCreature c = new CrowdCreature(entity, cType, info);
+            this.addCrowdCreature(c);
             return c;
         }
-
+        
         return null;
     }
-
+    
     @ThreadSafe
     public Set<CrowdCreature> getCrowdCreatures() {
-        return Collections.unmodifiableSet(crowdCreatureSet);
+        return Collections.unmodifiableSet(this.crowdCreatureSet);
     }
-
+    
     @ThreadSafe
     public Set<CreatureType> getEnabledCreatureTypes() {
-        return Collections.unmodifiableSet(enabledCreatures);
+        return Collections.unmodifiableSet(this.enabledCreatures);
     }
-
+    
     @ThreadSafe
     public World getWorld() {
-        return world;
+        return this.world;
     }
-
+    
     public boolean isDay() {
-        return world.getTime() < 12000 || world.getTime() == 24000;
+        return (this.world.getTime() < 12000) || (this.world.getTime() == 24000);
     }
-
+    
     @ThreadSafe
-    public void kill(CrowdCreature c) {
-        crowdCreatureSet.remove(c);
-        removeAllAttacked(c);
+    public void kill(final CrowdCreature c) {
+        this.crowdCreatureSet.remove(c);
+        this.removeAllAttacked(c);
         c.getEntity().damage(200);
     }
-
+    
     @ThreadSafe
     public void killAll() {
-        Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-
+        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        
         while (i.hasNext()) {
-            CrowdCreature c = i.next();
+            final CrowdCreature c = i.next();
             i.remove();
-            removeAllAttacked(c);
+            this.removeAllAttacked(c);
             c.getEntity().remove();
         }
     }
-
+    
     @ThreadSafe
-    public void killAll(CreatureType type) {
-        Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-
+    public void killAll(final CreatureType type) {
+        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        
         while (i.hasNext()) {
-            CrowdCreature c = i.next();
+            final CrowdCreature c = i.next();
             if (c.getType() == type) {
                 i.remove();
-                removeAllAttacked(c);
+                this.removeAllAttacked(c);
                 c.getEntity().remove();
             }
         }
     }
-
+    
     @ThreadSafe
-    public void removeAllAttacked(CrowdCreature c) {
+    public void removeAllAttacked(final CrowdCreature c) {
         this.attacked.remove(c);
     }
-
+    
     @ThreadSafe
-    public void removeAttacked(CrowdCreature c, Player p) {
+    public void removeAttacked(final CrowdCreature c, final Player p) {
         if (this.attacked.containsKey(c)) {
-            Set<Player> pList = this.attacked.get(c);
+            final Set<Player> pList = this.attacked.get(c);
             pList.remove(p);
             this.attacked.put(c, pList);
         }
     }
-
+    
     @ThreadSafe
-    public void removePlayer(Player p) {
-        Iterator<Entry<CrowdCreature, Set<Player>>> i = attacked.entrySet().iterator();
+    public void removePlayer(final Player p) {
+        final Iterator<Entry<CrowdCreature, Set<Player>>> i = this.attacked.entrySet().iterator();
         while (i.hasNext()) {
-            CrowdCreature c = i.next().getKey();
+            final CrowdCreature c = i.next().getKey();
             if (this.attacked.get(c) != null) {
                 this.attacked.get(c).remove(p);
             }
         }
     }
-
+    
     public void run() {
-
+        
         // Despawning code
-
-        Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-
+        
+        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        
         while (i.hasNext()) {
-
-            CrowdCreature c = i.next();
-            LivingEntity e = c.getEntity();
-
+            
+            final CrowdCreature c = i.next();
+            final LivingEntity e = c.getEntity();
+            
             boolean keep = false;
-
-            for (Player p : world.getPlayers()) {
-                double deltax = Math.abs(e.getLocation().getX() - p.getLocation().getX());
-                double deltay = Math.abs(e.getLocation().getY() - p.getLocation().getY());
-                double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
-                double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
-
-                if (distance < plugin.getDespawnDistance()) {
+            
+            for (final Player p : this.world.getPlayers()) {
+                final double deltax = Math.abs(e.getLocation().getX() - p.getLocation().getX());
+                final double deltay = Math.abs(e.getLocation().getY() - p.getLocation().getY());
+                final double deltaz = Math.abs(e.getLocation().getZ() - p.getLocation().getZ());
+                final double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+                
+                if (distance < this.plugin.getDespawnDistance()) {
                     if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with
                                                 // 1% chance to despawn
                         keep = true;
                     } else {
-                        if (rand.nextFloat() > plugin.getIdleDespawnChance()) { // Chance
-                                                                                // of
-                                                                                // despawning
-                                                                                // when
-                                                                                // idle
+                        if (this.rand.nextFloat() > this.plugin.getIdleDespawnChance()) { // Chance
+                            // of
+                            // despawning
+                            // when
+                            // idle
                             keep = true;
                         }
                     }
                 }
             }
-
+            
             if (!keep) {
-                despawn(c);
+                this.despawn(c);
                 return;
             }
-
+            
             if (e instanceof Creature) {
-
-                LivingEntity target = ((Creature) e).getTarget();
-
+                
+                final LivingEntity target = ((Creature) e).getTarget();
+                
                 if (target != null) {
-                    double deltax = Math.abs(e.getLocation().getX() - target.getLocation().getX());
-                    double deltay = Math.abs(e.getLocation().getY() - target.getLocation().getY());
-                    double deltaz = Math.abs(e.getLocation().getZ() - target.getLocation().getZ());
-                    double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
-
+                    final double deltax = Math.abs(e.getLocation().getX() - target.getLocation().getX());
+                    final double deltay = Math.abs(e.getLocation().getY() - target.getLocation().getY());
+                    final double deltaz = Math.abs(e.getLocation().getZ() - target.getLocation().getZ());
+                    final double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+                    
                     if (distance > c.getBaseInfo().getTargetDistance()) {
                         ((Creature) e).setTarget(null);
-
+                        
                         if (target instanceof Player) {
-                            removeAttacked(c, (Player) target);
+                            this.removeAttacked(c, (Player) target);
                         }
                     }
-
+                    
                 }
             }
-
+            
         }
-
-        if (world.getPlayers().size() <= 0) {
-            killAll();
+        
+        if (this.world.getPlayers().size() <= 0) {
+            this.killAll();
         }
     }
-
-    public void setInfo(BaseInfo info, CreatureType type) {
-        Iterator<CrowdCreature> i = crowdCreatureSet.iterator();
-
+    
+    public void setInfo(final BaseInfo info, final CreatureType type) {
+        final Iterator<CrowdCreature> i = this.crowdCreatureSet.iterator();
+        
         while (i.hasNext()) {
-            CrowdCreature creature = i.next();
-
+            final CrowdCreature creature = i.next();
+            
             if (creature.getType() == type) {
                 creature.setBaseInfo(info);
             }
         }
-
-        baseInfo.put(type, info);
-
-        config.load();
-        info.save(config, "mobs." + type.toString());
-        config.save();
-
+        
+        this.baseInfo.put(type, info);
+        
+        this.config.load();
+        info.save(this.config, "mobs." + type.toString());
+        this.config.save();
+        
         if (info.isEnabled()) {
-            enabledCreatures.add(type);
+            this.enabledCreatures.add(type);
         } else {
-            enabledCreatures.remove(type);
+            this.enabledCreatures.remove(type);
         }
     }
-
-    public boolean shouldBurn(Location loc) {
-        if (isDay()) {
+    
+    public boolean shouldBurn(final Location loc) {
+        if (this.isDay()) {
             if (loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ()).getLightLevel() >= 15) {
-                if (world.getHighestBlockYAt(loc) == loc.getBlockY()) {
+                if (this.world.getHighestBlockYAt(loc) == loc.getBlockY()) {
                     return true;
                 }
             }
-
+            
         }
         return false;
     }

@@ -14,43 +14,43 @@ import com.elbukkit.plugins.crowd.Info;
  * @version 1.0
  */
 public class TargetPlayerRule extends Rule {
-
-    private String player;
+    
+    private String  player;
     private boolean targetable;
-
-    public TargetPlayerRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+    
+    public TargetPlayerRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.TARGET;
     }
-
+    
     @Override
-    public boolean check(Info info) {
-        if (!targetable) {
+    public boolean check(final Info info) {
+        if (!this.targetable) {
             if (info.getTarget() instanceof Player) {
-                Player pTarget = (Player) info.getTarget();
-                if (player.equalsIgnoreCase(pTarget.getName())) {
+                final Player pTarget = (Player) info.getTarget();
+                if (this.player.equalsIgnoreCase(pTarget.getName())) {
                     return false;
                 }
             }
         }
         return true;
     }
-
-    public void load(Configuration config, String node) {
+    
+    public void load(final Configuration config, final String node) {
         this.targetable = config.getBoolean(node + ".targetable", true);
         this.player = config.getString(node + ".player", "Player");
     }
-
+    
     @Override
-    public void loadFromString(String data) {
-        String[] split = data.split(",");
+    public void loadFromString(final String data) {
+        final String[] split = data.split(" ");
         this.player = split[0];
         this.targetable = Boolean.valueOf(split[1]);
     }
-
-    public void save(Configuration config, String node) {
+    
+    public void save(final Configuration config, final String node) {
         config.setProperty(node + ".player", this.player);
-        config.setProperty(node + ".targetable", targetable);
+        config.setProperty(node + ".targetable", this.targetable);
     }
-
+    
 }

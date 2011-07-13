@@ -19,86 +19,86 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
  * @version 1.0
  */
 public class Info {
-
-    private LivingEntity entity;
-    private Environment env;
-    private int id;
-    private Location location;
-    private CrowdControlPlugin plugin;
-    private TargetReason reason;
-    private Entity target;
-    private CreatureType type;
-
-    public Info(CrowdControlPlugin plugin) {
+    
+    private LivingEntity             entity;
+    private Environment              env;
+    private int                      id;
+    private Location                 location;
+    private final CrowdControlPlugin plugin;
+    private TargetReason             reason;
+    private Entity                   target;
+    private CreatureType             type;
+    
+    public Info(final CrowdControlPlugin plugin) {
         this.plugin = plugin;
     }
-
+    
     public LivingEntity getEntity() {
-        return entity;
+        return this.entity;
     }
-
+    
     public Environment getEnv() {
-        return env;
+        return this.env;
     }
-
+    
     public int getID() {
         return this.id;
     }
-
+    
     public Location getLocation() {
-        return location;
+        return this.location;
     }
-
+    
     public TargetReason getReason() {
-        return reason;
+        return this.reason;
     }
-
+    
     public Entity getTarget() {
-        return target;
+        return this.target;
     }
-
+    
     public CreatureType getType() {
-        return type;
+        return this.type;
     }
-
-    public void setEntity(LivingEntity entity) {
+    
+    public void setEntity(final LivingEntity entity) {
         this.entity = entity;
     }
-
-    public void setEnv(Environment env) {
+    
+    public void setEnv(final Environment env) {
         this.env = env;
     }
-
-    public void setLocation(Location location) {
+    
+    public void setLocation(final Location location) {
         this.location = location;
     }
-
-    public void setReason(TargetReason reason) {
+    
+    public void setReason(final TargetReason reason) {
         this.reason = reason;
     }
-
-    public void setTarget(Entity target) {
+    
+    public void setTarget(final Entity target) {
         this.target = target;
     }
-
-    public void setType(CreatureType type) {
+    
+    public void setType(final CreatureType type) {
         this.type = type;
     }
-
+    
     public void spawn() {
-        Random rand = new Random();
-
-        this.entity = location.getWorld().spawnCreature(location, type);
-
+        final Random rand = new Random();
+        
+        this.entity = this.location.getWorld().spawnCreature(this.location, this.type);
+        
         // Random slime size
-        if (entity instanceof Slime) {
-            Slime slime = (Slime) entity;
-
+        if (this.entity instanceof Slime) {
+            final Slime slime = (Slime) this.entity;
+            
             slime.setSize(rand.nextInt(4));
-        } else if (entity instanceof Spider) {
-            if (rand.nextFloat() < plugin.getSpiderRiderChance()) {
-                LivingEntity rider = entity.getWorld().spawnCreature(entity.getLocation(), CreatureType.SKELETON);
-                Spider spider = (Spider) entity;
+        } else if (this.entity instanceof Spider) {
+            if (rand.nextFloat() < this.plugin.getSpiderRiderChance()) {
+                final LivingEntity rider = this.entity.getWorld().spawnCreature(this.entity.getLocation(), CreatureType.SKELETON);
+                final Spider spider = (Spider) this.entity;
                 spider.setPassenger(rider);
             }
         }

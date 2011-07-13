@@ -28,42 +28,42 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  * @version 1.0
  */
 public class RuleHandler {
-
-    private final Configuration config;
-    private final File configFile;
+    
+    private final Configuration                                                                      config;
+    private final File                                                                               configFile;
     private final ConcurrentHashMap<Entry<String, Entry<Class<? extends Rule>, CreatureType>>, Rule> rules;
-    private final World world;
-
+    private final World                                                                              world;
+    
     public RuleHandler(final World world, final CrowdControlPlugin plugin) throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, IOException {
         this.world = world;
-        rules = new ConcurrentHashMap<Entry<String, Entry<Class<? extends Rule>, CreatureType>>, Rule>();
-        configFile = new File(plugin.getDataFolder() + File.separator + world.getName() + ".yml");
-        if (!configFile.exists()) {
-            File defaults = new File(plugin.getDataFolder() + File.separator + world.getEnvironment().toString() + ".yml");
+        this.rules = new ConcurrentHashMap<Entry<String, Entry<Class<? extends Rule>, CreatureType>>, Rule>();
+        this.configFile = new File(plugin.getDataFolder() + File.separator + world.getName() + ".yml");
+        if (!this.configFile.exists()) {
+            final File defaults = new File(plugin.getDataFolder() + File.separator + world.getEnvironment().toString() + ".yml");
             if (defaults.exists()) {
-                FileUtils.copyFile(defaults, configFile);
+                FileUtils.copyFile(defaults, this.configFile);
             } else {
-                if(configFile.createNewFile()) {
+                if (this.configFile.createNewFile()) {
                     plugin.getLog().info("[CrowdControl] Created config for " + world.getName() + "!");
                 }
             }
         }
-        config = new Configuration(configFile);
-        config.load();
-        List<String> nodes = config.getKeys("rules");
+        this.config = new Configuration(this.configFile);
+        this.config.load();
+        final List<String> nodes = this.config.getKeys("rules");
         if (nodes != null) {
-            for (String node : nodes) {
-                List<String> classes = config.getKeys("rules." + node);
+            for (final String node : nodes) {
+                final List<String> classes = this.config.getKeys("rules." + node);
                 if (classes != null) {
-                    for (String ruleC : classes) {
+                    for (final String ruleC : classes) {
                         // ESCA-JAVA0179:
-                        List<String> rules = config.getKeys("rules." + node + "." + ruleC);
+                        final List<String> rules = this.config.getKeys("rules." + node + "." + ruleC);
                         if (rules != null) {
-                            for (String ruleName : rules) {
-                                Class<? extends Rule> ruleClass = Class.forName("com.elbukkit.plugins.crowd.rules." + ruleC).asSubclass(Rule.class);
-                                Constructor<? extends Rule> constructor = ruleClass.getDeclaredConstructor(String.class, CreatureType.class, CrowdControlPlugin.class);
-                                Rule rule = constructor.newInstance(ruleName, CreatureType.valueOf(node.toUpperCase()), plugin);
-                                rule.load(config, "rules." + rule.getCreatureType() + "." + ruleClass.getSimpleName() + "." + rule.getName());
+                            for (final String ruleName : rules) {
+                                final Class<? extends Rule> ruleClass = Class.forName("com.elbukkit.plugins.crowd.rules." + ruleC).asSubclass(Rule.class);
+                                final Constructor<? extends Rule> constructor = ruleClass.getDeclaredConstructor(String.class, CreatureType.class, CrowdControlPlugin.class);
+                                final Rule rule = constructor.newInstance(ruleName, CreatureType.valueOf(node.toUpperCase()), plugin);
+                                rule.load(this.config, "rules." + rule.getCreatureType() + "." + ruleClass.getSimpleName() + "." + rule.getName());
                                 this.rules.put(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(rule.getName(), new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(ruleClass, rule.getCreatureType())), rule);
                             }
                         }
@@ -72,39 +72,39 @@ public class RuleHandler {
             }
         }
     }
-
-    public void addRule(Rule rule) {
+    
+    public void addRule(final Rule rule) {
         this.rules.put(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(rule.getName(), new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(rule.getClass(), rule.getCreatureType())), rule);
-
-        config.load();
-        rule.save(config, "rules." + rule.getCreatureType() + "." + rule.getClass().getSimpleName() + "." + rule.getName());
-        config.save();
+        
+        this.config.load();
+        rule.save(this.config, "rules." + rule.getCreatureType() + "." + rule.getClass().getSimpleName() + "." + rule.getName());
+        this.config.save();
     }
-
+    
     public Collection<Rule> getRules() {
-        return Collections.unmodifiableCollection(rules.values());
+        return Collections.unmodifiableCollection(this.rules.values());
     }
-
+    
     public World getWorld() {
-        return world;
+        return this.world;
     }
-
+    
     @ThreadSafe
-    public boolean passesRules(Info info, Type type) {
-        Iterator<Rule> i = rules.values().iterator();
+    public boolean passesRules(final Info info, final Type type) {
+        final Iterator<Rule> i = this.rules.values().iterator();
         while (i.hasNext()) {
-            Rule rule = i.next();
+            final Rule rule = i.next();
             if (rule.getType().equals(type) && rule.checkCreatureType(info.getType()) && !rule.check(info)) {
                 return false;
             }
         }
         return true;
     }
-
-    public void removeRule(Entry<String, Entry<Class<? extends Rule>, CreatureType>> entry) {
-        Rule rule = rules.get(entry);
-        config.removeProperty("rules." + rule.getCreatureType() + "." + entry.getValue().getKey().getSimpleName() + "." + rule.getName());
-        rules.remove(entry);
-        config.save();
+    
+    public void removeRule(final Entry<String, Entry<Class<? extends Rule>, CreatureType>> entry) {
+        final Rule rule = this.rules.get(entry);
+        this.config.removeProperty("rules." + rule.getCreatureType() + "." + entry.getValue().getKey().getSimpleName() + "." + rule.getName());
+        this.rules.remove(entry);
+        this.config.save();
     }
 }

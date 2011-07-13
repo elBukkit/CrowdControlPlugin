@@ -13,52 +13,52 @@ import org.bukkit.event.Cancellable;
  * @version 1.0
  */
 public class CreatureSpawnEvent extends EventObject implements Cancellable {
-    private static final long serialVersionUID = -5031301408889128018L;
-    private boolean canceled = false;
+    private static final long  serialVersionUID = -5031301408889128018L;
+    private boolean            canceled         = false;
     private transient Location location;
-    private CreatureType type;
-
-    public CreatureSpawnEvent(Object sender, Location location, CreatureType type) {
+    private final CreatureType type;
+    
+    public CreatureSpawnEvent(final Object sender, final Location location, final CreatureType type) {
         super(sender);
-
+        
         this.location = location;
         this.type = type;
     }
-
+    
     /**
      * Gets the location of the spawning
      * 
      * @return {@link Location}
      */
     public Location getLocation() {
-        return location;
+        return this.location;
     }
-
+    
     /**
      * Gets the type of creature that wants to spawn
      * 
      * @return {@link CreatureType}
      */
     public CreatureType getType() {
-        return type;
+        return this.type;
     }
-
+    
     /**
      * Gets if the event was canceled
      * 
      * @return {@link Boolean}
      */
     public boolean isCancelled() {
-        return canceled;
+        return this.canceled;
     }
-
+    
     /**
      * Sets if the event is canceled
      * 
      * @param cancel
      *            {@link Boolean}
      */
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.canceled = cancel;
     }
 }

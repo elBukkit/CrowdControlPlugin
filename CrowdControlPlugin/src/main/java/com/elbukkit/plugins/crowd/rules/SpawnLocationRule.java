@@ -13,33 +13,38 @@ import com.elbukkit.plugins.crowd.Info;
  * @version 1.0
  */
 public class SpawnLocationRule extends Rule {
-
-    String elRegionName = "";
-
-    public SpawnLocationRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+    
+    private String  elRegionName = "";
+    private boolean spawnable    = true;
+    
+    public SpawnLocationRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.SPAWN;
     }
-
+    
     @Override
-    public boolean check(Info info) {
-        if (plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(elRegionName).contains(info.getLocation())) {
-            return true;
+    public boolean check(final Info info) {
+        
+        if (this.plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(this.elRegionName).contains(info.getLocation())) {
+            return this.spawnable;
         }
-
-        return false;
+        
+        return !this.spawnable;
     }
-
-    public void load(Configuration config, String node) {
+    
+    public void load(final Configuration config, final String node) {
         this.elRegionName = config.getString(node + ".elRegion", "");
     }
-
+    
     @Override
-    public void loadFromString(String data) {
-        elRegionName = data;
+    public void loadFromString(final String data) {
+        final String[] split = data.split(" ");
+        this.elRegionName = split[0];
+        this.spawnable = Boolean.parseBoolean(split[1]);
     }
-
-    public void save(Configuration config, String node) {
+    
+    public void save(final Configuration config, final String node) {
         config.setProperty(node + ".elRegion", this.elRegionName);
+        config.setProperty(node + ".spawnable", this.spawnable);
     }
 }

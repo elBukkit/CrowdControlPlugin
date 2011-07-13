@@ -16,11 +16,11 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.METHOD)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface ThreadSafe {
-
+    
     String author() default "Andrew Querol(winsock)";
-
+    
     String shortDescription() default "Indicates that the method is thread safe";
-
+    
     String version() default "1.0";
-
+    
 }

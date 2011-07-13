@@ -13,33 +13,33 @@ import com.elbukkit.plugins.crowd.Info;
  * @version 1.0
  */
 public class MovementLocationRule extends Rule {
-
+    
     String elRegionName = "";
-
-    public MovementLocationRule(String name, CreatureType type, CrowdControlPlugin plugin) {
+    
+    public MovementLocationRule(final String name, final CreatureType type, final CrowdControlPlugin plugin) {
         super(name, type, plugin);
         this.ruleType = Type.MOVEMENT;
     }
-
+    
     @Override
-    public boolean check(Info info) {
-        if (plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(elRegionName).contains(info.getLocation())) {
+    public boolean check(final Info info) {
+        if (this.plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(this.elRegionName).contains(info.getLocation())) {
             return true;
         }
-
+        
         return false;
     }
-
-    public void load(Configuration config, String node) {
+    
+    public void load(final Configuration config, final String node) {
         this.elRegionName = config.getString(node + ".elRegion", "");
     }
-
+    
     @Override
-    public void loadFromString(String data) {
+    public void loadFromString(final String data) {
         this.elRegionName = data;
     }
-
-    public void save(Configuration config, String node) {
+    
+    public void save(final Configuration config, final String node) {
         config.setProperty(node + ".elRegion", this.elRegionName);
     }
 }

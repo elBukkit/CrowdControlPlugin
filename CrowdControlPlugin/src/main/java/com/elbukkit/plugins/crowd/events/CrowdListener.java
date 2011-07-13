@@ -10,8 +10,8 @@ import java.util.EventListener;
  */
 public interface CrowdListener extends EventListener {
     void onCreatureAttack(CreatureAttackEvent event);
-
+    
     void onCreatureMove(CreatureMoveEvent event);
-
+    
     void onCreatureSpawn(CreatureSpawnEvent event);
 }

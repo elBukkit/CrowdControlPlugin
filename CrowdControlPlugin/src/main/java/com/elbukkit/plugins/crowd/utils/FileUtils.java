@@ -29,10 +29,10 @@ public class FileUtils {
         }
         return false;
     }
-
+    
     private static boolean copyFilesRecusively(final File toCopy, final File destDir) {
         assert destDir.isDirectory();
-
+        
         if (!toCopy.isDirectory()) {
             return FileUtils.copyFile(toCopy, new File(destDir, toCopy.getName()));
         } else {
@@ -48,16 +48,16 @@ public class FileUtils {
         }
         return true;
     }
-
+    
     public static boolean copyJarResourcesRecursively(final File destDir, final JarURLConnection jarConnection) throws IOException {
-
+        
         final JarFile jarFile = jarConnection.getJarFile();
-
+        
         for (final Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
             final JarEntry entry = e.nextElement();
             if (entry.getName().startsWith(jarConnection.getEntryName())) {
-                final String filename = removeStart(entry.getName(), jarConnection.getEntryName());
-
+                final String filename = FileUtils.removeStart(entry.getName(), jarConnection.getEntryName());
+                
                 final File f = new File(destDir, filename);
                 if (!entry.isDirectory()) {
                     final InputStream entryInputStream = jarFile.getInputStream(entry);
@@ -74,7 +74,7 @@ public class FileUtils {
         }
         return true;
     }
-
+    
     public static boolean copyResourcesRecursively( //
     final URL originUrl, final File destination) {
         try {
@@ -89,7 +89,7 @@ public class FileUtils {
         }
         return false;
     }
-
+    
     private static boolean copyStream(final InputStream is, final File f) {
         try {
             return FileUtils.copyStream(is, new FileOutputStream(f));
@@ -98,11 +98,11 @@ public class FileUtils {
         }
         return false;
     }
-
+    
     private static boolean copyStream(final InputStream is, final OutputStream os) {
         try {
             final byte[] buf = new byte[1024];
-
+            
             int len = 0;
             while ((len = is.read(buf)) > 0) {
                 os.write(buf, 0, len);
@@ -115,12 +115,12 @@ public class FileUtils {
         }
         return false;
     }
-
+    
     private static boolean ensureDirectoryExists(final File f) {
         return f.exists() || f.mkdir();
     }
-
-    private static String removeStart(String str, String remove) {
+    
+    private static String removeStart(final String str, final String remove) {
         if (str.isEmpty() || remove.isEmpty()) {
             return str;
         }

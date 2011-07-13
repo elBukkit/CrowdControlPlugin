@@ -14,75 +14,75 @@ import com.elbukkit.plugins.crowd.creature.CrowdCreature;
  * @version 1.0
  */
 public class CreatureMoveEvent extends EventObject implements Cancellable {
-
-    private static final long serialVersionUID = -3743383825319521868L;
-    private boolean canceled = false;
+    
+    private static final long       serialVersionUID = -3743383825319521868L;
+    private boolean                 canceled         = false;
     private transient CrowdCreature creature;
-    private transient Location newLocation;
-    private transient Location prevLocation;
-
-    public CreatureMoveEvent(Object sender, Location prevLocation, Location newLocation, CrowdCreature c) {
+    private transient Location      newLocation;
+    private transient Location      prevLocation;
+    
+    public CreatureMoveEvent(final Object sender, final Location prevLocation, final Location newLocation, final CrowdCreature c) {
         super(sender);
-
+        
         this.prevLocation = prevLocation;
         this.newLocation = newLocation;
         this.creature = c;
     }
-
+    
     /**
      * Gets the crowd creature that moved
      * 
      * @return {@link CrowdCreature}
      */
     public CrowdCreature getCreature() {
-        return creature;
+        return this.creature;
     }
-
+    
     /**
      * Gets the location the crowd creature wants to move to
      * 
      * @return {@link CrowdCreature}
      */
     public Location getNewLocation() {
-        return newLocation;
+        return this.newLocation;
     }
-
+    
     /**
      * Gets the location that the crowd creature was previously at.
      * 
      * @return {@link Location}
      */
     public Location getPrevLocation() {
-        return prevLocation;
+        return this.prevLocation;
     }
-
+    
     /**
      * Gets if the event was canceled
      * 
      * @return {@link Boolean}
      */
     public boolean isCancelled() {
-        return canceled;
+        return this.canceled;
     }
-
+    
     /**
      * Sets if the event is canceled
      * 
      * @param cancel
      *            {@link Boolean}
      */
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(final boolean cancel) {
         this.canceled = cancel;
     }
-
+    
     /**
      * Sets a new location to move the crowd creature to
      * 
      * @param newLocation
      *            {@link Location}
      */
-    public void setNewLocation(Location newLocation) {
+    public void setNewLocation(final Location newLocation) {
         this.newLocation = newLocation;
     }
-
+    
 }

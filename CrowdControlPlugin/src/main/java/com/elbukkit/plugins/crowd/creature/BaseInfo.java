@@ -12,28 +12,28 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  * @version 1.0
  */
 public class BaseInfo implements Saveable {
-    private volatile boolean burnDay = false;
-    private volatile int collisionDamage, miscDamage;
-    private volatile Nature creatureNatureDay, creatureNatureNight;
-    private volatile boolean enabled = false;
-    private volatile int health;
-    private volatile double spawnChance = 0.7f;
-    private volatile int targetDistance = 24;
-
-    public BaseInfo(Configuration config, String node) {
+    private volatile boolean burnDay        = false;
+    private volatile int     collisionDamage, miscDamage;
+    private volatile Nature  creatureNatureDay, creatureNatureNight;
+    private volatile boolean enabled        = false;
+    private volatile int     health;
+    private volatile double  spawnChance    = 0.7f;
+    private volatile int     targetDistance = 24;
+    
+    public BaseInfo(final Configuration config, final String node) {
         this.load(config, node);
     }
-
-    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health) {
+    
+    public BaseInfo(final Nature creatureNatureDay, final Nature creatureNatureNight, final int collisionDamage, final int miscDamage, final int health) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;
         this.collisionDamage = collisionDamage;
         this.miscDamage = miscDamage;
         this.health = health;
     }
-
+    
     // ESCA-JAVA0138:
-    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, double spawnChance) {
+    public BaseInfo(final Nature creatureNatureDay, final Nature creatureNatureNight, final int collisionDamage, final int miscDamage, final int health, final int targetDistance, final boolean burnDay, final double spawnChance) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;
         this.collisionDamage = collisionDamage;
@@ -43,53 +43,53 @@ public class BaseInfo implements Saveable {
         this.burnDay = burnDay;
         this.spawnChance = spawnChance;
     }
-
+    
     @ThreadSafe
     public int getCollisionDamage() {
-        return collisionDamage;
+        return this.collisionDamage;
     }
-
+    
     @ThreadSafe
     public Nature getCreatureNatureDay() {
-        return creatureNatureDay;
+        return this.creatureNatureDay;
     }
-
+    
     @ThreadSafe
     public Nature getCreatureNatureNight() {
-        return creatureNatureNight;
+        return this.creatureNatureNight;
     }
-
+    
     @ThreadSafe
     public int getHealth() {
-        return health;
+        return this.health;
     }
-
+    
     @ThreadSafe
     public int getMiscDamage() {
-        return miscDamage;
+        return this.miscDamage;
     }
-
+    
     @ThreadSafe
     public double getSpawnChance() {
-        return spawnChance;
+        return this.spawnChance;
     }
-
+    
     @ThreadSafe
     public int getTargetDistance() {
-        return targetDistance;
+        return this.targetDistance;
     }
-
+    
     @ThreadSafe
     public boolean isBurnDay() {
-        return burnDay;
+        return this.burnDay;
     }
-
+    
     @ThreadSafe
     public boolean isEnabled() {
-        return enabled;
+        return this.enabled;
     }
-
-    public void load(Configuration config, String node) {
+    
+    public void load(final Configuration config, final String node) {
         this.enabled = config.getBoolean(node + ".enabled", false);
         this.burnDay = config.getBoolean(node + ".burnDay", false);
         this.collisionDamage = config.getInt(node + ".damage.collision", 0);
@@ -100,61 +100,61 @@ public class BaseInfo implements Saveable {
         this.spawnChance = config.getDouble(".spawnChance", 0.7D);
         this.targetDistance = config.getInt(".targetDistance", 24);
     }
-
-    public void save(Configuration config, String node) {
+    
+    public void save(final Configuration config, final String node) {
         config.setProperty(node + ".enabled", false);
-        config.setProperty(node + ".burnDay", burnDay);
-        config.setProperty(node + ".damage.collision", collisionDamage);
-        config.setProperty(node + ".damage.misc", miscDamage);
-        config.setProperty(node + ".nature.day", creatureNatureDay.toString());
-        config.setProperty(node + ".nature.night", creatureNatureNight.toString());
-        config.setProperty(node + ".health", health);
-        config.setProperty(node + ".spawnChance", spawnChance);
-        config.setProperty(node + ".targetDistance", targetDistance);
+        config.setProperty(node + ".burnDay", this.burnDay);
+        config.setProperty(node + ".damage.collision", this.collisionDamage);
+        config.setProperty(node + ".damage.misc", this.miscDamage);
+        config.setProperty(node + ".nature.day", this.creatureNatureDay.toString());
+        config.setProperty(node + ".nature.night", this.creatureNatureNight.toString());
+        config.setProperty(node + ".health", this.health);
+        config.setProperty(node + ".spawnChance", this.spawnChance);
+        config.setProperty(node + ".targetDistance", this.targetDistance);
     }
-
+    
     @ThreadSafe
-    public void setBurnDay(boolean burnDay) {
+    public void setBurnDay(final boolean burnDay) {
         this.burnDay = burnDay;
     }
-
+    
     @ThreadSafe
-    public void setCollisionDamage(int collisionDamage) {
+    public void setCollisionDamage(final int collisionDamage) {
         this.collisionDamage = collisionDamage;
     }
-
+    
     @ThreadSafe
-    public void setCreatureNatureDay(Nature creatureNature) {
+    public void setCreatureNatureDay(final Nature creatureNature) {
         this.creatureNatureDay = creatureNature;
     }
-
+    
     @ThreadSafe
-    public void setCreatureNatureNight(Nature creatureNatureNight) {
+    public void setCreatureNatureNight(final Nature creatureNatureNight) {
         this.creatureNatureNight = creatureNatureNight;
     }
-
+    
     @ThreadSafe
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
-
+    
     @ThreadSafe
-    public void setHealth(int health) {
+    public void setHealth(final int health) {
         this.health = health;
     }
-
+    
     @ThreadSafe
-    public void setMiscDamage(int miscDamage) {
+    public void setMiscDamage(final int miscDamage) {
         this.miscDamage = miscDamage;
     }
-
+    
     @ThreadSafe
-    public void setSpawnChance(float spawnChance) {
+    public void setSpawnChance(final float spawnChance) {
         this.spawnChance = spawnChance;
     }
-
+    
     @ThreadSafe
-    public void setTargetDistance(int targetDistance) {
+    public void setTargetDistance(final int targetDistance) {
         this.targetDistance = targetDistance;
     }
 }
