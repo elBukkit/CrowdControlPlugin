@@ -160,6 +160,14 @@ public class CreatureHandler implements Runnable {
     
     @ThreadSafe
     public void despawn(CrowdCreature c) {
+    
+        if (c.getEntity() instanceof Wolf) {
+            Wolf w = (Wolf)c.getEntity();
+            if (w.isTamed()) {
+                return;
+            }
+        }
+        
         this.crowdCreatureSet.remove(c);
         this.removeAllAttacked(c);
         c.getEntity().remove();
