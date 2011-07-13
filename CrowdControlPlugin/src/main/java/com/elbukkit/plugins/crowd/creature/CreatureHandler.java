@@ -396,15 +396,10 @@ public class CreatureHandler implements Runnable {
                 double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
                 
                 if (distance < this.plugin.getDespawnDistance()) {
-                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with
-                                                // 1% chance to despawn
+                    if (c.getIdleTicks() < 5) { // 5 Seconds of idle time with 1% chance to despawn
                         keep = true;
                     } else {
-                        if (this.rand.nextFloat() > this.plugin.getIdleDespawnChance()) { // Chance
-                            // of
-                            // despawning
-                            // when
-                            // idle
+                        if (this.rand.nextFloat() > this.plugin.getIdleDespawnChance()) { // Chance of despawning when idle
                             keep = true;
                         }
                     }
@@ -437,10 +432,6 @@ public class CreatureHandler implements Runnable {
                 }
             }
             
-        }
-        
-        if (this.world.getPlayers().size() <= 0) {
-            this.killAll();
         }
     }
     
