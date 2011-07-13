@@ -122,9 +122,9 @@ public class CreatureHandler implements Runnable {
     
     @ThreadSafe
     public void despawn(CrowdCreature c) {
-    
+        
         if (c.getEntity() instanceof Wolf) {
-            Wolf w = (Wolf)c.getEntity();
+            Wolf w = (Wolf) c.getEntity();
             if (w.isTamed()) {
                 return;
             }
@@ -137,7 +137,7 @@ public class CreatureHandler implements Runnable {
     
     public void generateDefaults() {
         for (CreatureType t : CreatureType.values()) {
-            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
+            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 10);
             
             this.setInfo(info, t);
         }
@@ -153,7 +153,7 @@ public class CreatureHandler implements Runnable {
         if (this.baseInfo.containsKey(type)) {
             return this.baseInfo.get(type);
         } else {
-            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 0, 10);
+            BaseInfo info = new BaseInfo(Nature.PASSIVE, Nature.PASSIVE, 0, 10);
             this.setInfo(info, type);
             return info;
         }

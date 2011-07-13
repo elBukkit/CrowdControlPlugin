@@ -1,17 +1,22 @@
 package com.elbukkit.plugins.crowd;
 
+import net.minecraft.server.EntityHuman;
+
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Ghast;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -19,7 +24,6 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import com.elbukkit.plugins.crowd.creature.BaseInfo;
 import com.elbukkit.plugins.crowd.creature.CreatureHandler;
 import com.elbukkit.plugins.crowd.creature.CrowdCreature;
-import com.elbukkit.plugins.crowd.rules.Type;
 
 /**
  * Entity listener, calls necessary rule checks
@@ -80,95 +84,39 @@ public class CrowdEntityListener extends EntityListener {
             return;
         }
         
+        if (event.getDamage() <= 0) {
+            return;
+        }
+        
         CreatureHandler cHandler = this.plugin.getCreatureHandler(event.getEntity().getWorld());
         
         if (cHandler == null) {
             return;
         }
         
-        if (event.getEntity() instanceof Player) {
-            Player attacked = (Player) event.getEntity();
+        if (event.getEntity() instanceof LivingEntity) {
+            
+            LivingEntity attacked = (LivingEntity) event.getEntity();
             
             if (event instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent eventDmg = (EntityDamageByEntityEvent) event;
-                CrowdCreature attacker = null;
+                Entity entity = ((EntityDamageByEntityEvent) event).getDamager();
                 
-                if (eventDmg instanceof EntityDamageByProjectileEvent) {
-                    EntityDamageByProjectileEvent eventP = (EntityDamageByProjectileEvent) eventDmg;
-                    Projectile p = eventP.getProjectile();
+                if (entity instanceof LivingEntity) {
+                    LivingEntity attacker = (LivingEntity) entity;
                     
-                    attacker = cHandler.getCrowdCreature(p.getShooter());
-                    if (attacker != null) {
-                        event.setDamage(attacker.getBaseInfo().getMiscDamage());
-                    }
+                    CrowdCreature crowdAttacker = cHandler.getCrowdCreature(attacker);
                     
-                } else {
-                    if (!(eventDmg.getDamager() instanceof Player) && (eventDmg.getDamager() instanceof LivingEntity)) {
-                        LivingEntity e = (LivingEntity) eventDmg.getDamager();
-                        attacker = cHandler.getCrowdCreature(e);
-                        if (attacker != null) {
-                            if (eventDmg.getCause() != DamageCause.CONTACT || eventDmg.getCause() != DamageCause.ENTITY_ATTACK) {
-                                event.setDamage(attacker.getBaseInfo().getMiscDamage());
-                            } else {
-                                event.setDamage(attacker.getCollisionDamage());
-                            }
-                        }
+                    if (crowdAttacker != null) {
+                        event.setDamage(crowdAttacker.getDamage());
                     }
                 }
             }
             
-            if (attacked.isDead() || ((attacked.getHealth() - event.getDamage()) <= 0)) {
-                this.plugin.getCreatureHandler(event.getEntity().getWorld()).removePlayer(attacked);
-            }
-            
-        } else if (!(event.getEntity() instanceof Player) && (event.getEntity() instanceof LivingEntity)) {
-            LivingEntity e = (LivingEntity) event.getEntity();
-            CrowdCreature attacked = cHandler.getCrowdCreature(e);
-            
-            if (attacked == null) {
-                return;
-            }
-            
-            if (event instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent eventDmg = (EntityDamageByEntityEvent) event;
-                
-                if (eventDmg instanceof EntityDamageByProjectileEvent) {
-                    EntityDamageByProjectileEvent eventP = (EntityDamageByProjectileEvent) eventDmg;
-                    Projectile p = eventP.getProjectile();
-                    
-                    CrowdCreature attacker = cHandler.getCrowdCreature(p.getShooter());
-                    if (attacker != null) {
-                        event.setDamage(attacker.getBaseInfo().getMiscDamage());
-                    }
-                } else {
-                    if (eventDmg.getDamager() instanceof Player) {
-                        Player attacker = (Player) eventDmg.getDamager();
-                        event.setDamage(event.getDamage());
-                        cHandler.addAttacked(attacked, attacker);
-                    } else if (eventDmg.getDamager() instanceof LivingEntity) {
-                        LivingEntity ea = (LivingEntity) eventDmg.getDamager();
-                        CrowdCreature attacker = cHandler.getCrowdCreature(ea);
-                        
-                        if (attacker != null) {
-                            if (eventDmg.getCause() != DamageCause.CONTACT || eventDmg.getCause() != DamageCause.ENTITY_ATTACK) {
-                                event.setDamage(attacker.getBaseInfo().getMiscDamage());
-                            } else {
-                                event.setDamage(attacker.getCollisionDamage());
-                            }
-                        }
-                    } else {
-                        event.setDamage(event.getDamage());
-                    }
-                }
-            } else {
-                event.setDamage(event.getDamage());
-            }
-            
-            if (this.plugin.getSlimeSplit() && (attacked.getEntity().getHealth() <= 0 || attacked.getEntity().isDead()) && (attacked.getType() == CreatureType.SLIME)) {
-                Slime slime = (Slime) attacked.getEntity();
+            if (this.plugin.getSlimeSplit() && ((attacked.getHealth() <= 0) || attacked.isDead()) && (attacked instanceof Slime)) {
+                Slime slime = (Slime) attacked;
                 
                 if (slime.getSize() > 1) {
-                    this.plugin.getCreatureHandler(slime.getWorld()).despawn(attacked);
+                    this.plugin.getCreatureHandler(slime.getWorld()).despawn(cHandler.getCrowdCreature(slime));
                     for (int i = 0; i < 4; i++) {
                         Slime slimeSmall = (Slime) slime.getWorld().spawnCreature(slime.getLocation(), CreatureType.SLIME);
                         slimeSmall.setSize(slime.getSize() - 1);
@@ -193,9 +141,6 @@ public class CrowdEntityListener extends EntityListener {
             info.setReason(event.getReason());
             
             if (event.getReason() == TargetReason.CUSTOM) {
-                if (!this.plugin.getRuleHandler(event.getEntity().getWorld()).passesRules(info, Type.TARGET)) {
-                    event.setCancelled(true);
-                }
                 return;
             }
             
@@ -210,7 +155,23 @@ public class CrowdEntityListener extends EntityListener {
                 }
             }
             
-            event.setCancelled(true); // Targeting handled in the Damage Handler
+            if (event.getEntity() instanceof Ghast) {
+                
+                CrowdCreature c = cHandler.getCrowdCreature(info.getEntity());
+                
+                EntityHuman human = ((CraftWorld) cHandler.getWorld()).getHandle().findNearbyPlayer(((CraftEntity) event.getEntity()).getHandle(), c.getBaseInfo().getTargetDistance());
+                
+                if (human == null) {
+                    return;
+                }
+                
+                CraftEntity e = CraftEntity.getEntity((CraftServer) Bukkit.getServer(), human);
+                
+                event.setTarget(e);
+                
+            } else {
+                event.setCancelled(true); // Targeting handled in the Damage Handler
+            }
         }
     }
 }

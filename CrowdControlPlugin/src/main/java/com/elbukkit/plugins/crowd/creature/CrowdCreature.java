@@ -29,7 +29,7 @@ public class CrowdCreature {
         this.baseInfo = info;
         
         if (entity instanceof Slime) {
-            entity.setHealth(info.getHealth() * 3 ^ (((Slime) entity).getSize() - 1)); // Geometric series 3^n n = size - 1. Close enough to the default minecraft values
+            entity.setHealth((info.getHealth() * 3) ^ (((Slime) entity).getSize() - 1)); // Geometric series 3^n n = size - 1. Close enough to the default minecraft values
         } else {
             entity.setHealth(info.getHealth());
         }
@@ -41,17 +41,17 @@ public class CrowdCreature {
     }
     
     @ThreadSafe
-    public int getCollisionDamage() {
-        if (this.entity instanceof Slime) {
-            return this.baseInfo.getCollisionDamage() * (2 * (((Slime) this.entity).getSize() - 1)); // Arithmetic series 2n, n = size -1
-        }
-        
-        return this.baseInfo.getCollisionDamage();
+    public Location getCurrentLocation() {
+        return this.entity.getLocation().clone();
     }
     
     @ThreadSafe
-    public Location getCurrentLocation() {
-        return this.entity.getLocation().clone();
+    public int getDamage() {
+        if (this.entity instanceof Slime) {
+            return this.baseInfo.getDamage() * (2 * (((Slime) this.entity).getSize() - 1)); // Arithmetic series 2n, n = size -1
+        }
+        
+        return this.baseInfo.getDamage();
     }
     
     @ThreadSafe

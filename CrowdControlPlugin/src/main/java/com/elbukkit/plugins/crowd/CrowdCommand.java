@@ -178,10 +178,8 @@ public class CrowdCommand implements CommandExecutor {
                         info.setCreatureNatureDay(Nature.valueOf(args[4].toUpperCase()));
                     } else if (args[3].equalsIgnoreCase("NatureNight")) {
                         info.setCreatureNatureNight(Nature.valueOf(args[4].toUpperCase()));
-                    } else if (args[3].equalsIgnoreCase("CollisionDamage")) {
-                        info.setCollisionDamage(Integer.parseInt(args[4]));
-                    } else if (args[3].equalsIgnoreCase("MiscDamage")) {
-                        info.setMiscDamage(Integer.parseInt(args[4]));
+                    } else if (args[3].equalsIgnoreCase("damage")) {
+                        info.setDamage(Integer.parseInt(args[4]));
                     } else if (args[3].equalsIgnoreCase("Health")) {
                         info.setHealth(Integer.parseInt(args[4]));
                     } else if (args[3].equalsIgnoreCase("TargetDistance")) {

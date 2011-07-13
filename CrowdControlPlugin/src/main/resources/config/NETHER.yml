@@ -1,36 +1,30 @@
 mobs:
     CHICKEN:
-        enabled: true
+        enabled: false
         nature:
             night: PASSIVE
             day: PASSIVE
-        damage:
-            collision: 0
-            misc: 0
+        damage: 0
         targetDistance: 24
         health: 4
         burnDay: false
         spawnChance: 0.7
     COW:
-        enabled: true
+        enabled: false
         nature:
             night: PASSIVE
             day: PASSIVE
-        damage:
-            collision: 0
-            misc: 0
+        damage: 0
         targetDistance: 24
         health: 10
         burnDay: false
         spawnChance: 0.7
     CREEPER:
-        enabled: true
+        enabled: false
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
-        damage:
-            collision: 0
-            misc: 20
+        damage: 20
         targetDistance: 24
         health: 10
         burnDay: false
@@ -40,21 +34,17 @@ mobs:
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
-        damage:
-            collision: 0
-            misc: 5
+        damage: 5
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.7
+        spawnChance: 0.1
     GIANT:
-        enabled: true
+        enabled: false
         nature:
             night: PASSIVE
             day: PASSIVE
-        damage:
-            collision: 0
-            misc: 0
+        damage: 0
         targetDistance: 24
         health: 10
         burnDay: false
@@ -64,21 +54,17 @@ mobs:
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
-        damage:
-            collision: 1
-            misc: 0
+        damage: 1
         targetDistance: 24
         health: 20
         burnDay: false
         spawnChance: 0.1
     PIG:
-        enabled: true
+        enabled: false
         nature:
             night: PASSIVE
             day: PASSIVE
-        damage:
-            collision: 0
-            misc: 0
+        damage: 0
         targetDistance: 24
         health: 10
         burnDay: false
@@ -88,93 +74,77 @@ mobs:
         nature:
             night: NEUTRAL
             day: NEUTRAL
-        damage:
-            collision: 5
-            misc: 0
+        damage: 5
         targetDistance: 24
         health: 20
         burnDay: false
         spawnChance: 0.7
     SHEEP:
-        enabled: true
+        enabled: false
         nature:
             night: PASSIVE
             day: PASSIVE
-        damage:
-            collision: 0
-            misc: 0
+        damage: 0
         targetDistance: 24
         health: 10
         burnDay: false
         spawnChance: 0.7
     SKELETON:
-        enabled: true
+        enabled: false
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
-        damage:
-            collision: 0
-            misc: 4
+        damage: 4
         targetDistance: 24
         health: 10
         burnDay: true
         spawnChance: 0.7
     SLIME:
-        enabled: true
+        enabled: false
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
-        damage:
-            collision: 4 # Slime damage is the arithmetic series 2n, n = slimeSize - 1
-            misc: 0
+        damage: 4 # Slime damage is the arithmetic series 2n, n = slimeSize - 1
         targetDistance: 24
         health: 1 # Slime health is the geometric series 3^n. n = slimeSize - 1
         burnDay: false
         spawnChance: 0.05
     SPIDER:
-        enabled: true
+        enabled: false
         nature:
             night: AGGRESSIVE
             day: NEUTRAL
-        damage:
-            collision: 5
-            misc: 0
+        damage: 5
         targetDistance: 24
         health: 10
         burnDay: false
         spawnChance: 0.7
     SQUID:
-        enabled: true
+        enabled: false
         nature:
             night: PASSIVE
             day: PASSIVE
-        damage:
-            collision: 0
-            misc: 0
+        damage: 0
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.5
+        spawnChance: 0.1
     ZOMBIE:
-        enabled: true
+        enabled: false
         nature:
             night: AGGRESSIVE
             day: AGGRESSIVE
-        damage:
-            collision: 5
-            misc: 0
+        damage: 5
         targetDistance: 24
         health: 10
         burnDay: true
         spawnChance: 0.7
     WOLF:
-        enabled: true
+        enabled: false
         nature:
             night: PASSIVE
             day: PASSIVE
-        damage:
-            collision: 5
-            misc: 0
+        damage: 5
         targetDistance: 24
         health: 20
         burnDay: false

@@ -13,8 +13,8 @@ import com.elbukkit.plugins.crowd.utils.ThreadSafe;
  */
 public class BaseInfo implements Saveable {
     private volatile boolean burnDay        = false;
-    private volatile int     collisionDamage, miscDamage;
     private volatile Nature  creatureNatureDay, creatureNatureNight;
+    private volatile int     damage;
     private volatile boolean enabled        = false;
     private volatile int     health;
     private volatile double  spawnChance    = 0.7f;
@@ -24,29 +24,22 @@ public class BaseInfo implements Saveable {
         this.load(config, node);
     }
     
-    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health) {
+    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int damage, int health) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;
-        this.collisionDamage = collisionDamage;
-        this.miscDamage = miscDamage;
+        this.damage = damage;
         this.health = health;
     }
     
     // ESCA-JAVA0138:
-    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int collisionDamage, int miscDamage, int health, int targetDistance, boolean burnDay, double spawnChance) {
+    public BaseInfo(Nature creatureNatureDay, Nature creatureNatureNight, int damage, int health, int targetDistance, boolean burnDay, double spawnChance) {
         this.creatureNatureDay = creatureNatureDay;
         this.creatureNatureNight = creatureNatureNight;
-        this.collisionDamage = collisionDamage;
-        this.miscDamage = miscDamage;
+        this.damage = damage;
         this.health = health;
         this.targetDistance = targetDistance;
         this.burnDay = burnDay;
         this.spawnChance = spawnChance;
-    }
-    
-    @ThreadSafe
-    public int getCollisionDamage() {
-        return this.collisionDamage;
     }
     
     @ThreadSafe
@@ -60,13 +53,13 @@ public class BaseInfo implements Saveable {
     }
     
     @ThreadSafe
-    public int getHealth() {
-        return this.health;
+    public int getDamage() {
+        return this.damage;
     }
     
     @ThreadSafe
-    public int getMiscDamage() {
-        return this.miscDamage;
+    public int getHealth() {
+        return this.health;
     }
     
     @ThreadSafe
@@ -92,8 +85,7 @@ public class BaseInfo implements Saveable {
     public void load(Configuration config, String node) {
         this.enabled = config.getBoolean(node + ".enabled", false);
         this.burnDay = config.getBoolean(node + ".burnDay", false);
-        this.collisionDamage = config.getInt(node + ".damage.collision", 0);
-        this.miscDamage = config.getInt(node + ".damage.misc", 0);
+        this.damage = config.getInt(node + ".damage", 0);
         this.creatureNatureDay = Nature.valueOf(config.getString(node + ".nature.day", "PASSIVE").toUpperCase());
         this.creatureNatureNight = Nature.valueOf(config.getString(node + ".nature.night", "PASSIVE").toUpperCase());
         this.health = config.getInt(node + ".health", 10);
@@ -104,8 +96,7 @@ public class BaseInfo implements Saveable {
     public void save(Configuration config, String node) {
         config.setProperty(node + ".enabled", false);
         config.setProperty(node + ".burnDay", this.burnDay);
-        config.setProperty(node + ".damage.collision", this.collisionDamage);
-        config.setProperty(node + ".damage.misc", this.miscDamage);
+        config.setProperty(node + ".damage", this.damage);
         config.setProperty(node + ".nature.day", this.creatureNatureDay.toString());
         config.setProperty(node + ".nature.night", this.creatureNatureNight.toString());
         config.setProperty(node + ".health", this.health);
@@ -119,11 +110,6 @@ public class BaseInfo implements Saveable {
     }
     
     @ThreadSafe
-    public void setCollisionDamage(int collisionDamage) {
-        this.collisionDamage = collisionDamage;
-    }
-    
-    @ThreadSafe
     public void setCreatureNatureDay(Nature creatureNature) {
         this.creatureNatureDay = creatureNature;
     }
@@ -134,6 +120,11 @@ public class BaseInfo implements Saveable {
     }
     
     @ThreadSafe
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+    
+    @ThreadSafe
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -141,11 +132,6 @@ public class BaseInfo implements Saveable {
     @ThreadSafe
     public void setHealth(int health) {
         this.health = health;
-    }
-    
-    @ThreadSafe
-    public void setMiscDamage(int miscDamage) {
-        this.miscDamage = miscDamage;
     }
     
     @ThreadSafe

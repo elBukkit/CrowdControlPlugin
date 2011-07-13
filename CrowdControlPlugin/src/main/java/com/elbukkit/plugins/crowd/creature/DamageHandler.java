@@ -45,7 +45,7 @@ public class DamageHandler implements Runnable {
             
             CrowdCreature crowdCreature = i.next();
             LivingEntity entity = crowdCreature.getEntity();
-            EntityHuman human = ((CraftWorld)handler.getWorld()).getHandle().findNearbyPlayer(((CraftEntity)entity).getHandle(), crowdCreature.getBaseInfo().getTargetDistance());
+            EntityHuman human = ((CraftWorld) this.handler.getWorld()).getHandle().findNearbyPlayer(((CraftEntity) entity).getHandle(), crowdCreature.getBaseInfo().getTargetDistance());
             
             if (crowdCreature.getType() == CreatureType.WOLF) {
                 Wolf wolf = (Wolf) entity;
@@ -60,19 +60,19 @@ public class DamageHandler implements Runnable {
                 continue;
             }
             
-            CraftEntity e = CraftEntity.getEntity((CraftServer)Bukkit.getServer(), human);
+            CraftEntity e = CraftEntity.getEntity((CraftServer) Bukkit.getServer(), human);
             
             if (!(e instanceof CraftPlayer)) {
                 continue;
             }
             
-            Player p = (CraftPlayer)e;
+            Player p = (CraftPlayer) e;
             
             double deltax = Math.abs(entity.getLocation().getX() - p.getLocation().getX());
             double deltay = Math.abs(entity.getLocation().getY() - p.getLocation().getY());
             double deltaz = Math.abs(entity.getLocation().getZ() - p.getLocation().getZ());
             double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
-
+            
             // Living entities cannot have targets?
             if (entity instanceof Creature) {
                 Creature c = (Creature) entity;
