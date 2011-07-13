@@ -11,6 +11,7 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
@@ -110,7 +111,11 @@ public class CrowdEntityListener extends EntityListener {
                         LivingEntity e = (LivingEntity) eventDmg.getDamager();
                         attacker = cHandler.getCrowdCreature(e);
                         if (attacker != null) {
-                            event.setDamage(attacker.getCollisionDamage());
+                            if (event.getCause() != DamageCause.ENTITY_ATTACK) {
+                                event.setDamage(attacker.getBaseInfo().getMiscDamage());
+                            } else {
+                                event.setDamage(attacker.getCollisionDamage());
+                            }
                         }
                     }
                 }
