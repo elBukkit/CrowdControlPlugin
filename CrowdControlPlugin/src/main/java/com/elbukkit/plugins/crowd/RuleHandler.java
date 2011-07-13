@@ -43,7 +43,9 @@ public class RuleHandler {
             if (defaults.exists()) {
                 FileUtils.copyFile(defaults, configFile);
             } else {
-                configFile.createNewFile();
+                if(configFile.createNewFile()) {
+                    plugin.getLog().info("[CrowdControl] Created config for " + world.getName() + "!");
+                }
             }
         }
         config = new Configuration(configFile);

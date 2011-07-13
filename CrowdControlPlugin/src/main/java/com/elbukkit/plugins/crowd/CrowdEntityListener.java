@@ -102,7 +102,7 @@ public class CrowdEntityListener extends EntityListener {
                     }
 
                 } else {
-                    if (!(eventDmg.getDamager() instanceof Player)) {
+                    if (!(eventDmg.getDamager() instanceof Player) && (eventDmg.getDamager() instanceof LivingEntity)) {
                         LivingEntity e = (LivingEntity) eventDmg.getDamager();
                         attacker = cHandler.getCrowdCreature(e);
                         if (attacker != null) {

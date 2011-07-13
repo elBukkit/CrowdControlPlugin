@@ -327,7 +327,10 @@ public class CrowdControlPlugin extends JavaPlugin {
         ruleCommands.put(SpawnTimeRule.class, "[Day or Night]");
 
         if (!this.getDataFolder().exists()) {
-            this.getDataFolder().mkdirs(); // Create dir if it doesn't exist
+            if (this.getDataFolder().mkdirs()) {
+                // Create dir if it doesn't exist
+                log.info("[CrowdControl] Made data folder!");
+            }
             FileUtils.copyResourcesRecursively(super.getClass().getResource("/config"), getDataFolder());
         }
 

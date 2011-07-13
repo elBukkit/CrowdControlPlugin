@@ -78,11 +78,12 @@ public class CrowdCommand implements CommandExecutor {
                             Object classObj = c.newInstance(args[2], CreatureType.valueOf(args[4]), plugin);
                             if (classObj instanceof Rule) {
                                 Rule r = (Rule) classObj;
-                                String load = "";
+                                StringBuffer buf = new StringBuffer();
                                 for (int i = 5; i < args.length; i++) {
-                                    load += args[i] + " ";
+                                    buf.append(args[i]);
+                                    buf.append(" ");
                                 }
-                                r.loadFromString(load);
+                                r.loadFromString(buf.toString());
                                 plugin.getRuleHandler(Bukkit.getServer().getWorld(args[3])).addRule(r);
                                 sender.sendMessage("Rule added!");
                                 pendingCommands.remove(ruleClass);
@@ -111,15 +112,15 @@ public class CrowdCommand implements CommandExecutor {
             }
         } else if (args[0].equalsIgnoreCase("listRules")) {
             if (plugin.getRules().size() > 0) {
-                String ruleList = "";
+                StringBuffer buf = new StringBuffer();
                 for (Class<? extends Rule> r : plugin.getRules().keySet()) {
-                    if (ruleList.length() > 0) {
-                        ruleList += ", ";
+                    if (buf.length() > 0) {
+                        buf.append(", ");
                     }
-                    ruleList += r.getSimpleName();
+                    buf.append(r.getSimpleName());
                 }
                 sender.sendMessage("Available Rules:");
-                sender.sendMessage(ruleList);
+                sender.sendMessage(buf.toString());
             } else {
                 sender.sendMessage("No rules!"); // should never happen :)
             }

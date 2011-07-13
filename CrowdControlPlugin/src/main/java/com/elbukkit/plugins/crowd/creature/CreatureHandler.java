@@ -74,7 +74,9 @@ public class CreatureHandler implements Runnable {
             if (defaults.exists()) {
                 FileUtils.copyFile(defaults, configFile);
             } else {
-                configFile.createNewFile();
+                if(configFile.createNewFile()) {
+                    plugin.getLog().info("[CrowdControl] Created config for " + w.getName() + "!");
+                }
             }
         }
         config = new Configuration(configFile);
