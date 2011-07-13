@@ -30,7 +30,7 @@ mobs:
             day: AGGRESSIVE
         damage:
             collision: 0
-            misc: 0
+            misc: 20
         targetDistance: 24
         health: 10
         burnDay: false
@@ -137,7 +137,7 @@ mobs:
             night: AGGRESSIVE
             day: NEUTRAL
         damage:
-            collision: 0
+            collision: 5
             misc: 0
         targetDistance: 24
         health: 10
@@ -184,7 +184,7 @@ rules:
     CHICKEN:
     COW:
     CREEPER:
-    GHAST
+    GHAST:
         SpawnMaterialRule:
             Default:
                 material:

@@ -101,31 +101,6 @@ public class CreatureHandler implements Runnable {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new MovementHandler(plugin, this), 0, 15);
         
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new DamageHandler(plugin, this), 0, 20);
-        
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            
-            public void run() {
-                Iterator<CrowdCreature> i = CreatureHandler.this.crowdCreatureSet.iterator();
-                while (i.hasNext()) {
-                    CrowdCreature creature = i.next();
-                    
-                    if (creature.getHealth() <= 0) {
-                        CreatureHandler.this.kill(creature);
-                    }
-                    
-                    if (creature.getEntity() != null) {
-                        if (creature.getEntity().isDead() || (creature.getEntity().getHealth() <= 0)) {
-                            CreatureHandler.this.removeAllAttacked(creature);
-                            i.remove();
-                        }
-                    } else {
-                        CreatureHandler.this.removeAllAttacked(creature);
-                        i.remove();
-                    }
-                }
-                
-            }
-        }, 0, 5);
     }
     
     @ThreadSafe
@@ -143,19 +118,6 @@ public class CreatureHandler implements Runnable {
     @ThreadSafe
     public void addCrowdCreature(CrowdCreature c) {
         this.crowdCreatureSet.add(c);
-    }
-    
-    @ThreadSafe
-    public void damageCreature(CrowdCreature c, int damage) {
-        int health = c.getHealth();
-        health -= damage;
-        c.setHealth(health);
-        
-        if (health <= 0) {
-            this.removeAllAttacked(c);
-            c.getEntity().damage(9999);
-            this.crowdCreatureSet.remove(c);
-        }
     }
     
     @ThreadSafe
@@ -316,13 +278,6 @@ public class CreatureHandler implements Runnable {
     
     public boolean isDay() {
         return (this.world.getTime() < 12000) || (this.world.getTime() == 24000);
-    }
-    
-    @ThreadSafe
-    public void kill(CrowdCreature c) {
-        this.crowdCreatureSet.remove(c);
-        this.removeAllAttacked(c);
-        c.getEntity().damage(200);
     }
     
     @ThreadSafe

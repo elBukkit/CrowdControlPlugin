@@ -1,14 +1,17 @@
 package com.elbukkit.plugins.crowd.creature;
 
-import java.util.AbstractMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
+import net.minecraft.server.EntityHuman;
+
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
@@ -42,8 +45,7 @@ public class DamageHandler implements Runnable {
             
             CrowdCreature crowdCreature = i.next();
             LivingEntity entity = crowdCreature.getEntity();
-            List<Entity> near = entity.getNearbyEntities(crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance(), crowdCreature.getBaseInfo().getTargetDistance());
-            Entry<Double, Player> player = null;
+            EntityHuman human = ((CraftWorld)handler.getWorld()).getHandle().findNearbyPlayer(((CraftEntity)entity).getHandle(), crowdCreature.getBaseInfo().getTargetDistance());
             
             if (crowdCreature.getType() == CreatureType.WOLF) {
                 Wolf wolf = (Wolf) entity;
@@ -54,37 +56,23 @@ public class DamageHandler implements Runnable {
                 }
             }
             
-            if ((near == null) || (near.size() <= 0)) {
+            if (human == null) {
                 continue;
             }
             
-            for (Entity e : near) {
-                
-                if (e instanceof Player) {
-                    
-                    double deltax = Math.abs(entity.getLocation().getX() - e.getLocation().getX());
-                    double deltay = Math.abs(entity.getLocation().getY() - e.getLocation().getY());
-                    double deltaz = Math.abs(entity.getLocation().getZ() - e.getLocation().getZ());
-                    double distance = (deltax * deltax) + (deltay * deltay) + (deltaz * deltaz);
-                    
-                    if (player != null) {
-                        if (player.getKey() > distance) {
-                            player = new AbstractMap.SimpleEntry<Double, Player>(distance, (Player) e);
-                        }
-                    } else {
-                        player = new AbstractMap.SimpleEntry<Double, Player>(distance, (Player) e);
-                    }
-                }
-                
-            }
+            CraftEntity e = CraftEntity.getEntity((CraftServer)Bukkit.getServer(), human);
             
-            if (player == null) {
+            if (!(e instanceof CraftPlayer)) {
                 continue;
             }
             
-            double distance = Math.sqrt(player.getKey());
-            Player p = player.getValue();
+            Player p = (CraftPlayer)e;
             
+            double deltax = Math.abs(entity.getLocation().getX() - p.getLocation().getX());
+            double deltay = Math.abs(entity.getLocation().getY() - p.getLocation().getY());
+            double deltaz = Math.abs(entity.getLocation().getZ() - p.getLocation().getZ());
+            double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
+
             // Living entities cannot have targets?
             if (entity instanceof Creature) {
                 Creature c = (Creature) entity;
@@ -129,43 +117,6 @@ public class DamageHandler implements Runnable {
                                         if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
                                             c.setTarget(p);
                                         }
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-            
-            // Collision damage system
-            if (distance <= 1.8) {
-                
-                if (p.getNoDamageTicks() > 0) {
-                    
-                    if (this.plugin.getCreatureHandler(p.getWorld()).isDay()) {
-                        switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
-                            case AGGRESSIVE:
-                                p.damage(crowdCreature.getCollisionDamage());
-                                break;
-                            case NEUTRAL:
-                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
-                                if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
-                                    if (attackingPlayers.contains(p)) {
-                                        p.damage(crowdCreature.getCollisionDamage(), entity);
-                                    }
-                                }
-                                break;
-                        }
-                    } else {
-                        switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
-                            case AGGRESSIVE:
-                                p.damage(crowdCreature.getCollisionDamage());
-                                break;
-                            case NEUTRAL:
-                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(p.getWorld()).getAttackingPlayers(crowdCreature);
-                                if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
-                                    if (attackingPlayers.contains(p)) {
-                                        p.damage(crowdCreature.getCollisionDamage(), entity);
                                     }
                                 }
                                 break;

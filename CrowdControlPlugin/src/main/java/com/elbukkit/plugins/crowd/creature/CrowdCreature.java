@@ -18,7 +18,6 @@ public class CrowdCreature {
     
     private BaseInfo              baseInfo;
     private LivingEntity          entity    = null;
-    private volatile int          health;
     private volatile int          idleTicks = 0;
     private final Location        lastLocation;
     private volatile CreatureType type;
@@ -28,17 +27,12 @@ public class CrowdCreature {
         this.lastLocation = entity.getLocation().clone();
         this.type = type;
         this.baseInfo = info;
-        this.health = info.getHealth();
         
         if (entity instanceof Slime) {
-            this.health *= 3 ^ (((Slime) entity).getSize() - 1); // Geometric series 3^n n = size - 1. Close enough to the default minecraft values
+            entity.setHealth(info.getHealth() * 3 ^ (((Slime) entity).getSize() - 1)); // Geometric series 3^n n = size - 1. Close enough to the default minecraft values
+        } else {
+            entity.setHealth(info.getHealth());
         }
-    }
-    
-    @ThreadSafe
-    public void damage(int amount) {
-        this.health -= amount;
-        this.entity.damage(0); // Work around to make the entity turn red
     }
     
     @ThreadSafe
@@ -67,11 +61,6 @@ public class CrowdCreature {
     }
     
     @ThreadSafe
-    public int getHealth() {
-        return this.health;
-    }
-    
-    @ThreadSafe
     public int getIdleTicks() {
         return this.idleTicks;
     }
@@ -86,18 +75,8 @@ public class CrowdCreature {
     }
     
     @ThreadSafe
-    public boolean isDead() {
-        return (this.health <= 0) || this.entity.isDead();
-    }
-    
-    @ThreadSafe
     public void setBaseInfo(BaseInfo baseInfo) {
         this.baseInfo = baseInfo;
-    }
-    
-    @ThreadSafe
-    public void setHealth(int health) {
-        this.health = health;
     }
     
     @ThreadSafe

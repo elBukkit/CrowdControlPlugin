@@ -89,10 +89,6 @@ public class CrowdEntityListener extends EntityListener {
         if (event.getEntity() instanceof Player) {
             Player attacked = (Player) event.getEntity();
             
-            if (attacked.getNoDamageTicks() > 0) {
-                return;
-            }
-            
             if (event instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent eventDmg = (EntityDamageByEntityEvent) event;
                 CrowdCreature attacker = null;
@@ -111,7 +107,7 @@ public class CrowdEntityListener extends EntityListener {
                         LivingEntity e = (LivingEntity) eventDmg.getDamager();
                         attacker = cHandler.getCrowdCreature(e);
                         if (attacker != null) {
-                            if (event.getCause() != DamageCause.ENTITY_ATTACK) {
+                            if (eventDmg.getCause() != DamageCause.CONTACT || eventDmg.getCause() != DamageCause.ENTITY_ATTACK) {
                                 event.setDamage(attacker.getBaseInfo().getMiscDamage());
                             } else {
                                 event.setDamage(attacker.getCollisionDamage());
@@ -125,7 +121,7 @@ public class CrowdEntityListener extends EntityListener {
                 this.plugin.getCreatureHandler(event.getEntity().getWorld()).removePlayer(attacked);
             }
             
-        } else if (event.getEntity() instanceof LivingEntity) {
+        } else if (!(event.getEntity() instanceof Player) && (event.getEntity() instanceof LivingEntity)) {
             LivingEntity e = (LivingEntity) event.getEntity();
             CrowdCreature attacked = cHandler.getCrowdCreature(e);
             
@@ -142,29 +138,33 @@ public class CrowdEntityListener extends EntityListener {
                     
                     CrowdCreature attacker = cHandler.getCrowdCreature(p.getShooter());
                     if (attacker != null) {
-                        attacked.damage(attacker.getBaseInfo().getMiscDamage());
+                        event.setDamage(attacker.getBaseInfo().getMiscDamage());
                     }
                 } else {
                     if (eventDmg.getDamager() instanceof Player) {
                         Player attacker = (Player) eventDmg.getDamager();
-                        attacked.damage(event.getDamage());
+                        event.setDamage(event.getDamage());
                         cHandler.addAttacked(attacked, attacker);
                     } else if (eventDmg.getDamager() instanceof LivingEntity) {
                         LivingEntity ea = (LivingEntity) eventDmg.getDamager();
                         CrowdCreature attacker = cHandler.getCrowdCreature(ea);
                         
                         if (attacker != null) {
-                            attacked.damage(attacker.getCollisionDamage());
+                            if (eventDmg.getCause() != DamageCause.CONTACT || eventDmg.getCause() != DamageCause.ENTITY_ATTACK) {
+                                event.setDamage(attacker.getBaseInfo().getMiscDamage());
+                            } else {
+                                event.setDamage(attacker.getCollisionDamage());
+                            }
                         }
                     } else {
-                        attacked.damage(event.getDamage());
+                        event.setDamage(event.getDamage());
                     }
                 }
             } else {
-                attacked.damage(event.getDamage());
+                event.setDamage(event.getDamage());
             }
             
-            if (this.plugin.getSlimeSplit() && attacked.isDead() && (attacked.getType() == CreatureType.SLIME)) {
+            if (this.plugin.getSlimeSplit() && (attacked.getEntity().getHealth() <= 0 || attacked.getEntity().isDead()) && (attacked.getType() == CreatureType.SLIME)) {
                 Slime slime = (Slime) attacked.getEntity();
                 
                 if (slime.getSize() > 1) {
@@ -175,8 +175,6 @@ public class CrowdEntityListener extends EntityListener {
                     }
                 }
             }
-            
-            event.setCancelled(true);
         }
     }
     
