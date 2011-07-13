@@ -46,7 +46,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.7
+        spawnChance: 0.1
     GIANT:
         enabled: false
         nature:
@@ -130,7 +130,7 @@ mobs:
         targetDistance: 24
         health: 1 # Slime health is the geometric series 3^n. n = slimeSize - 1
         burnDay: false
-        spawnChance: 0.2
+        spawnChance: 0.05
     SPIDER:
         enabled: true
         nature:
@@ -154,7 +154,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.5
+        spawnChance: 0.1
     ZOMBIE:
         enabled: true
         nature:
@@ -178,7 +178,7 @@ mobs:
         targetDistance: 24
         health: 20
         burnDay: false
-        spawnChance: 0.4
+        spawnChance: 0.1
         
 rules:
     CHICKEN:

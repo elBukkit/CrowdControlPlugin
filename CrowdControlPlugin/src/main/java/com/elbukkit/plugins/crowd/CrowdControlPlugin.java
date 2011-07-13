@@ -63,8 +63,8 @@ public class CrowdControlPlugin extends JavaPlugin {
     private final Set<CrowdListener>                         listeners             = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
     
     private Logger                                           log;
-    private volatile int                                     maxPerChunk           = 5;
-    private volatile int                                     maxPerWorld           = 150;
+    private volatile int                                     maxPerChunk           = 2;
+    private volatile int                                     maxPerWorld           = 400;
     private volatile int                                     minDistanceFromPlayer = 10;
     private PluginDescriptionFile                            pdf;
     private ConcurrentHashMap<Class<? extends Rule>, String> ruleCommands;

@@ -48,7 +48,7 @@ mobs:
         burnDay: false
         spawnChance: 0.7
     GIANT:
-        enabled: false
+        enabled: true
         nature:
             night: PASSIVE
             day: PASSIVE
@@ -58,7 +58,7 @@ mobs:
         targetDistance: 24
         health: 10
         burnDay: false
-        spawnChance: 0.7
+        spawnChance: 0.1
     MONSTER:
         enabled: false
         nature:
@@ -84,7 +84,7 @@ mobs:
         burnDay: false
         spawnChance: 0.7
     PIG_ZOMBIE:
-        enabled: false
+        enabled: true
         nature:
             night: NEUTRAL
             day: NEUTRAL
@@ -130,7 +130,7 @@ mobs:
         targetDistance: 24
         health: 1 # Slime health is the geometric series 3^n. n = slimeSize - 1
         burnDay: false
-        spawnChance: 0.2
+        spawnChance: 0.05
     SPIDER:
         enabled: true
         nature:
@@ -178,19 +178,19 @@ mobs:
         targetDistance: 24
         health: 20
         burnDay: false
-        spawnChance: 0.4
+        spawnChance: 0.1
         
 rules:
     CHICKEN:
     COW:
     CREEPER:
-    GHAST:
-    GIANT:
+    GHAST
         SpawnMaterialRule:
             Default:
                 material:
                     - AIR
                 spawnable: true
+    GIANT:
     MONSTER:
     PIG:
     PIG_ZOMBIE:
