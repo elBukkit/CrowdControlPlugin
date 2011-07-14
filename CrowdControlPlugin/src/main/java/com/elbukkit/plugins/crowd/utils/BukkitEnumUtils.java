@@ -4,6 +4,12 @@ import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.CreatureType;
 
+/**
+ * A simple class that contains static members for loading Bukkit enums from strings.
+ * 
+ * @author WinSock
+ * @version 1.0
+ */
 public class BukkitEnumUtils {
     public static Material findMaterial(String m) throws IllegalArgumentException {
         try {
