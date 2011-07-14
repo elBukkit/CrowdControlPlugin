@@ -20,6 +20,7 @@ import org.bukkit.entity.CreatureType;
 import com.elbukkit.plugins.crowd.creature.BaseInfo;
 import com.elbukkit.plugins.crowd.creature.Nature;
 import com.elbukkit.plugins.crowd.rules.Rule;
+import com.elbukkit.plugins.crowd.utils.BukkitEnumUtils;
 
 /**
  * Handles all of the commands
@@ -171,13 +172,13 @@ public class CrowdCommand implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("set")) {
             if (args.length >= 5) {
                 
-                BaseInfo info = this.plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).getBaseInfo(CreatureType.valueOf(args[2].toUpperCase()));
+                BaseInfo info = this.plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).getBaseInfo(BukkitEnumUtils.findCreatureType(args[2]));
                 
                 if (info != null) {
                     if (args[3].equalsIgnoreCase("NatureDay")) {
-                        info.setCreatureNatureDay(Nature.valueOf(args[4].toUpperCase()));
+                        info.setCreatureNatureDay(Nature.findNature(args[4]));
                     } else if (args[3].equalsIgnoreCase("NatureNight")) {
-                        info.setCreatureNatureNight(Nature.valueOf(args[4].toUpperCase()));
+                        info.setCreatureNatureNight(Nature.findNature(args[4]));
                     } else if (args[3].equalsIgnoreCase("damage")) {
                         info.setDamage(Integer.parseInt(args[4]));
                     } else if (args[3].equalsIgnoreCase("Health")) {
@@ -195,7 +196,7 @@ public class CrowdCommand implements CommandExecutor {
                         return true;
                     }
                     
-                    this.plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, CreatureType.valueOf(args[2].toUpperCase()));
+                    this.plugin.getCreatureHandler(Bukkit.getServer().getWorld(args[1])).setInfo(info, BukkitEnumUtils.findCreatureType(args[2]));
                     sender.sendMessage("Set creature info!");
                     
                 } else {

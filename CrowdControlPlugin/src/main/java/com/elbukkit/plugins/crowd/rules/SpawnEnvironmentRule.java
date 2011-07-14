@@ -6,6 +6,7 @@ import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
+import com.elbukkit.plugins.crowd.utils.BukkitEnumUtils;
 
 /**
  * A rule that allows or disallows creatures based on the environment, Normal,
@@ -32,12 +33,12 @@ public class SpawnEnvironmentRule extends Rule {
     }
     
     public void load(Configuration config, String node) {
-        this.spawnableEnvironment = Environment.valueOf(config.getString(node + ".SpawnableEnvironment", "NORMAL").toUpperCase());
+        this.spawnableEnvironment = BukkitEnumUtils.findEnvironment(config.getString(node + ".SpawnableEnvironment", "NORMAL"));
     }
     
     @Override
     public void loadFromString(String data) {
-        this.spawnableEnvironment = Environment.valueOf(data.toUpperCase());
+        this.spawnableEnvironment = BukkitEnumUtils.findEnvironment(data);
     }
     
     public void save(Configuration config, String node) {

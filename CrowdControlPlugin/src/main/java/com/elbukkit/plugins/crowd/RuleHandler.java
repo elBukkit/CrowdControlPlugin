@@ -18,6 +18,7 @@ import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.rules.Rule;
 import com.elbukkit.plugins.crowd.rules.Type;
+import com.elbukkit.plugins.crowd.utils.BukkitEnumUtils;
 import com.elbukkit.plugins.crowd.utils.FileUtils;
 import com.elbukkit.plugins.crowd.utils.ThreadSafe;
 
@@ -62,7 +63,7 @@ public class RuleHandler {
                             for (String ruleName : rules) {
                                 Class<? extends Rule> ruleClass = Class.forName("com.elbukkit.plugins.crowd.rules." + ruleC).asSubclass(Rule.class);
                                 Constructor<? extends Rule> constructor = ruleClass.getDeclaredConstructor(String.class, CreatureType.class, CrowdControlPlugin.class);
-                                Rule rule = constructor.newInstance(ruleName, CreatureType.valueOf(node.toUpperCase()), plugin);
+                                Rule rule = constructor.newInstance(ruleName, BukkitEnumUtils.findCreatureType(node), plugin);
                                 rule.load(this.config, "rules." + rule.getCreatureType() + "." + ruleClass.getSimpleName() + "." + rule.getName());
                                 this.rules.put(new AbstractMap.SimpleEntry<String, Entry<Class<? extends Rule>, CreatureType>>(rule.getName(), new AbstractMap.SimpleEntry<Class<? extends Rule>, CreatureType>(ruleClass, rule.getCreatureType())), rule);
                             }

@@ -1,5 +1,6 @@
 package com.elbukkit.plugins.crowd.rules;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,7 @@ import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
+import com.elbukkit.plugins.crowd.utils.BukkitEnumUtils;
 
 /**
  * A rule that controls spawning based on the material it spawns on.
@@ -58,10 +60,10 @@ public class SpawnMaterialRule extends Rule {
     
     public void load(Configuration config, String node) {
         this.materials = new HashSet<Material>();
-        List<Object> data = config.getList(node + ".material");
+        List<String> data = config.getStringList(node + ".material", new ArrayList<String>());
         
-        for (Object material : data) {
-            this.materials.add(Material.valueOf((String) material));
+        for (String s : data) {
+            this.materials.add(BukkitEnumUtils.findMaterial(s));
         }
         
         this.spawnable = config.getBoolean(node + ".spawnable", false);
@@ -71,9 +73,11 @@ public class SpawnMaterialRule extends Rule {
     public void loadFromString(String data) {
         String[] split = data.split(" ");
         String[] materialArray = split[0].split(",");
+        
         for (String s : materialArray) {
-            this.materials.add(Material.valueOf(s.toUpperCase()));
+            this.materials.add(BukkitEnumUtils.findMaterial(s));
         }
+        
         this.spawnable = Boolean.valueOf(split[1]);
     }
     

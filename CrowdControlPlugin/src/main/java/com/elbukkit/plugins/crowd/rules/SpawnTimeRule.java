@@ -46,12 +46,12 @@ public class SpawnTimeRule extends Rule {
     }
     
     public void load(Configuration config, String node) {
-        this.spawnTime = Time.valueOf(config.getString(node + ".time", "DAY").toUpperCase());
+        this.spawnTime = Time.findTime(config.getString(node + ".time", "DAY"));
     }
     
     @Override
     public void loadFromString(String data) {
-        this.spawnTime = Time.valueOf(data);
+        this.spawnTime = Time.findTime(data);
     }
     
     public void save(Configuration config, String node) {
