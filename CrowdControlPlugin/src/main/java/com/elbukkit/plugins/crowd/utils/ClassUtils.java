@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * A utility class for accessing private fields, and calling provate methods
+ * A utility class for accessing private fields, and calling private methods
  * @author WinSock
  * @version 1.0
  */
