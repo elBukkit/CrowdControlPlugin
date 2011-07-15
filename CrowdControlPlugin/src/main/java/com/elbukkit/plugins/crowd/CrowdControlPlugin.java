@@ -367,7 +367,6 @@ public class CrowdControlPlugin extends JavaPlugin {
         pm.registerEvent(Type.CREATURE_SPAWN, this.entityListener, Priority.Lowest, this);
         pm.registerEvent(Type.ENTITY_TARGET, this.entityListener, Priority.Lowest, this);
         pm.registerEvent(Type.ENTITY_COMBUST, this.entityListener, Priority.Lowest, this);
-        pm.registerEvent(Type.ENTITY_EXPLODE, this.entityListener, Priority.Lowest, this);
         pm.registerEvent(Type.ENTITY_DAMAGE, this.entityListener, Priority.Lowest, this);
         pm.registerEvent(Type.CHUNK_UNLOAD, this.worldListener, Priority.Monitor, this);
         

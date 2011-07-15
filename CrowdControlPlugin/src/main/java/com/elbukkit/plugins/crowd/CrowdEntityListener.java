@@ -155,23 +155,7 @@ public class CrowdEntityListener extends EntityListener {
                 }
             }
             
-            if (event.getEntity() instanceof Ghast) {
-                
-                CrowdCreature c = cHandler.getCrowdCreature(info.getEntity());
-                
-                EntityHuman human = ((CraftWorld) cHandler.getWorld()).getHandle().findNearbyPlayer(((CraftEntity) event.getEntity()).getHandle(), c.getBaseInfo().getTargetDistance());
-                
-                if (human == null) {
-                    return;
-                }
-                
-                CraftEntity e = CraftEntity.getEntity((CraftServer) Bukkit.getServer(), human);
-                
-                event.setTarget(e);
-                
-            } else {
-                event.setCancelled(true); // Targeting handled in the Damage Handler
-            }
+            event.setCancelled(true);
         }
     }
 }

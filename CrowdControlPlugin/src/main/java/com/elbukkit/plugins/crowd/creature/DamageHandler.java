@@ -3,15 +3,19 @@ package com.elbukkit.plugins.crowd.creature;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.minecraft.server.Entity;
+import net.minecraft.server.EntityGhast;
 import net.minecraft.server.EntityHuman;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftGhast;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Ghast;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
@@ -20,6 +24,7 @@ import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import com.elbukkit.plugins.crowd.CrowdControlPlugin;
 import com.elbukkit.plugins.crowd.Info;
 import com.elbukkit.plugins.crowd.rules.Type;
+import com.elbukkit.plugins.crowd.utils.ClassUtils;
 
 /**
  * This handles all of the damage stuff for my plugin
@@ -74,8 +79,7 @@ public class DamageHandler implements Runnable {
             double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
             
             // Living entities cannot have targets?
-            if (entity instanceof Creature) {
-                Creature c = (Creature) entity;
+            if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
                 
                 Info info = new Info(this.plugin);
                 info.setEntity(entity);
@@ -83,7 +87,10 @@ public class DamageHandler implements Runnable {
                 info.setReason(TargetReason.CLOSEST_PLAYER);
                 
                 // Targeting System
-                if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
+                if (entity instanceof Creature) {
+                    
+                    Creature c = (Creature) entity;
+                    
                     if (this.plugin.getCreatureHandler(p.getWorld()).isDay()) {
                         switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
                             case AGGRESSIVE:
@@ -122,8 +129,15 @@ public class DamageHandler implements Runnable {
                                 break;
                         }
                     }
+                } else if (entity instanceof Ghast) {
+                    EntityGhast ghast = (EntityGhast) ((CraftGhast)entity).getHandle();
+                    try {
+                        ClassUtils.setPrivateField(ghast, "target", e.getHandle());
+                    } catch (Exception ex) {
+                        plugin.getLog().info("[CrowdControl] Error setting ghast target!");
+                    }
                 }
-            }
+            } 
             
             if (this.handler.shouldBurn(crowdCreature.getEntity().getLocation()) && crowdCreature.getBaseInfo().isBurnDay()) {
                 crowdCreature.getEntity().setFireTicks(30);
