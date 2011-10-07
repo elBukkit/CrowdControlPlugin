@@ -3,16 +3,7 @@ package com.elbukkit.plugins.crowd.creature;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityGhast;
-import net.minecraft.server.EntityHuman;
-
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
-import org.bukkit.craftbukkit.entity.CraftGhast;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.Location;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.Ghast;
@@ -49,11 +40,27 @@ public class DamageHandler implements Runnable {
         while (i.hasNext()) {
             
             CrowdCreature crowdCreature = i.next();
-            LivingEntity entity = crowdCreature.getEntity();
-            EntityHuman human = ((CraftWorld) this.handler.getWorld()).getHandle().findNearbyPlayer(((CraftEntity) entity).getHandle(), crowdCreature.getBaseInfo().getTargetDistance());
+            LivingEntity creature = crowdCreature.getEntity();
+            Player targetPlayer = null;
+            {
+                Location creatureLocation = creature.getLocation();
+                double creatureX = creatureLocation.getX(), creatureY = creatureLocation.getY(), creatureZ = creatureLocation.getZ(), maxTargetDistance = crowdCreature.getBaseInfo().getTargetDistance();
+	            double targetDistance = -1.0D;
+	            for (Player player : this.handler.getWorld().getPlayers()) {
+	                if (player.isDead()) {
+	                    continue;
+	                }
+	                Location playerLocation = player.getLocation();
+	                double playerDistance = (playerLocation.getX() - creatureX) * (playerLocation.getX() - creatureX) + (playerLocation.getY() - creatureY) * (playerLocation.getY() - creatureY) + (playerLocation.getZ() - creatureZ) * (playerLocation.getZ() - creatureZ);
+	                if ((maxTargetDistance < 0.0D || playerDistance < maxTargetDistance * maxTargetDistance) && (targetDistance == -1.0D || playerDistance < targetDistance)) {
+	                    targetDistance = playerDistance;
+	                    targetPlayer = player;
+	                }
+	            }
+            }
             
             if (crowdCreature.getType() == CreatureType.WOLF) {
-                Wolf wolf = (Wolf) entity;
+                Wolf wolf = (Wolf) creature;
                 
                 // Ignore tamed wolves
                 if (wolf.isTamed()) {
@@ -61,83 +68,67 @@ public class DamageHandler implements Runnable {
                 }
             }
             
-            if (human == null) {
+            if (targetPlayer == null) {
                 continue;
             }
             
-            CraftEntity e = CraftEntity.getEntity((CraftServer) Bukkit.getServer(), human);
+            // Living entities cannot have targets?                
+            Info info = new Info(this.plugin);
+            info.setEntity(creature);
+            info.setTarget(targetPlayer);
+            info.setReason(TargetReason.CLOSEST_PLAYER);
             
-            if (!(e instanceof CraftPlayer)) {
-                continue;
-            }
-            
-            Player p = (CraftPlayer) e;
-            
-            double deltax = Math.abs(entity.getLocation().getX() - p.getLocation().getX());
-            double deltay = Math.abs(entity.getLocation().getY() - p.getLocation().getY());
-            double deltaz = Math.abs(entity.getLocation().getZ() - p.getLocation().getZ());
-            double distance = Math.sqrt((deltax * deltax) + (deltay * deltay) + (deltaz * deltaz));
-            
-            // Living entities cannot have targets?
-            if (distance < crowdCreature.getBaseInfo().getTargetDistance()) {
+            // Targeting System
+            if (creature instanceof Creature) {
                 
-                Info info = new Info(this.plugin);
-                info.setEntity(entity);
-                info.setTarget(p);
-                info.setReason(TargetReason.CLOSEST_PLAYER);
+                Creature c = (Creature) creature;
                 
-                // Targeting System
-                if (entity instanceof Creature) {
-                    
-                    Creature c = (Creature) entity;
-                    
-                    if (this.plugin.getCreatureHandler(p.getWorld()).isDay()) {
-                        switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
-                            case AGGRESSIVE:
-                                if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
-                                    c.setTarget(p);
-                                }
-                                break;
-                            case NEUTRAL:
-                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
-                                if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
-                                    if (attackingPlayers.contains(p)) {
-                                        if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
-                                            c.setTarget(p);
-                                        }
-                                        c.setTarget(p);
+                if (this.plugin.getCreatureHandler(targetPlayer.getWorld()).isDay()) {
+                    switch (crowdCreature.getBaseInfo().getCreatureNatureDay()) {
+                        case AGGRESSIVE:
+                            if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                c.setTarget(targetPlayer);
+                            }
+                            break;
+                        case NEUTRAL:
+                            Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
+                            if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
+                                if (attackingPlayers.contains(targetPlayer)) {
+                                    if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                        c.setTarget(targetPlayer);
                                     }
+                                    c.setTarget(targetPlayer);
                                 }
-                                break;
-                        }
-                    } else {
-                        switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
-                            case AGGRESSIVE:
-                                if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
-                                    c.setTarget(p);
-                                }
-                                break;
-                            case NEUTRAL:
-                                Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
-                                if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
-                                    if (attackingPlayers.contains(p)) {
-                                        if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
-                                            c.setTarget(p);
-                                        }
-                                    }
-                                }
-                                break;
-                        }
+                            }
+                            break;
                     }
-                } else if (entity instanceof Ghast) {
-                    EntityGhast ghast = (EntityGhast) ((CraftGhast)entity).getHandle();
-                    try {
-                        ClassUtils.setPrivateField(ghast, "target", e.getHandle());
-                    } catch (Exception ex) {
-                        plugin.getLog().info("[CrowdControl] Error setting ghast target!");
+                } else {
+                    switch (crowdCreature.getBaseInfo().getCreatureNatureNight()) {
+                        case AGGRESSIVE:
+                            if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                c.setTarget(targetPlayer);
+                            }
+                            break;
+                        case NEUTRAL:
+                            Set<Player> attackingPlayers = this.plugin.getCreatureHandler(c.getWorld()).getAttackingPlayers(crowdCreature);
+                            if ((attackingPlayers != null) && (attackingPlayers.size() > 0)) {
+                                if (attackingPlayers.contains(targetPlayer)) {
+                                    if (this.plugin.getRuleHandler(this.handler.getWorld()).passesRules(info, Type.TARGET)) {
+                                        c.setTarget(targetPlayer);
+                                    }
+                                }
+                            }
+                            break;
                     }
                 }
-            } 
+            } else if (creature instanceof Ghast) {
+                Ghast ghast = (Ghast) creature;
+                try {
+                    ClassUtils.setPrivateField(ghast, "target", targetPlayer);
+                } catch (Exception ex) {
+                    plugin.getLog().info("[CrowdControl] Error setting ghast target!");
+                }
+            }
             
             if (this.handler.shouldBurn(crowdCreature.getEntity().getLocation()) && crowdCreature.getBaseInfo().isBurnDay()) {
                 crowdCreature.getEntity().setFireTicks(30);
