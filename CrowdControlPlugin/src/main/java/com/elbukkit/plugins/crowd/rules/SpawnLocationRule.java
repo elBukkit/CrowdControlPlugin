@@ -24,8 +24,7 @@ public class SpawnLocationRule extends Rule {
     
     @Override
     public boolean check(Info info) {
-        
-        if (this.plugin.getRegionsPlugin().getRegionManager(info.getEntity().getWorld()).getRegion(this.elRegionName).contains(info.getLocation())) {
+        if (CrowdControlPlugin.getRegionsManager().getRegions(info.getLocation()).contains(this.elRegionName)) {
             return this.spawnable;
         }
         
