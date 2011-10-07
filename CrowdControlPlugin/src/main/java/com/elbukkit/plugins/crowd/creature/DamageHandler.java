@@ -3,7 +3,6 @@ package com.elbukkit.plugins.crowd.creature;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.minecraft.server.Entity;
 import net.minecraft.server.EntityGhast;
 import net.minecraft.server.EntityHuman;
 

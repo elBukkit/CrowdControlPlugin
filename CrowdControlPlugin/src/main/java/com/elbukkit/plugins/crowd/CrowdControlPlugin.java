@@ -3,7 +3,9 @@ package com.elbukkit.plugins.crowd;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,18 +14,21 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.CreatureType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 import com.elbukkit.api.elregions.elRegionsPlugin;
+import com.elbukkit.api.elregions.region.Region;
 import com.elbukkit.plugins.crowd.creature.BaseInfo;
 import com.elbukkit.plugins.crowd.creature.CreatureHandler;
 import com.elbukkit.plugins.crowd.creature.CrowdCreature;
@@ -41,6 +46,7 @@ import com.elbukkit.plugins.crowd.rules.SpawnTimeRule;
 import com.elbukkit.plugins.crowd.rules.TargetPlayerRule;
 import com.elbukkit.plugins.crowd.utils.FileUtils;
 import com.elbukkit.plugins.crowd.utils.ThreadSafe;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 /**
  * CrowdControl plugin
@@ -55,9 +61,9 @@ public class CrowdControlPlugin extends JavaPlugin {
     private Configuration                                    config;
     private ConcurrentHashMap<World, CreatureHandler>        creatureHandlers;
     private volatile int                                     despawnDistance       = 128;
-    
-    private elRegionsPlugin                                  elRegions;
-    private final CrowdEntityListener                        entityListener        = new CrowdEntityListener(this);
+    private final CrowdEntityListener                        entityListener        = new CrowdEntityListener(this);    
+    private static Plugin                                    regionsPlugin         = null;
+	private static RegionsManager                            regionsManager        = null;
     private volatile double                                  idleDespawnChance     = 0.05;
     
     private final Set<CrowdListener>                         listeners             = Collections.newSetFromMap(new ConcurrentHashMap<CrowdListener, Boolean>());
@@ -178,15 +184,6 @@ public class CrowdControlPlugin extends JavaPlugin {
     @ThreadSafe
     public int getMinDistanceFromPlayer() {
         return this.minDistanceFromPlayer;
-    }
-    
-    /**
-     * Gets the elRegions plugin
-     * 
-     * @return The elRegionsPlugin
-     */
-    public elRegionsPlugin getRegionsPlugin() {
-        return this.elRegions;
     }
     
     /**
@@ -322,10 +319,14 @@ public class CrowdControlPlugin extends JavaPlugin {
         this.pdf = this.getDescription();
         this.log = this.getServer().getLogger();
         
-        this.elRegions = (elRegionsPlugin) this.getServer().getPluginManager().getPlugin("elRegions");
-        
-        if (this.elRegions == null) {
-            this.log.info("ERROR: Could not load elRegions!");
+        RegionsManager.reload(this);
+        switch(CrowdControlPlugin.regionsManager) {
+        case elRegions:
+        case WorldGuard:
+            this.log.info("Found " + regionsManager.name() + " v" + regionsPlugin.getDescription().getVersion());
+            break;
+        case NONE:
+            this.log.info("ERROR: Could not load a regions plugin!");
             this.setEnabled(false);
             return;
         }
@@ -479,4 +480,75 @@ public class CrowdControlPlugin extends JavaPlugin {
         this.config.setProperty("global.spiderRiderChance", spiderRiderChance);
         this.config.save();
     }
+    
+    /**
+     * Returns the static regionsManager member of this class.
+     *
+     * @return A {@link RegionsManager} that is used for the {@link SpawnLocationRule} and {@link MovementLocationRule}
+     */
+	public static RegionsManager getRegionsManager(){ return regionsManager;}
+	
+	/**
+     * Utility enumeration to handle the different types of regions plugins. 
+     *
+     */
+	public enum RegionsManager {
+		NONE, WorldGuard, elRegions;
+		
+		private static List<String> emptyList = new ArrayList<String>();
+		public List<String> getRegions(Location location) {
+			switch(this) {
+				case elRegions:
+					com.elbukkit.api.elregions.region.RegionManager erManager = ((elRegionsPlugin)regionsPlugin).getRegionManager(location.getWorld());
+					if(erManager != null) {
+						List<String> regionNames = new ArrayList<String>();
+						for(Region region : erManager.getRegions(location))
+							regionNames.add(region.getName());
+						return regionNames;
+					}
+				case WorldGuard:
+					com.sk89q.worldguard.protection.managers.RegionManager wgManager = ((WorldGuardPlugin)regionsPlugin).getGlobalRegionManager().get(location.getWorld());
+					if(wgManager != null)
+						return wgManager.getApplicableRegionsIDs(com.sk89q.worldguard.bukkit.BukkitUtil.toVector(location));
+					break;
+			}
+			return emptyList;
+		}
+
+		public List<String> getAllRegions() {
+			switch(this) {
+				case elRegions:
+					for(World world : regionsPlugin.getServer().getWorlds()) {
+						com.elbukkit.api.elregions.region.RegionManager erManager = ((elRegionsPlugin)regionsPlugin).getRegionManager(world);
+						if(erManager != null) {
+							List<String> regionNames = new ArrayList<String>();
+							for(Region region : erManager.getRegions())
+								regionNames.add(region.getName());
+							return regionNames;
+						}
+					}
+				case WorldGuard:
+					for(World world : regionsPlugin.getServer().getWorlds()) {
+						com.sk89q.worldguard.protection.managers.RegionManager wgManager = ((WorldGuardPlugin)regionsPlugin).getGlobalRegionManager().get(world);
+						if(wgManager != null)
+							return new ArrayList<String>(wgManager.getRegions().keySet());
+					}
+			}
+			return emptyList;
+		}
+		
+		public static void reload(Plugin plugin) {
+			regionsPlugin = null;
+			for(RegionsManager regionalPlugin : RegionsManager.values()) {
+				if(regionalPlugin.equals(RegionsManager.NONE)) continue;
+				regionsPlugin = plugin.getServer().getPluginManager().getPlugin(regionalPlugin.name());
+				if (regionsPlugin != null) {
+					regionsManager = regionalPlugin;
+					break;
+				}
+			}
+			if(regionsPlugin == null)
+				regionsManager = RegionsManager.NONE;
+		}
+	}
 }
