@@ -19,13 +19,13 @@ import org.elbukkit.crowdcontrol.entity.EntityData;
 import org.elbukkit.crowdcontrol.settings.MasterSettings;
 import org.elbukkit.crowdcontrol.settings.SettingManager;
 
-public class SpawnControl implements Runnable {
+public class CreatureControl implements Runnable {
 
     CrowdControlPlugin plugin;
     SettingManager manager;
     MasterSettings settings;
 
-    public SpawnControl(CrowdControlPlugin plugin) {
+    public CreatureControl(CrowdControlPlugin plugin) {
         this.plugin = plugin;
         this.manager = new SettingManager(plugin);
         this.settings = manager.getMasterSettings();
@@ -41,7 +41,7 @@ public class SpawnControl implements Runnable {
                 }
             }
 
-            // Despawn code
+            // Despawn code and burn code
             for (LivingEntity e : w.getLivingEntities()) {
                 if (e instanceof Player) {
                     continue;
@@ -69,6 +69,18 @@ public class SpawnControl implements Runnable {
                 if (new Random().nextDouble() >= settings.getDespawnChance()) {
                     e.remove();
                 }
+                
+                // Burning code
+                CreatureType type = CreatureType.creatureTypeFromEntity(e);
+                EntityData data = manager.getSetting(type, w);
+                
+                if (isDay(e.getWorld())) {
+    				if (e.getLocation().getBlock().getLightFromSky() > 7) {
+    					if (data.isBurnDay()) {
+    						e.setFireTicks(20);
+    					}
+    				}
+    			}
             }
 
             List<Player> players = w.getPlayers();
@@ -111,5 +123,12 @@ public class SpawnControl implements Runnable {
                 }
             }
         }
+    }
+    
+    public boolean isDay(World w) {
+    	if (w.getTime() > 0 && w.getTime() < 12000) {
+    		return true;
+    	}
+    	return false;
     }
 }

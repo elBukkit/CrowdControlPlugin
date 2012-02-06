@@ -11,8 +11,8 @@ import org.elbukkit.crowdcontrol.settings.SettingManager;
 
 public class CrowdControlPlugin extends JavaPlugin {
 
-    private EntityListener entityListener = new EntityListener();
-    private SpawnControl spawnHandler = new SpawnControl(this);
+    private EntityListener entityListener = new EntityListener(this);
+    private CreatureControl spawnHandler = new CreatureControl(this);
 
     public static void main(String[] args) {
         System.out.println("This is a bukkit plugin!");
