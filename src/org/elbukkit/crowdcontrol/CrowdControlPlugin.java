@@ -25,7 +25,7 @@ public class CrowdControlPlugin extends JavaPlugin {
         getCommand("kill").setExecutor(new KillCommand(this));
         getServer().getPluginManager().registerEvents(entityListener, this);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, spawnHandler, 0, 1);
-        
+
         if (!this.getDataFolder().exists()) {
             for (CreatureType c : CreatureType.values()) {
                 for (World w : Bukkit.getServer().getWorlds()) {

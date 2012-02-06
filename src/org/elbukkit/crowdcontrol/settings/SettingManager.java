@@ -27,10 +27,10 @@ public class SettingManager {
 
     public void saveSetting(EntityData data, CreatureType type, World w) {
         File dir = new File(plugin.getDataFolder().getAbsolutePath() + File.separator + w.getName());
-        if(!dir.exists()) {
+        if (!dir.exists()) {
             dir.mkdirs();
         }
-        
+
         String location = plugin.getDataFolder().getAbsolutePath() + File.separator + w.getName() + File.separator + type.getName() + ".json";
         File entityFile = new File(location);
         try {
@@ -60,6 +60,37 @@ public class SettingManager {
 
     public GsonBuilder getGsonBuilder() {
         return new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().serializeNulls().excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.VOLATILE);
+    }
+
+    public void saveMasterSettings(MasterSettings data) {
+        if (!plugin.getDataFolder().exists())
+            plugin.getDataFolder().mkdirs();
+
+        String location = plugin.getDataFolder().getAbsolutePath() + File.separator + "MasterSettings.json";
+        File settingFile = new File(location);
+        try {
+            settingFile.createNewFile();
+            String json = getGsonBuilder().create().toJson(data);
+            Writer writer = new BufferedWriter(new FileWriter(settingFile));
+            writer.write(json);
+            writer.close();
+        } catch (IOException e) {
+
+        }
+    }
+
+    public MasterSettings getMasterSettings() {
+        String location = plugin.getDataFolder().getAbsolutePath() + File.separator + "MasterSettings.json";
+        File settingFile = new File(location);
+        try {
+            Reader reader = new BufferedReader(new FileReader(settingFile));
+            MasterSettings data = getGsonBuilder().create().fromJson(reader, MasterSettings.class);
+            return data;
+        } catch (FileNotFoundException e) {
+            MasterSettings data = new MasterSettings();
+            saveMasterSettings(data);
+            return data;
+        }
     }
 
 }
