@@ -15,8 +15,6 @@ import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EntityData;
 import org.elbukkit.crowdcontrol.settings.SettingManager;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-
 public class EntityListener implements Listener {
 
 	CrowdControlPlugin plugin;

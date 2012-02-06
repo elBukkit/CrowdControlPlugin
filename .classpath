@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="D:/PortableApps/EclipsePortable/Data/workspace/CrowdControlPlugin/lib/bukkit-1.1-R3.jar"/>
-	<classpathentry kind="lib" path="D:/PortableApps/EclipsePortable/Data/workspace/CrowdControlPlugin/lib/gson-2.1.jar"/>
+	<classpathentry kind="lib" path="/home/ceriosnerd/workspace/CrowdControl/lib/bukkit-1.1-R3.jar"/>
+	<classpathentry kind="lib" path="/home/ceriosnerd/workspace/CrowdControl/lib/gson-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
