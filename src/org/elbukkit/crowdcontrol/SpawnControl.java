@@ -8,7 +8,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -29,13 +31,44 @@ public class SpawnControl implements Runnable {
     public void run() {
 
         for (World w : Bukkit.getWorlds()) {
+            
+            // Despawn code
+            for (LivingEntity e : w.getLivingEntities()) {
+                if (e instanceof Player) {
+                    continue;
+                }
+                
+                // Don't want to despawn the boss
+                if(e instanceof EnderDragon) {
+                    if (e.getWorld().getEnvironment() == Environment.THE_END){
+                        continue;
+                    }
+                }
+                
+                List<Entity> nearbyEntities = e.getNearbyEntities(20, 20, 20);
+                boolean playerNearby = false;
+                for (Entity ne : nearbyEntities) {
+                    if(ne instanceof Player) {
+                        playerNearby = true;
+                    }
+                }
+                
+                if (playerNearby) {
+                    continue;
+                }
+                
+                if (new Random().nextInt(100) == 1) {
+                    e.remove();
+                }
+            }
+            
             List<Player> players = w.getPlayers();
 
             // Spawn an creature by each player
             for (Player p : players) {
                 for (int i = 0; i < new Random().nextInt(64); i++) {
                     CreatureType randomType = CreatureType.values()[new Random().nextInt(CreatureType.values().length)];
-                    EntityData data = manager.getSetting(randomType);
+                    EntityData data = manager.getSetting(randomType, w);
 
                     HashSet<Chunk> spawningChunks = new HashSet<Chunk>();
                     Chunk playerChunk = w.getChunkAt(p.getLocation());
@@ -64,29 +97,6 @@ public class SpawnControl implements Runnable {
                         }
 
                     }
-                }
-            }
-            
-            // Despawn code
-            for (LivingEntity e : w.getLivingEntities()) {
-                if (e instanceof Player) {
-                    continue;
-                }
-                
-                List<Entity> nearbyEntities = e.getNearbyEntities(20, 20, 20);
-                boolean playerNearby = false;
-                for (Entity ne : nearbyEntities) {
-                    if(ne instanceof Player) {
-                        playerNearby = true;
-                    }
-                }
-                
-                if (playerNearby) {
-                    continue;
-                }
-                
-                if (new Random().nextInt(100) == 1) {
-                    e.remove();
                 }
             }
         }

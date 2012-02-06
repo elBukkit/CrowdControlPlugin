@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Modifier;
 
+import org.bukkit.World;
 import org.elbukkit.crowdcontrol.CrowdControlPlugin;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EntityData;
@@ -24,10 +25,13 @@ public class SettingManager {
         this.plugin = plugin;
     }
 
-    public void saveSetting(EntityData data, CreatureType type) {
-        if (!plugin.getDataFolder().exists())
-            plugin.getDataFolder().mkdirs();
-        String location = plugin.getDataFolder().getAbsolutePath() + File.separator + type.getName() + ".json";
+    public void saveSetting(EntityData data, CreatureType type, World w) {
+        File dir = new File(plugin.getDataFolder().getAbsolutePath() + File.separator + w.getName());
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }
+        
+        String location = plugin.getDataFolder().getAbsolutePath() + File.separator + w.getName() + File.separator + type.getName() + ".json";
         File entityFile = new File(location);
         try {
             entityFile.createNewFile();
@@ -40,8 +44,8 @@ public class SettingManager {
         }
     }
 
-    public EntityData getSetting(CreatureType type) {
-        String location = plugin.getDataFolder().getAbsolutePath() + File.separator + type.getName() + ".json";
+    public EntityData getSetting(CreatureType type, World w) {
+        String location = plugin.getDataFolder().getAbsolutePath() + File.separator + w.getName() + File.separator + type.getName() + ".json";
         File entityFile = new File(location);
         try {
             Reader reader = new BufferedReader(new FileReader(entityFile));
@@ -49,7 +53,7 @@ public class SettingManager {
             return data;
         } catch (FileNotFoundException e) {
             EntityData data = new EntityData();
-            saveSetting(data, type);
+            saveSetting(data, type, w);
             return data;
         }
     }
