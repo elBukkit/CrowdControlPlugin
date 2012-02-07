@@ -9,7 +9,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
-public abstract class EntityData {
+public class EntityData {
 
     protected List<Material> spawnable = new ArrayList<Material>();
     protected List<Material> notSpawnable = new ArrayList<Material>();

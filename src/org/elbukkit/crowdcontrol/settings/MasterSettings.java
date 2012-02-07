@@ -6,7 +6,7 @@ import java.util.List;
 import org.bukkit.World;
 
 public class MasterSettings {
-    private int numberOfTrys = 64;
+    private int numberOfTrys = 128;
     private int maxPerChunk = 4;
     private int maxPerWorld = -1;
     private int noSpawnRadius = 10;

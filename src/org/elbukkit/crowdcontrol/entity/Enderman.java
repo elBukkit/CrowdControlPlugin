@@ -4,7 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 
-public class Enderman extends LivingEntity {
+public class Enderman extends Monster {
 
     public Enderman() {
         this.environment.add(Environment.NORMAL);
