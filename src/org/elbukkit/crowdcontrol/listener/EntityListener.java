@@ -28,14 +28,23 @@ public class EntityListener implements Listener {
             return;
         }
 
+        if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getLocation().getWorld())) {
+            return;
+        }
+        
         if (event.getSpawnReason() == SpawnReason.NATURAL) {
             event.setCancelled(true);
         }
+        
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityCombust(EntityCombustEvent event) {
         Entity e = event.getEntity();
+        
+        if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
+            return;
+        }
 
         if (e instanceof LivingEntity) {
 

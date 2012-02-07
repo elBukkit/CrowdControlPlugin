@@ -9,20 +9,24 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public enum CreatureType {
-    CREEPER("Creeper"), SKELETON("Skeleton"), SPIDER("Spider"), GIANT("Giant"), ZOMBIE("Zombie"), SLIME("Slime"), GHAST("Ghast"), PIG_ZOMBIE("PigZombie"), ENDERMAN("Enderman"), CAVE_SPIDER("CaveSpider"), SILVERFISH("Silverfish"), BLAZE("Blaze"), MAGMA_CUBE("LavaSlime"), ENDER_DRAGON("EnderDragon"), PIG("Pig"), SHEEP("Sheep"), COW("Cow"), CHICKEN("Chicken"), SQUID("Squid"), WOLF("Wolf"), MUSHROOM_COW("MushroomCow"), SNOWMAN("SnowMan"), VILLAGER("Villager");
+    CREEPER("Creeper", Creeper.class), SKELETON("Skeleton", Skeleton.class), SPIDER("Spider", Spider.class), GIANT("Giant", Giant.class), ZOMBIE("Zombie", Zombie.class), SLIME("Slime", Slime.class), GHAST("Ghast", Ghast.class), PIG_ZOMBIE("PigZombie", PigZombie.class), ENDERMAN("Enderman", Enderman.class), CAVE_SPIDER("CaveSpider", CaveSpider.class), SILVERFISH("Silverfish", Silverfish.class), BLAZE("Blaze", Blaze.class), MAGMA_CUBE("LavaSlime", LavaSlime.class), ENDER_DRAGON("EnderDragon", EnderDragon.class), PIG("Pig", Pig.class), SHEEP("Sheep", Sheep.class), COW("Cow", Cow.class), CHICKEN("Chicken", Chicken.class), SQUID("Squid", Squid.class), WOLF("Wolf", Wolf.class), MUSHROOM_COW("MushroomCow", MushroomCow.class), SNOWMAN("Snowman", Snowman.class), VILLAGER("Villager", Villager.class);
 
     private String name = "";
+    private Class<? extends EntityData> classz;
 
     private static final Map<String, CreatureType> NAME_MAP = new HashMap<String, CreatureType>();
+    private static final Map<CreatureType, Class<? extends EntityData>> CLASS_MAP = new HashMap<CreatureType, Class<? extends EntityData>>();
 
     static {
         for (CreatureType type : EnumSet.allOf(CreatureType.class)) {
             NAME_MAP.put(type.name.toUpperCase(), type);
+            CLASS_MAP.put(type, type.classz);
         }
     }
 
-    private CreatureType(String name) {
+    private CreatureType(String name, Class<? extends EntityData> classz) {
         this.name = name;
+        this.classz = classz;
     }
 
     public String getName() {
@@ -46,5 +50,9 @@ public enum CreatureType {
         name = name.substring(5); // Remove "Craft"
 
         return CreatureType.fromName(name);
+    }
+    
+    public static Class<? extends EntityData> getClassFromCreatureType(CreatureType type) {
+        return CLASS_MAP.get(type);
     }
 }

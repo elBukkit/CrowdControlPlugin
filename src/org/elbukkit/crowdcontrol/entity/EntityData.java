@@ -9,21 +9,21 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 
-public class EntityData {
+public abstract class EntityData {
 
-    private List<Material> spawnable = new ArrayList<Material>();
-    private List<Material> notSpawnable = new ArrayList<Material>();
-    private List<Environment> environment = new ArrayList<Environment>();
-    private List<Biome> biome = new ArrayList<Biome>();
-    private List<Biome> noBiome = new ArrayList<Biome>();
-    private int minSpawnLight = 0;
-    private int maxSpawnLight = 15;
-    private boolean burnDay = false;
-    private int maxSpawnHeight = 128;
-    private int minSpawnHeight = 0;
-    private boolean canNaturalSpawn = true;
-    private double spawnChance = 1;
-    private int max = -1;
+    protected List<Material> spawnable = new ArrayList<Material>();
+    protected List<Material> notSpawnable = new ArrayList<Material>();
+    protected List<Environment> environment = new ArrayList<Environment>();
+    protected List<Biome> biome = new ArrayList<Biome>();
+    protected List<Biome> noBiome = new ArrayList<Biome>();
+    protected int minSpawnLight = 0;
+    protected int maxSpawnLight = 15;
+    protected boolean burnDay = false;
+    protected int maxSpawnHeight = 128;
+    protected int minSpawnHeight = 0;
+    protected boolean canNaturalSpawn = true;
+    protected double spawnChance = 1;
+    protected int max = -1;
 
     public boolean canSpawn(Block b) {
 

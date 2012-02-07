@@ -1,11 +1,17 @@
 package org.elbukkit.crowdcontrol.settings;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.World;
+
 public class MasterSettings {
     private int numberOfTrys = 64;
     private int maxPerChunk = 4;
     private int maxPerWorld = -1;
     private int noSpawnRadius = 10;
     private int chunkRadius = 7;
+    private List<String> enabledWorlds = new ArrayList<String>();
 
     public int getNumberOfTrys() {
         return numberOfTrys;
@@ -45,5 +51,9 @@ public class MasterSettings {
 
     public void setNoSpawnRadius(int noSpawnRadius) {
         this.noSpawnRadius = noSpawnRadius;
+    }
+
+    public boolean isEnabledWorld(World w) {
+        return enabledWorlds.contains(w.getName());
     }
 }

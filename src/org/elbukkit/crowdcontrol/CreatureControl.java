@@ -30,6 +30,10 @@ public class CreatureControl implements Runnable {
 
         for (World w : Bukkit.getWorlds()) {
             
+            if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(w)) {
+                continue;
+            }
+            
             List<Player> players = w.getPlayers();
             
             if (players.size() <= 0) {
@@ -47,10 +51,6 @@ public class CreatureControl implements Runnable {
                 if (e instanceof Player)
                     continue;
                 CreatureType type = CreatureType.creatureTypeFromEntity(e);
-                if (type == null) {
-                    System.out.println("Null! Name: " + e.getClass().getSimpleName());
-                    continue;
-                }
                 EntityData data = plugin.getSettingManager().getSetting(type, w);
 
                 if (isDay(e.getWorld())) {

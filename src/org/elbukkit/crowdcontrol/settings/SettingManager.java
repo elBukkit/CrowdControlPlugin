@@ -42,6 +42,7 @@ public class SettingManager {
             writer.close();
         } catch (IOException e) {
             // TODO Error handling
+            System.out.println("Save Error!");
         }
     }
 
@@ -53,9 +54,16 @@ public class SettingManager {
             EntityData data = getGsonBuilder().create().fromJson(reader, EntityData.class);
             return data;
         } catch (FileNotFoundException e) {
-            EntityData data = new EntityData();
-            saveSetting(data, type, w);
-            return data;
+            EntityData data;
+            try {
+                data = CreatureType.getClassFromCreatureType(type).newInstance();
+                saveSetting(data, type, w);
+                return data;
+            } catch (InstantiationException | IllegalAccessException e1) {
+                // TODO Auto-generated catch block
+                System.out.println("Setting creation error!");
+            }
+            return null;
         }
     }
 
