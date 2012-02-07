@@ -8,88 +8,65 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EntityData;
 import org.elbukkit.crowdcontrol.settings.MasterSettings;
-import org.elbukkit.crowdcontrol.settings.SettingManager;
 
 public class CreatureControl implements Runnable {
 
     CrowdControlPlugin plugin;
-    SettingManager manager;
     MasterSettings settings;
 
     public CreatureControl(CrowdControlPlugin plugin) {
         this.plugin = plugin;
-        this.manager = new SettingManager(plugin);
-        this.settings = manager.getMasterSettings();
+        this.settings = plugin.getSettingManager().getMasterSettings();
     }
 
+    @Override
     public void run() {
 
         for (World w : Bukkit.getWorlds()) {
-
+            
+            List<Player> players = w.getPlayers();
+            
+            if (players.size() <= 0) {
+                continue;
+            }
+            
             if (settings.getMaxPerWorld() != -1) {
                 if (w.getLivingEntities().size() >= settings.getMaxPerWorld()) {
                     continue;
                 }
             }
 
-            // Despawn code and burn code
+            // Burn code
             for (LivingEntity e : w.getLivingEntities()) {
-                if (e instanceof Player) {
+                if (e instanceof Player)
                     continue;
-                }
-
-                // Don't want to despawn the boss
-                if (e instanceof EnderDragon) {
-                    if (e.getWorld().getEnvironment() == Environment.THE_END) {
-                        continue;
-                    }
-                }
-
-                List<Entity> nearbyEntities = e.getNearbyEntities(settings.getDespawnRadius(), settings.getDespawnRadius(), settings.getDespawnRadius());
-                boolean playerNearby = false;
-                for (Entity ne : nearbyEntities) {
-                    if (ne instanceof Player) {
-                        playerNearby = true;
-                    }
-                }
-
-                if (playerNearby) {
-                    continue;
-                }
-
-                if (new Random().nextDouble() >= settings.getDespawnChance()) {
-                    e.remove();
-                }
-                
-                // Burning code
                 CreatureType type = CreatureType.creatureTypeFromEntity(e);
-                EntityData data = manager.getSetting(type, w);
-                
-                if (isDay(e.getWorld())) {
-    				if (e.getLocation().getBlock().getLightFromSky() > 7) {
-    					if (data.isBurnDay()) {
-    						e.setFireTicks(20);
-    					}
-    				}
-    			}
-            }
+                if (type == null) {
+                    System.out.println("Null! Name: " + e.getClass().getSimpleName());
+                    continue;
+                }
+                EntityData data = plugin.getSettingManager().getSetting(type, w);
 
-            List<Player> players = w.getPlayers();
+                if (isDay(e.getWorld())) {
+                    if (e.getLocation().getBlock().getLightFromSky() > 7) {
+                        if (data.isBurnDay()) {
+                            e.setFireTicks(20);
+                        }
+                    }
+                }
+            }
 
             // Spawn an creature by each player
             for (Player p : players) {
                 for (int i = 0; i < new Random().nextInt(64); i++) {
                     CreatureType randomType = CreatureType.values()[new Random().nextInt(CreatureType.values().length)];
-                    EntityData data = manager.getSetting(randomType, w);
+                    EntityData data = plugin.getSettingManager().getSetting(randomType, w);
 
                     HashSet<Chunk> spawningChunks = new HashSet<Chunk>();
                     Chunk playerChunk = w.getChunkAt(p.getLocation());
@@ -110,8 +87,12 @@ public class CreatureControl implements Runnable {
                         }
 
                         Block testBlock = c.getBlock(r.nextInt(16), r.nextInt(128), r.nextInt(16));
+                        
+                        if (testBlock.getType() != Material.AIR && testBlock.getType() != Material.WATER) {
+                            continue;
+                        }
 
-                        if (testBlock.getType() != Material.AIR) {
+                        if(p.getLocation().distance(testBlock.getLocation()) < settings.getNoSpawnRadius()){
                             continue;
                         }
 
@@ -124,11 +105,11 @@ public class CreatureControl implements Runnable {
             }
         }
     }
-    
+
     public boolean isDay(World w) {
-    	if (w.getTime() > 0 && w.getTime() < 12000) {
-    		return true;
-    	}
-    	return false;
+        if ((w.getTime() > 0) && (w.getTime() < 12000)) {
+            return true;
+        }
+        return false;
     }
 }

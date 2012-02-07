@@ -19,6 +19,7 @@ public class KillCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
             return false;

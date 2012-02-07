@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.elbukkit.crowdcontrol.CrowdControlPlugin;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EntityData;
+
 import com.google.gson.GsonBuilder;
 
 public class SettingManager {
@@ -63,8 +64,9 @@ public class SettingManager {
     }
 
     public void saveMasterSettings(MasterSettings data) {
-        if (!plugin.getDataFolder().exists())
+        if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdirs();
+        }
 
         String location = plugin.getDataFolder().getAbsolutePath() + File.separator + "MasterSettings.json";
         File settingFile = new File(location);
