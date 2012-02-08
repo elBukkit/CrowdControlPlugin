@@ -9,6 +9,7 @@ public class Ghast extends Monster {
         this.notSpawnable.remove(Material.AIR);
         this.maxSpawnLight = 15;
         this.environment.add(Environment.NETHER);
+        this.health = 10;
     }
     
     @Override

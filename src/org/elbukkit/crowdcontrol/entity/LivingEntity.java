@@ -6,5 +6,6 @@ public abstract class LivingEntity extends EntityData {
     public LivingEntity() {
         this.notSpawnable.add(Material.LAVA);
         this.notSpawnable.add(Material.STATIONARY_LAVA);
+        this.health = 20;
     }
 }

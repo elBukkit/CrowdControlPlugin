@@ -6,5 +6,6 @@ public class CaveSpider extends Monster {
     public CaveSpider() {
         this.environment.add(Environment.NORMAL);
         this.canNaturalSpawn = false;
+        this.health = 12;
     }
 }

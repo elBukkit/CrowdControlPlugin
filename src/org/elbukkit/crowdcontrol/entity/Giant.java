@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 public class Giant extends Monster {
     public Giant() {
         this.canNaturalSpawn = false;
+        this.health = 100;
     }
     
     @Override

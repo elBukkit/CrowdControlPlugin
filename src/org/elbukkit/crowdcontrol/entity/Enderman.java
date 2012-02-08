@@ -9,6 +9,7 @@ public class Enderman extends Monster {
     public Enderman() {
         this.environment.add(Environment.NORMAL);
         this.environment.add(Environment.THE_END);
+        this.health = 40;
     }
     
     @Override
