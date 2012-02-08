@@ -10,6 +10,7 @@ public class Slime extends LivingEntity {
     public Slime() {
         this.notSpawnable.add(Material.WATER);
         this.notSpawnable.add(Material.STATIONARY_WATER);
+        this.notSpawnable.add(Material.AIR);
         this.environment.add(Environment.NORMAL);
         this.maxSpawnHeight = 40;
         this.health = 1;

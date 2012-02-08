@@ -13,6 +13,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.elbukkit.crowdcontrol.CrowdControlPlugin;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
@@ -121,6 +122,18 @@ public class EntityListener implements Listener {
                 org.elbukkit.crowdcontrol.entity.Tameable data = (org.elbukkit.crowdcontrol.entity.Tameable)instance.getDefaultData();
                 instance.setHealth(data.getTammedHealth());
             }
+        }
+    }
+    
+    @EventHandler(priority=EventPriority.MONITOR)
+    public void onEntityDeath(EntityDeathEvent event) {
+        
+        if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
+            return;
+        }
+        
+        if (event instanceof LivingEntity) {
+            plugin.getCreatureController().removeEntity((LivingEntity) event.getEntity());
         }
     }
 

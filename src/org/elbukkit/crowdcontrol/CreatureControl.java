@@ -15,8 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EnderDragon;
 import org.elbukkit.crowdcontrol.entity.EntityData;
@@ -60,6 +58,26 @@ public class CreatureControl implements Runnable {
                 if (e instanceof Player)
                     continue;
                 
+                // Burn code
+                CreatureType type = CreatureType.creatureTypeFromEntity(e);
+                EntityData data = plugin.getSettingManager().getSetting(type, w);
+
+                if (isDay(e.getWorld())) {
+                    if (e.getLocation().getBlock().getLightFromSky() > 7) {
+                        if (data.isBurnDay()) {
+                            e.setFireTicks(20);
+                        }
+                    }
+                }
+                
+                // Kill code
+                if (getInstance(e).isDead()) {
+                    if(e.getKiller() != null) {
+                        e.damage(e.getMaxHealth(), e.getKiller());
+                    }
+                    e.damage(e.getMaxHealth());
+                }
+                
                 // Don't want to despawn the boss
                 if (e instanceof EnderDragon) {
                     if (e.getWorld().getEnvironment() == Environment.THE_END) {
@@ -67,7 +85,7 @@ public class CreatureControl implements Runnable {
                     }
                 }
 
-                List<Entity> nearbyEntities = e.getNearbyEntities(settings.getDespawnRadius(), settings.getDespawnRadius(), settings.getDespawnRadius());
+                List<Entity> nearbyEntities = e.getNearbyEntities(settings.getDespawnRadius(), 20, settings.getDespawnRadius());
                 boolean playerNearby = false;
                 for (Entity ne : nearbyEntities) {
                     if (ne instanceof Player) {
@@ -80,36 +98,8 @@ public class CreatureControl implements Runnable {
                 }
 
                 if (new Random().nextDouble() >= settings.getDespawnChance()) {
+                    masterList.remove(e);
                     e.remove();
-                }
-                
-                CreatureType type = CreatureType.creatureTypeFromEntity(e);
-                EntityData data = plugin.getSettingManager().getSetting(type, w);
-
-                if (isDay(e.getWorld())) {
-                    if (e.getLocation().getBlock().getLightFromSky() > 7) {
-                        if (data.isBurnDay()) {
-                            e.setFireTicks(20);
-                        }
-                    }
-                }
-                
-                // Keep up with all entities
-                if (!masterList.containsKey(e)) {
-                    masterList.put(e, new EntityInstance(data, e));
-                }
-                
-                // Kill code
-                if (masterList.get(e).isDead()) {
-                    
-                    EntityDamageEvent lastEvent = e.getLastDamageCause();
-                    
-                    if (lastEvent instanceof EntityDamageByEntityEvent) {
-                        EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent)lastEvent;
-                        e.damage(e.getMaxHealth(), entityDamageByEntityEvent.getDamager());
-                    }
-                    
-                    e.damage(e.getMaxHealth());
                 }
             }
 
@@ -174,5 +164,9 @@ public class CreatureControl implements Runnable {
         }
         
         return masterList.get(e);
+    }
+    
+    public void removeEntity(LivingEntity e) {
+        masterList.remove(e);
     }
 }

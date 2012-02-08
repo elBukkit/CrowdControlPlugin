@@ -12,7 +12,7 @@ public class MasterSettings {
     private int noSpawnRadius = 10;
     private int chunkRadius = 7;
     private double despawnChance = .001;
-    private int despawnRadius = 10;
+    private int despawnRadius = 100;
     private List<String> enabledWorlds = new ArrayList<String>();
 
     public int getNumberOfTrys() {

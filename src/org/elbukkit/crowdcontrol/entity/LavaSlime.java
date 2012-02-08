@@ -7,5 +7,6 @@ public class LavaSlime extends Slime {
         this.maxSpawnLight = 15;
         this.maxSpawnHeight = 128;
         this.environment.add(Environment.NETHER);
+        this.environment.remove(Environment.NORMAL);
     }
 }
