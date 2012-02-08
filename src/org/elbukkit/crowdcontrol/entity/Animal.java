@@ -11,5 +11,6 @@ public abstract class Animal extends LivingEntity {
         this.notSpawnable.add(Material.STATIONARY_WATER);
         this.minSpawnLight = 7;
         this.environment.add(Environment.NORMAL);
+        this.health = 10;
     }
 }

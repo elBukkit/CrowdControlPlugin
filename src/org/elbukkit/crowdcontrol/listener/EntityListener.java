@@ -4,15 +4,20 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.elbukkit.crowdcontrol.CrowdControlPlugin;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EntityData;
+import org.elbukkit.crowdcontrol.entity.EntityInstance;
 
 public class EntityListener implements Listener {
 
@@ -22,7 +27,7 @@ public class EntityListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         if (event.isCancelled()) {
             return;
@@ -38,9 +43,13 @@ public class EntityListener implements Listener {
         
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityCombust(EntityCombustEvent event) {
         Entity e = event.getEntity();
+        
+        if (event.isCancelled()) {
+            return;
+        }
         
         if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
             return;
@@ -57,8 +66,60 @@ public class EntityListener implements Listener {
 
             if (!data.isBurnDay()) {
                 if (isDay(e.getWorld())) {
-                    event.setCancelled(true);
+                    if (e.getLocation().getBlock().getLightFromSky() > 7) {
+                        event.setCancelled(true);
+                    }
                 }
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onEntityDamage(EntityDamageEvent event) {
+        
+        if (event.isCancelled()) {
+            return;
+        }
+        
+        if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
+            return;
+        }
+        
+        if (event.getEntity() instanceof LivingEntity) {
+            if (event.getEntity() instanceof Player) {
+                return;
+            }
+            
+            LivingEntity le = (LivingEntity) event.getEntity();
+            plugin.getCreatureController().getInstance(le).damage(event.getDamage());
+            
+            if (event instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent)event;
+                
+                le.damage(0, entityDamageByEntityEvent.getDamager());
+            }
+            
+            event.setDamage(0);
+        }
+        
+    }
+    
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityTame(EntityTameEvent event) {
+        
+        if (event.isCancelled()) {
+            return;
+        }
+        
+        if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
+            return;
+        }
+        
+        if (event.getEntity() instanceof Tameable) {
+            EntityInstance instance = plugin.getCreatureController().getInstance((LivingEntity) event.getEntity());
+            if (instance.getDefaultData() instanceof org.elbukkit.crowdcontrol.entity.Tameable) {
+                org.elbukkit.crowdcontrol.entity.Tameable data = (org.elbukkit.crowdcontrol.entity.Tameable)instance.getDefaultData();
+                instance.setHealth(data.getTammedHealth());
             }
         }
     }

@@ -40,5 +40,9 @@ public class CrowdControlPlugin extends JavaPlugin {
     public SettingManager getSettingManager() {
         return settingManager;
     }
+    
+    public CreatureControl getCreatureController() {
+        return spawnHandler;
+    }
 
 }

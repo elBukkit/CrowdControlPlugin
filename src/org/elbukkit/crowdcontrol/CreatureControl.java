@@ -1,7 +1,9 @@
 package org.elbukkit.crowdcontrol;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -11,15 +13,19 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EntityData;
+import org.elbukkit.crowdcontrol.entity.EntityInstance;
 import org.elbukkit.crowdcontrol.settings.MasterSettings;
 
 public class CreatureControl implements Runnable {
 
     CrowdControlPlugin plugin;
     MasterSettings settings;
-
+    Map<LivingEntity, EntityInstance> masterList = new HashMap<LivingEntity, EntityInstance>();
+    
     public CreatureControl(CrowdControlPlugin plugin) {
         this.plugin = plugin;
         this.settings = plugin.getSettingManager().getMasterSettings();
@@ -46,7 +52,7 @@ public class CreatureControl implements Runnable {
                 }
             }
 
-            // Burn code
+            // Burn code, kill code
             for (LivingEntity e : w.getLivingEntities()) {
                 if (e instanceof Player)
                     continue;
@@ -59,6 +65,24 @@ public class CreatureControl implements Runnable {
                             e.setFireTicks(20);
                         }
                     }
+                }
+                
+                // Keep up with all entities
+                if (!masterList.containsKey(e)) {
+                    masterList.put(e, new EntityInstance(data, e));
+                }
+                
+                // Kill code
+                if (masterList.get(e).isDead()) {
+                    
+                    EntityDamageEvent lastEvent = e.getLastDamageCause();
+                    
+                    if (lastEvent instanceof EntityDamageByEntityEvent) {
+                        EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent)lastEvent;
+                        e.damage(e.getMaxHealth(), entityDamageByEntityEvent.getDamager());
+                    }
+                    
+                    e.damage(e.getMaxHealth());
                 }
             }
 
@@ -97,7 +121,8 @@ public class CreatureControl implements Runnable {
                         }
 
                         if (data.canSpawn(testBlock)) {
-                            w.spawnCreature(testBlock.getLocation(), randomType.toBukkitType());
+                            LivingEntity e = w.spawnCreature(testBlock.getLocation(), randomType.toBukkitType());
+                            masterList.put(e , new EntityInstance(data, e));
                         }
 
                     }
@@ -111,5 +136,16 @@ public class CreatureControl implements Runnable {
             return true;
         }
         return false;
+    }
+    
+    public EntityInstance getInstance(LivingEntity e) {
+        
+        if (!masterList.containsKey(e)) {
+            CreatureType type = CreatureType.creatureTypeFromEntity(e);
+            EntityData data = plugin.getSettingManager().getSetting(type, e.getWorld());
+            masterList.put(e, new EntityInstance(data, e));
+        }
+        
+        return masterList.get(e);
     }
 }

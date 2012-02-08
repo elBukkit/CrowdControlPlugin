@@ -27,6 +27,10 @@ public class KillCommand implements CommandExecutor {
 
         List<LivingEntity> entities = new ArrayList<LivingEntity>();
         if (sender instanceof Player) {
+            if(!sender.isOp()) {
+                sender.sendMessage("This command requires you to be an operator!");
+                return true;
+            }
             entities.addAll(((Player) sender).getWorld().getLivingEntities());
         } else {
             for (World w : plugin.getServer().getWorlds()) {
@@ -42,6 +46,7 @@ public class KillCommand implements CommandExecutor {
                 e.remove();
             }
         }
+        sender.sendMessage("Killed: " + entities.size());
         return true;
     }
 
