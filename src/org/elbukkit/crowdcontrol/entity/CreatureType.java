@@ -51,7 +51,7 @@ public enum CreatureType {
 
         return CreatureType.fromName(name);
     }
-    
+
     public static Class<? extends EntityData> getClassFromCreatureType(CreatureType type) {
         return CLASS_MAP.get(type);
     }

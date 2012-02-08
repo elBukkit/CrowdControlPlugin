@@ -9,5 +9,7 @@ public abstract class Monster extends LivingEntity {
         this.notSpawnable.add(Material.STATIONARY_WATER);
         this.maxSpawnLight = 7;
         this.health = 20;
+        this.creatureNatureDay = Nature.AGGRESSIVE;
+        this.creatureNatureNight = Nature.AGGRESSIVE;
     }
 }

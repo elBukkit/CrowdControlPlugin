@@ -15,6 +15,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTameEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 import org.elbukkit.crowdcontrol.CrowdControlPlugin;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
 import org.elbukkit.crowdcontrol.entity.EntityData;
@@ -37,21 +39,21 @@ public class EntityListener implements Listener {
         if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getLocation().getWorld())) {
             return;
         }
-        
+
         if (event.getSpawnReason() == SpawnReason.NATURAL) {
             event.setCancelled(true);
         }
-        
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityCombust(EntityCombustEvent event) {
         Entity e = event.getEntity();
-        
+
         if (event.isCancelled()) {
             return;
         }
-        
+
         if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
             return;
         }
@@ -74,64 +76,89 @@ public class EntityListener implements Listener {
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDamage(EntityDamageEvent event) {
-        
+
         if (event.isCancelled()) {
             return;
         }
-        
+
         if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
             return;
         }
-        
+
         if (event.getEntity() instanceof LivingEntity) {
             if (event.getEntity() instanceof Player) {
                 return;
             }
-            
+
             LivingEntity le = (LivingEntity) event.getEntity();
-            plugin.getCreatureController().getInstance(le).damage(event.getDamage());
-            
+
             if (event instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent)event;
-                
+                EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) event;
+
                 le.damage(0, entityDamageByEntityEvent.getDamager());
+
+                if (entityDamageByEntityEvent.getDamager() instanceof LivingEntity) {
+                    plugin.getCreatureController().getInstance(le).damage(event.getDamage(), (LivingEntity) entityDamageByEntityEvent.getDamager());
+                } else {
+                    plugin.getCreatureController().getInstance(le).damage(event.getDamage());
+                }
+            } else {
+                plugin.getCreatureController().getInstance(le).damage(event.getDamage());
             }
-            
+
             event.setDamage(0);
         }
-        
+
     }
-    
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onEntityTame(EntityTameEvent event) {
-        
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onEntityTarget(EntityTargetEvent event) {
+
         if (event.isCancelled()) {
             return;
         }
-        
+
         if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
             return;
         }
-        
+
+        // Damage events already take care of the attacking reasons, and we
+        // determine the closest player
+        if ((event.getReason() == TargetReason.TARGET_ATTACKED_ENTITY) || (event.getReason() != TargetReason.TARGET_ATTACKED_OWNER) || (event.getReason() != TargetReason.OWNER_ATTACKED_TARGET) || (event.getReason() != TargetReason.CLOSEST_PLAYER)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityTame(EntityTameEvent event) {
+
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
+            return;
+        }
+
         if (event.getEntity() instanceof Tameable) {
             EntityInstance instance = plugin.getCreatureController().getInstance((LivingEntity) event.getEntity());
             if (instance.getDefaultData() instanceof org.elbukkit.crowdcontrol.entity.Tameable) {
-                org.elbukkit.crowdcontrol.entity.Tameable data = (org.elbukkit.crowdcontrol.entity.Tameable)instance.getDefaultData();
+                org.elbukkit.crowdcontrol.entity.Tameable data = (org.elbukkit.crowdcontrol.entity.Tameable) instance.getDefaultData();
                 instance.setHealth(data.getTammedHealth());
             }
         }
     }
-    
-    @EventHandler(priority=EventPriority.MONITOR)
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDeath(EntityDeathEvent event) {
-        
+
         if (!plugin.getSettingManager().getMasterSettings().isEnabledWorld(event.getEntity().getWorld())) {
             return;
         }
-        
+
         if (event instanceof LivingEntity) {
             plugin.getCreatureController().removeEntity((LivingEntity) event.getEntity());
         }

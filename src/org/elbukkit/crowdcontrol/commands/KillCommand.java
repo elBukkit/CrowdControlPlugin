@@ -27,7 +27,7 @@ public class KillCommand implements CommandExecutor {
 
         List<LivingEntity> entities = new ArrayList<LivingEntity>();
         if (sender instanceof Player) {
-            if(!sender.isOp()) {
+            if (!sender.isOp()) {
                 sender.sendMessage("This command requires you to be an operator!");
                 return true;
             }

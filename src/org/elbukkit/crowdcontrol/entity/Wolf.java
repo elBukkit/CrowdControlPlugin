@@ -8,5 +8,7 @@ public class Wolf extends Tameable {
         this.biome.add(Biome.TAIGA);
         this.biome.add(Biome.TAIGA_HILLS);
         this.health = 8;
+        this.creatureNatureDay = Nature.NEUTRAL;
+        this.creatureNatureNight = Nature.NEUTRAL;
     }
 }

@@ -22,6 +22,9 @@ public class EntityData {
     protected int maxSpawnHeight = 128;
     protected int minSpawnHeight = 0;
     protected int health = 20;
+    protected Nature creatureNatureDay = Nature.PASSIVE;
+    protected Nature creatureNatureNight = Nature.PASSIVE;
+    protected int targetDistance = 20;
     protected boolean canNaturalSpawn = true;
     protected double spawnChance = 1;
     protected int max = -1;
@@ -178,8 +181,20 @@ public class EntityData {
     public void setMax(int max) {
         this.max = max;
     }
-    
+
     public int getHealth() {
         return health;
+    }
+
+    public Nature getNatureDay() {
+        return creatureNatureDay;
+    }
+
+    public Nature getNatureNight() {
+        return creatureNatureNight;
+    }
+
+    public int getTargetDistance() {
+        return targetDistance;
     }
 }

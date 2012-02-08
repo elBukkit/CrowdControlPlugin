@@ -1,6 +1,6 @@
 name: Crowd Control
 main: org.elbukkit.crowdcontrol.CrowdControlPlugin
-version: 0.0.2
+version: 0.0.3
 author: Andrew Querol
 description: Creature control
 commands:

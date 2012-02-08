@@ -11,22 +11,22 @@ public class Ghast extends Monster {
         this.environment.add(Environment.NETHER);
         this.health = 10;
     }
-    
+
     @Override
     public boolean canSpawn(Block b) {
-        
+
         if (!super.canSpawn(b)) {
             return false;
         }
-        
-        for (int y = 0; y < 5; y ++) {
+
+        for (int y = 0; y < 5; y++) {
             Block testBlock = b.getWorld().getBlockAt(b.getX(), b.getY() + y, b.getZ());
-            
+
             if (testBlock.getType() != Material.AIR) {
                 return false;
             }
         }
-        
+
         return true;
     }
 }
