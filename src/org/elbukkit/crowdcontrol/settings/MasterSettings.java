@@ -11,6 +11,8 @@ public class MasterSettings {
     private int maxPerWorld = -1;
     private int noSpawnRadius = 10;
     private int chunkRadius = 7;
+    private double despawnChance = .001;
+    private int despawnRadius = 10;
     private List<String> enabledWorlds = new ArrayList<String>();
 
     public int getNumberOfTrys() {
@@ -55,5 +57,13 @@ public class MasterSettings {
 
     public boolean isEnabledWorld(World w) {
         return enabledWorlds.contains(w.getName());
+    }
+
+    public double getDespawnChance() {
+        return despawnChance;
+    }
+
+    public double getDespawnRadius() {
+        return despawnRadius;
     }
 }

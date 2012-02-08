@@ -10,12 +10,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.elbukkit.crowdcontrol.entity.CreatureType;
+import org.elbukkit.crowdcontrol.entity.EnderDragon;
 import org.elbukkit.crowdcontrol.entity.EntityData;
 import org.elbukkit.crowdcontrol.entity.EntityInstance;
 import org.elbukkit.crowdcontrol.settings.MasterSettings;
@@ -56,6 +59,30 @@ public class CreatureControl implements Runnable {
             for (LivingEntity e : w.getLivingEntities()) {
                 if (e instanceof Player)
                     continue;
+                
+                // Don't want to despawn the boss
+                if (e instanceof EnderDragon) {
+                    if (e.getWorld().getEnvironment() == Environment.THE_END) {
+                        continue;
+                    }
+                }
+
+                List<Entity> nearbyEntities = e.getNearbyEntities(settings.getDespawnRadius(), settings.getDespawnRadius(), settings.getDespawnRadius());
+                boolean playerNearby = false;
+                for (Entity ne : nearbyEntities) {
+                    if (ne instanceof Player) {
+                        playerNearby = true;
+                    }
+                }
+
+                if (playerNearby) {
+                    continue;
+                }
+
+                if (new Random().nextDouble() >= settings.getDespawnChance()) {
+                    e.remove();
+                }
+                
                 CreatureType type = CreatureType.creatureTypeFromEntity(e);
                 EntityData data = plugin.getSettingManager().getSetting(type, w);
 
